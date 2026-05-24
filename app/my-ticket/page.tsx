@@ -271,7 +271,7 @@ export default function MyTicketPage() {
           <div className="text-center mb-10">
 
             <h1 className="
-              text-5xl
+              text-3xl md:text-5xl
               font-bold
               text-yellow-300
               mb-3
@@ -372,14 +372,18 @@ export default function MyTicketPage() {
             disabled={loading}
 
             className="
-              w-full
-              bg-yellow-400
-              hover:bg-yellow-300
-              text-black
-              font-bold
-              py-4
-              rounded-xl
-              transition
+               w-full
+               bg-yellow-400
+               hover:bg-yellow-300
+               text-black
+               font-bold
+               py-4
+               px-6
+               rounded-2xl
+               text-lg
+               transition
+               shadow-lg
+               shadow-yellow-500/30
             "
 
           >
@@ -602,8 +606,7 @@ export default function MyTicketPage() {
                     alt="QR Code"
 
                     className="
-                      w-72
-                      h-72
+                     w-52 h-52 md:w-72 md:h-72
                     "
 
                   />
@@ -633,15 +636,20 @@ export default function MyTicketPage() {
                   onClick={downloadPDF}
 
                   className="
-                    mt-8
-                    bg-yellow-400
-                    hover:bg-yellow-300
-                    text-black
-                    font-bold
-                    px-8
-                    py-4
-                    rounded-xl
-                    transition
+                     mt-8
+                     w-full
+                     md:w-auto
+                     bg-yellow-400
+                     hover:bg-yellow-300
+                     text-black
+                     font-bold
+                     px-8
+                     py-4
+                     rounded-2xl
+                     text-lg
+                     transition
+                     shadow-lg
+                     shadow-yellow-500/30
                   "
 
                 >

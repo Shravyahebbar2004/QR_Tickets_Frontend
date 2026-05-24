@@ -1,17 +1,29 @@
-
 'use client';
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import {
+
+  Menu,
+  X
+
+} from 'lucide-react';
+
 export default function HomePage() {
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const [timeLeft, setTimeLeft] = useState({
+
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0
+
   });
+
+
 
 
   // =====================================
@@ -20,45 +32,105 @@ export default function HomePage() {
 
   useEffect(() => {
 
-    const targetDate = new Date('2026-06-13T18:00:00');
+    const targetDate = new Date(
+
+      '2026-06-13T18:00:00'
+
+    );
+
+
 
     const interval = setInterval(() => {
 
       const now = new Date().getTime();
 
-      const distance = targetDate.getTime() - now;
+      const distance =
+        targetDate.getTime() - now;
+
+
 
       const days = Math.floor(
-        distance / (1000 * 60 * 60 * 24)
+
+        distance /
+
+        (1000 * 60 * 60 * 24)
+
       );
+
+
 
       const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) /
+
+        (
+
+          distance %
+
+          (1000 * 60 * 60 * 24)
+
+        )
+
+        /
+
         (1000 * 60 * 60)
+
       );
+
+
 
       const minutes = Math.floor(
-        (distance % (1000 * 60 * 60)) /
+
+        (
+
+          distance %
+
+          (1000 * 60 * 60)
+
+        )
+
+        /
+
         (1000 * 60)
+
       );
+
+
 
       const seconds = Math.floor(
-        (distance % (1000 * 60)) /
+
+        (
+
+          distance %
+
+          (1000 * 60)
+
+        )
+
+        /
+
         1000
+
       );
 
+
+
       setTimeLeft({
+
         days,
         hours,
         minutes,
         seconds
+
       });
 
     }, 1000);
 
+
+
     return () => clearInterval(interval);
 
   }, []);
+
+
 
 
   return (
@@ -75,7 +147,11 @@ export default function HomePage() {
           ANIMATED BACKGROUND
       ===================================== */}
 
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="
+        absolute
+        inset-0
+        overflow-hidden
+      ">
 
         <div className="
           absolute
@@ -90,6 +166,7 @@ export default function HomePage() {
         "></div>
 
 
+
         <div className="
           absolute
           bottom-[-150px]
@@ -101,6 +178,7 @@ export default function HomePage() {
           rounded-full
           animate-pulse
         "></div>
+
 
 
         <div className="
@@ -117,11 +195,18 @@ export default function HomePage() {
       </div>
 
 
+
+
       {/* =====================================
-          FLOATING MUSIC ICONS
+          FLOATING ICONS
       ===================================== */}
 
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="
+        absolute
+        inset-0
+        pointer-events-none
+        overflow-hidden
+      ">
 
         <div className="
           absolute
@@ -133,6 +218,7 @@ export default function HomePage() {
         ">
           🎵
         </div>
+
 
 
         <div className="
@@ -147,6 +233,7 @@ export default function HomePage() {
         </div>
 
 
+
         <div className="
           absolute
           bottom-32
@@ -157,6 +244,7 @@ export default function HomePage() {
         ">
           🎧
         </div>
+
 
 
         <div className="
@@ -173,6 +261,8 @@ export default function HomePage() {
       </div>
 
 
+
+
       {/* =====================================
           NAVBAR
       ===================================== */}
@@ -183,7 +273,7 @@ export default function HomePage() {
         flex
         justify-between
         items-center
-        px-8
+        px-5
         md:px-14
         py-6
         border-b
@@ -193,7 +283,8 @@ export default function HomePage() {
       ">
 
         <h1 className="
-          text-3xl
+          text-2xl
+          sm:text-3xl
           md:text-4xl
           font-black
           tracking-widest
@@ -203,11 +294,46 @@ export default function HomePage() {
         </h1>
 
 
+
+
+        {/* MOBILE MENU BUTTON */}
+
+        <button
+
+          onClick={() =>
+
+            setMenuOpen(!menuOpen)
+
+          }
+
+          className="
+            md:hidden
+            text-white
+          "
+
+        >
+
+          {
+
+            menuOpen
+
+              ? <X size={32} />
+
+              : <Menu size={32} />
+
+          }
+
+        </button>
+
+
+
+
+        {/* DESKTOP MENU */}
+
         <div className="
-          flex
-          gap-3
-          md:gap-5
-          flex-wrap
+          hidden
+          md:flex
+          gap-5
         ">
 
           <Link href="/register">
@@ -230,6 +356,8 @@ export default function HomePage() {
           </Link>
 
 
+
+
           <Link href="/my-ticket">
 
             <button className="
@@ -247,6 +375,8 @@ export default function HomePage() {
             </button>
 
           </Link>
+
+
 
 
           <Link href="/admin-login">
@@ -268,6 +398,110 @@ export default function HomePage() {
         </div>
 
       </nav>
+
+
+
+
+      {/* =====================================
+          MOBILE SIDEBAR
+      ===================================== */}
+
+      {
+
+        menuOpen && (
+
+          <div className="
+            fixed
+            inset-0
+            bg-black/90
+            backdrop-blur-2xl
+            z-50
+            flex
+            flex-col
+            items-center
+            justify-center
+            gap-10
+          ">
+
+            <Link href="/register">
+
+              <button
+
+                onClick={() =>
+
+                  setMenuOpen(false)
+
+                }
+
+                className="
+                  text-4xl
+                  font-black
+                  text-yellow-300
+                "
+
+              >
+                Register
+              </button>
+
+            </Link>
+
+
+
+
+            <Link href="/my-ticket">
+
+              <button
+
+                onClick={() =>
+
+                  setMenuOpen(false)
+
+                }
+
+                className="
+                  text-4xl
+                  font-black
+                  text-white
+                "
+
+              >
+                My Ticket
+              </button>
+
+            </Link>
+
+
+
+
+            <Link href="/admin-login">
+
+              <button
+
+                onClick={() =>
+
+                  setMenuOpen(false)
+
+                }
+
+                className="
+                  text-4xl
+                  font-black
+                  text-red-400
+                "
+
+              >
+                Admin
+              </button>
+
+            </Link>
+
+          </div>
+
+        )
+
+      }
+
+
 
 
       {/* =====================================
@@ -292,7 +526,8 @@ export default function HomePage() {
           border
           border-white/10
           rounded-[40px]
-          p-10
+          p-6
+          sm:p-10
           md:p-16
           max-w-6xl
           shadow-2xl
@@ -300,42 +535,62 @@ export default function HomePage() {
 
           <p className="
             text-yellow-300
-            tracking-[8px]
+            tracking-[5px]
+            md:tracking-[8px]
             uppercase
             mb-5
             font-semibold
+            text-sm
+            md:text-base
           ">
             Live • Music • Energy • Lights
           </p>
 
 
+
+
           <h1 className="
-            text-6xl
+            text-5xl
+            sm:text-6xl
             md:text-8xl
             font-black
             leading-tight
             mb-8
           ">
             Feel The
-            <span className="text-yellow-300"> Beat</span>
+            <span className="
+              text-yellow-300
+            ">
+              {' '}
+              Beat
+            </span>
+
             <br />
+
             Of The Night
           </h1>
+
+
 
 
           <p className="
             max-w-3xl
             mx-auto
-            text-xl
+            text-lg
+            md:text-xl
             text-gray-300
             leading-relaxed
             mb-12
           ">
-            Step into an unforgettable atmosphere of music,
-            lights, performances, DJs, energy, emotions,
-            and memories. Experience a warm immersive night
-            where every beat connects people together.
+            Step into an unforgettable atmosphere
+            of music, lights, performances,
+            DJs, energy, emotions, and memories.
+            Experience a warm immersive night
+            where every beat connects people
+            together.
           </p>
+
+
 
 
           {/* CTA */}
@@ -356,18 +611,25 @@ export default function HomePage() {
                 hover:bg-yellow-300
                 text-black
                 font-bold
-                px-10
-                py-5
+                px-8
+                md:px-10
+                py-4
+                md:py-5
                 rounded-2xl
-                text-xl
+                text-lg
+                md:text-xl
                 transition
                 shadow-2xl
                 shadow-yellow-500/30
+                w-full
+                md:w-auto
               ">
                 Reserve Your Spot
               </button>
 
             </Link>
+
+
 
 
             <Link href="/my-ticket">
@@ -377,11 +639,16 @@ export default function HomePage() {
                 hover:bg-white/20
                 border
                 border-white/20
-                px-10
-                py-5
+                px-8
+                md:px-10
+                py-4
+                md:py-5
                 rounded-2xl
-                text-xl
+                text-lg
+                md:text-xl
                 transition
+                w-full
+                md:w-auto
               ">
                 View My Ticket
               </button>
@@ -391,7 +658,9 @@ export default function HomePage() {
           </div>
 
 
-          {/* COUNTDOWN TIMER */}
+
+
+          {/* COUNTDOWN */}
 
           <div className="
             grid
@@ -402,102 +671,84 @@ export default function HomePage() {
             mx-auto
           ">
 
-            <div className="
-              bg-white/10
-              border
-              border-white/10
-              rounded-3xl
-              p-6
-            ">
+            {
 
-              <h2 className="
-                text-5xl
-                font-black
-                text-yellow-300
-              ">
-                {timeLeft.days}
-              </h2>
+              [
 
-              <p className="text-gray-300 mt-2">
-                Days
-              </p>
+                {
 
-            </div>
+                  label: 'Days',
+                  value: timeLeft.days
 
+                },
 
-            <div className="
-              bg-white/10
-              border
-              border-white/10
-              rounded-3xl
-              p-6
-            ">
+                {
 
-              <h2 className="
-                text-5xl
-                font-black
-                text-yellow-300
-              ">
-                {timeLeft.hours}
-              </h2>
+                  label: 'Hours',
+                  value: timeLeft.hours
 
-              <p className="text-gray-300 mt-2">
-                Hours
-              </p>
+                },
 
-            </div>
+                {
 
+                  label: 'Minutes',
+                  value: timeLeft.minutes
 
-            <div className="
-              bg-white/10
-              border
-              border-white/10
-              rounded-3xl
-              p-6
-            ">
+                },
 
-              <h2 className="
-                text-5xl
-                font-black
-                text-yellow-300
-              ">
-                {timeLeft.minutes}
-              </h2>
+                {
 
-              <p className="text-gray-300 mt-2">
-                Minutes
-              </p>
+                  label: 'Seconds',
+                  value: timeLeft.seconds
 
-            </div>
+                }
 
+              ].map((item) => (
 
-            <div className="
-              bg-white/10
-              border
-              border-white/10
-              rounded-3xl
-              p-6
-            ">
+                <div
 
-              <h2 className="
-                text-5xl
-                font-black
-                text-yellow-300
-              ">
-                {timeLeft.seconds}
-              </h2>
+                  key={item.label}
 
-              <p className="text-gray-300 mt-2">
-                Seconds
-              </p>
+                  className="
+                    bg-white/10
+                    border
+                    border-white/10
+                    rounded-3xl
+                    p-4
+                    md:p-6
+                  "
 
-            </div>
+                >
+
+                  <h2 className="
+                    text-4xl
+                    md:text-5xl
+                    font-black
+                    text-yellow-300
+                  ">
+                    {item.value}
+                  </h2>
+
+                  <p className="
+                    text-gray-300
+                    mt-2
+                  ">
+                    {item.label}
+                  </p>
+
+                </div>
+
+              ))
+
+            }
 
           </div>
 
         </div>
 
       </section>
+
+
 
 
       {/* =====================================
@@ -511,10 +762,14 @@ export default function HomePage() {
         py-20
       ">
 
-        <div className="max-w-6xl mx-auto">
+        <div className="
+          max-w-6xl
+          mx-auto
+        ">
 
           <h2 className="
-            text-5xl
+            text-4xl
+            md:text-5xl
             font-black
             text-center
             text-yellow-300
@@ -524,259 +779,100 @@ export default function HomePage() {
           </h2>
 
 
-          <div className="space-y-6">
-
-            <div className="
-              bg-white/10
-              border
-              border-white/10
-              rounded-3xl
-              p-8
-              flex
-              justify-between
-              items-center
-              backdrop-blur-lg
-            ">
-
-              <div>
-
-                <h3 className="
-                  text-3xl
-                  font-bold
-                  text-yellow-300
-                ">
-                  Opening DJ Session
-                </h3>
-
-                <p className="text-gray-300 mt-2">
-                  Warm-up vibes & crowd energy
-                </p>
-
-              </div>
-
-              <span className="text-2xl font-bold">
-                6:00 PM
-              </span>
-
-            </div>
-
-
-            <div className="
-              bg-white/10
-              border
-              border-white/10
-              rounded-3xl
-              p-8
-              flex
-              justify-between
-              items-center
-              backdrop-blur-lg
-            ">
-
-              <div>
-
-                <h3 className="
-                  text-3xl
-                  font-bold
-                  text-yellow-300
-                ">
-                  Live Band Performance
-                </h3>
-
-                <p className="text-gray-300 mt-2">
-                  Main stage musical experience
-                </p>
-
-              </div>
-
-              <span className="text-2xl font-bold">
-                7:30 PM
-              </span>
-
-            </div>
-
-
-            <div className="
-              bg-white/10
-              border
-              border-white/10
-              rounded-3xl
-              p-8
-              flex
-              justify-between
-              items-center
-              backdrop-blur-lg
-            ">
-
-              <div>
-
-                <h3 className="
-                  text-3xl
-                  font-bold
-                  text-yellow-300
-                ">
-                  EDM Night Finale
-                </h3>
-
-                <p className="text-gray-300 mt-2">
-                  High-energy lights & beats
-                </p>
-
-              </div>
-
-              <span className="text-2xl font-bold">
-                9:00 PM
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================
-          ARTIST SECTION
-      ===================================== */}
-
-      <section className="
-        relative
-        z-10
-        px-5
-        py-20
-      ">
-
-        <div className="max-w-7xl mx-auto">
-
-          <h2 className="
-            text-5xl
-            font-black
-            text-center
-            text-yellow-300
-            mb-16
-          ">
-            Featured Artists
-          </h2>
 
 
           <div className="
-            grid
-            grid-cols-1
-            md:grid-cols-3
-            gap-8
+            space-y-6
           ">
 
-            {[1,2,3].map((artist) => (
+            {
 
-              <div
-                key={artist}
-                className="
-                  bg-white/10
-                  border
-                  border-white/10
-                  rounded-[40px]
-                  overflow-hidden
-                  backdrop-blur-lg
-                  hover:scale-105
-                  transition
-                  duration-300
-                "
-              >
+              [
 
-                <div className="
-                  h-80
-                  bg-gradient-to-br
-                  from-yellow-500/20
-                  to-orange-500/20
-                  flex
-                  items-center
-                  justify-center
-                  text-7xl
-                ">
-                  🎤
-                </div>
+                {
+
+                  title: 'Opening DJ Session',
+                  desc: 'Warm-up vibes & crowd energy',
+                  time: '6:00 PM'
+
+                },
+
+                {
+
+                  title: 'Live Band Performance',
+                  desc: 'Main stage musical experience',
+                  time: '7:30 PM'
+
+                },
+
+                {
+
+                  title: 'EDM Night Finale',
+                  desc: 'High-energy lights & beats',
+                  time: '9:00 PM'
+
+                }
+
+              ].map((event, index) => (
+
+                <div
+
+                  key={index}
+
+                  className="
+                    bg-white/10
+                    border
+                    border-white/10
+                    rounded-3xl
+                    p-6
+                    md:p-8
+                    flex
+                    flex-col
+                    md:flex-row
+                    justify-between
+                    items-start
+                    md:items-center
+                    gap-5
+                    backdrop-blur-lg
+                  "
+
+                >
+
+                  <div>
+
+                    <h3 className="
+                      text-2xl
+                      md:text-3xl
+                      font-bold
+                      text-yellow-300
+                    ">
+                      {event.title}
+                    </h3>
+
+                    <p className="
+                      text-gray-300
+                      mt-2
+                    ">
+                      {event.desc}
+                    </p>
+
+                  </div>
 
 
-                <div className="p-8 text-center">
 
-                  <h3 className="
-                    text-3xl
+                  <span className="
+                    text-xl
+                    md:text-2xl
                     font-bold
-                    text-yellow-300
-                    mb-3
                   ">
-                    Artist Name
-                  </h3>
-
-                  <p className="text-gray-300 text-lg">
-                    Live Performer • DJ • Music Producer
-                  </p>
+                    {event.time}
+                  </span>
 
                 </div>
 
-              </div>
+              ))
 
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================
-          SPONSORS SECTION
-      ===================================== */}
-
-      <section className="
-        relative
-        z-10
-        px-5
-        py-20
-      ">
-
-        <div className="max-w-6xl mx-auto text-center">
-
-          <h2 className="
-            text-5xl
-            font-black
-            text-yellow-300
-            mb-16
-          ">
-            Sponsors
-          </h2>
-
-
-          <div className="
-            grid
-            grid-cols-2
-            md:grid-cols-4
-            gap-6
-          ">
-
-            {[1,2,3,4].map((sponsor) => (
-
-              <div
-                key={sponsor}
-                className="
-                  bg-white/10
-                  border
-                  border-white/10
-                  rounded-3xl
-                  p-10
-                  backdrop-blur-lg
-                  text-2xl
-                  font-bold
-                  text-gray-300
-                "
-              >
-                LOGO
-              </div>
-
-            ))}
+            }
 
           </div>
 
@@ -785,76 +881,6 @@ export default function HomePage() {
       </section>
 
 
-      {/* =====================================
-          HELP SECTION
-      ===================================== */}
-
-      <section className="
-        relative
-        z-10
-        px-5
-        py-20
-      ">
-
-        <div className="
-          max-w-4xl
-          mx-auto
-          bg-white/10
-          border
-          border-white/10
-          rounded-[40px]
-          p-12
-          backdrop-blur-2xl
-          text-center
-        ">
-
-          <h2 className="
-            text-5xl
-            font-black
-            text-yellow-300
-            mb-8
-          ">
-            Need Help?
-          </h2>
-
-
-          <p className="
-            text-xl
-            text-gray-300
-            leading-relaxed
-            mb-10
-          ">
-            For ticket support, payment issues,
-            event details, sponsorships,
-            or general queries,
-            feel free to contact us anytime.
-          </p>
-
-
-          <div className="space-y-5 text-2xl">
-
-            <p>
-              <span className="text-yellow-300 font-bold">
-                Contact Person:
-              </span>
-              {' '}
-              Your Name
-            </p>
-
-
-            <p>
-              <span className="text-yellow-300 font-bold">
-                Phone:
-              </span>
-              {' '}
-              +91 9876543210
-            </p>
-
-          </div>
-
-        </div>
-
-      </section>
 
 
       {/* =====================================
@@ -869,6 +895,8 @@ export default function HomePage() {
         py-10
         text-center
         text-gray-500
+        text-sm
+        md:text-base
       ">
 
         © 2026 Musical Jam Event.

@@ -70,9 +70,9 @@ export default function ScannerPage() {
 
           qrbox: {
 
-            width: 250,
+            width: 280,
 
-            height: 250
+            height: 280
 
           }
 
@@ -183,22 +183,28 @@ export default function ScannerPage() {
       min-h-screen
       bg-black
       text-white
-      p-5
+      p-3
+      md:p-5
     ">
 
       {/* HEADER */}
 
       <div className="
         flex
+        flex-col
+        md:flex-row
         justify-between
         items-center
-        mb-10
+        gap-5
+        mb-8
       ">
 
         <h1 className="
-          text-5xl
+          text-3xl
+          md:text-5xl
           font-black
           text-yellow-300
+          text-center
         ">
           QR Scanner
         </h1>
@@ -230,9 +236,13 @@ export default function ScannerPage() {
             bg-red-500
             hover:bg-red-600
             px-6
-            py-3
-            rounded-xl
+            py-4
+            rounded-2xl
             font-bold
+            text-lg
+            transition
+            w-full
+            md:w-auto
           "
 
         >
@@ -247,13 +257,13 @@ export default function ScannerPage() {
       {/* SCANNER */}
 
       <div className="
-        max-w-2xl
-        mx-auto
+        w-full
         bg-white/10
         border
         border-white/10
         rounded-3xl
-        p-8
+        p-3
+        md:p-8
         backdrop-blur-xl
       ">
 
@@ -271,9 +281,9 @@ export default function ScannerPage() {
         scanResult && (
 
           <div className="
-            max-w-2xl
+            w-full
             mx-auto
-            mt-10
+            mt-8
           ">
 
             {
@@ -287,12 +297,14 @@ export default function ScannerPage() {
                     border
                     border-green-500
                     rounded-3xl
-                    p-10
+                    p-6
+                    md:p-10
                     text-center
                   ">
 
                     <h2 className="
-                      text-5xl
+                      text-3xl
+                      md:text-5xl
                       font-black
                       text-green-400
                       mb-5
@@ -303,7 +315,8 @@ export default function ScannerPage() {
 
 
                     <p className="
-                      text-3xl
+                      text-2xl
+                      md:text-3xl
                       font-bold
                       mb-3
                     ">
@@ -319,7 +332,8 @@ export default function ScannerPage() {
 
 
                     <p className="
-                      text-xl
+                      text-lg
+                      md:text-xl
                       text-gray-300
                     ">
 
@@ -337,7 +351,8 @@ export default function ScannerPage() {
 
 
                     <p className="
-                      text-xl
+                      text-lg
+                      md:text-xl
                       text-gray-300
                       mt-2
                     ">
@@ -372,12 +387,14 @@ export default function ScannerPage() {
                     border
                     border-red-500
                     rounded-3xl
-                    p-10
+                    p-6
+                    md:p-10
                     text-center
                   ">
 
                     <h2 className="
-                      text-5xl
+                      text-3xl
+                      md:text-5xl
                       font-black
                       text-red-400
                       mb-5
@@ -388,7 +405,8 @@ export default function ScannerPage() {
 
 
                     <p className="
-                      text-2xl
+                      text-xl
+                      md:text-2xl
                     ">
 
                       {

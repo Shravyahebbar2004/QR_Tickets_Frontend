@@ -332,10 +332,13 @@ export default function AdminPage() {
               bg-red-500
               hover:bg-red-600
               px-6
-              py-3
-              rounded-xl
+              py-4
+              rounded-2xl
               font-bold
+              text-lg
               transition
+              w-full
+              md:w-auto
             "
 
           >
@@ -688,7 +691,10 @@ export default function AdminPage() {
         backdrop-blur-xl
       ">
 
-        <table className="w-full">
+        <table className="
+     w-full
+  min-w-[1000px]
+">  
 
           <thead>
 
@@ -870,10 +876,14 @@ export default function AdminPage() {
                               className="
                                 bg-green-500
                                 hover:bg-green-600
-                                px-4
-                                py-2
-                                rounded-xl
+                                px-6
+                                py-4
+                                rounded-2xl
                                 font-bold
+                                text-lg
+                                transition
+                                w-full
+                                md:w-auto
                               "
 
                             >

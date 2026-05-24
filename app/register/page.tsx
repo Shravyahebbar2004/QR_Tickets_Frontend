@@ -610,16 +610,20 @@ export default function RegisterPage() {
 
             type="submit"
 
-            className="
-              w-full
-              bg-yellow-400
-              hover:bg-yellow-300
-              text-black
-              font-bold
-              py-4
-              rounded-xl
-              transition
-            "
+         className="
+         w-full
+         bg-yellow-400
+         hover:bg-yellow-300
+         text-black
+         font-bold
+         py-4
+         px-6
+         rounded-2xl
+         text-lg
+         transition
+         shadow-lg
+         shadow-yellow-500/30
+         "
 
           >
             Reserve Seat
