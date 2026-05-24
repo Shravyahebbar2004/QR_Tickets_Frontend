@@ -880,6 +880,302 @@ export default function HomePage() {
 
       </section>
 
+            {/* =====================================
+          FEATURED ARTISTS
+      ===================================== */}
+
+      <section className="
+        relative
+        z-10
+        px-5
+        py-20
+      ">
+
+        <div className="max-w-6xl mx-auto">
+
+          <h2 className="
+            text-4xl
+            md:text-5xl
+            font-black
+            text-center
+            text-yellow-300
+            mb-16
+          ">
+            Featured Artists
+          </h2>
+
+          <div className="
+            grid
+            md:grid-cols-3
+            gap-8
+          ">
+
+            <div className="
+              bg-white/10
+              border
+              border-white/10
+              rounded-3xl
+              p-8
+              backdrop-blur-lg
+            ">
+
+              <h3 className="
+                text-3xl
+                font-bold
+                text-yellow-300
+                mb-4
+              ">
+                DJ NightStorm
+              </h3>
+
+              <p className="text-gray-300">
+                Experience electrifying EDM beats,
+                immersive lights, and unforgettable
+                energy throughout the night.
+              </p>
+
+            </div>
+
+            <div className="
+              bg-white/10
+              border
+              border-white/10
+              rounded-3xl
+              p-8
+              backdrop-blur-lg
+            ">
+
+              <h3 className="
+                text-3xl
+                font-bold
+                text-yellow-300
+                mb-4
+              ">
+                Fusion Beats Band
+              </h3>
+
+              <p className="text-gray-300">
+                Live fusion performances combining
+                Bollywood, Indie Rock, and modern
+                music experiences.
+              </p>
+
+            </div>
+
+            <div className="
+              bg-white/10
+              border
+              border-white/10
+              rounded-3xl
+              p-8
+              backdrop-blur-lg
+            ">
+
+              <h3 className="
+                text-3xl
+                font-bold
+                text-yellow-300
+                mb-4
+              ">
+                Surprise Guest Artist
+              </h3>
+
+              <p className="text-gray-300">
+                Special celebrity performance to
+                make the event even more memorable.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+
+      {/* =====================================
+          SPONSORS
+      ===================================== */}
+
+      <section className="
+        relative
+        z-10
+        px-5
+        py-20
+      ">
+
+        <div className="max-w-6xl mx-auto">
+
+          <h2 className="
+            text-4xl
+            md:text-5xl
+            font-black
+            text-center
+            text-yellow-300
+            mb-16
+          ">
+            Sponsors & Partners
+          </h2>
+
+          <div className="
+            grid
+            md:grid-cols-3
+            gap-8
+          ">
+
+            <div className="
+              bg-white/10
+              border
+              border-white/10
+              rounded-3xl
+              p-8
+              text-center
+              backdrop-blur-lg
+            ">
+
+              <h3 className="
+                text-2xl
+                font-bold
+              ">
+                XYZ Bank
+              </h3>
+
+              <p className="
+                text-gray-300
+                mt-4
+              ">
+                Official Banking Partner
+              </p>
+
+            </div>
+
+            <div className="
+              bg-white/10
+              border
+              border-white/10
+              rounded-3xl
+              p-8
+              text-center
+              backdrop-blur-lg
+            ">
+
+              <h3 className="
+                text-2xl
+                font-bold
+              ">
+                SoundWave Studios
+              </h3>
+
+              <p className="
+                text-gray-300
+                mt-4
+              ">
+                Audio & Production Partner
+              </p>
+
+            </div>
+
+            <div className="
+              bg-white/10
+              border
+              border-white/10
+              rounded-3xl
+              p-8
+              text-center
+              backdrop-blur-lg
+            ">
+
+              <h3 className="
+                text-2xl
+                font-bold
+              ">
+                Glow Energy
+              </h3>
+
+              <p className="
+                text-gray-300
+                mt-4
+              ">
+                Energy Drink Partner
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+
+      {/* =====================================
+          HELP DESK
+      ===================================== */}
+
+      <section className="
+        relative
+        z-10
+        px-5
+        py-20
+      ">
+
+        <div className="
+          max-w-3xl
+          mx-auto
+          text-center
+          bg-white/10
+          border
+          border-white/10
+          rounded-[40px]
+          p-10
+          backdrop-blur-2xl
+        ">
+
+          <h2 className="
+            text-4xl
+            md:text-5xl
+            font-black
+            text-yellow-300
+            mb-8
+          ">
+            Help Desk
+          </h2>
+
+          <p className="
+            text-gray-300
+            text-lg
+            mb-6
+          ">
+            For registration support,
+            ticket issues, or event queries,
+            contact us anytime.
+          </p>
+
+          <h3 className="
+            text-3xl
+            font-bold
+          ">
+            abc
+          </h3>
+
+          <p className="
+            text-yellow-300
+            text-2xl
+            mt-4
+            font-bold
+          ">
+            +91 XXXXX XXXXX
+          </p>
+
+        </div>
+
+      </section>
+
 
 
 
