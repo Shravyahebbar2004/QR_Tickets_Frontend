@@ -106,7 +106,7 @@ export default function AdminPage() {
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/registerations`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/registrations`,
       );
 
       setUsers(response.data.data || []);
