@@ -35,7 +35,7 @@ export default function MyTicketPage() {
 
       const response = await axios.post(
 
-        'http://localhost:5000/api/my-ticket',
+        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
 
         {
 

@@ -100,7 +100,7 @@ export default function ScannerPage() {
 
             const response = await axios.post(
 
-              'http://localhost:5000/api/verify-ticket',
+              `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
 
               {
 

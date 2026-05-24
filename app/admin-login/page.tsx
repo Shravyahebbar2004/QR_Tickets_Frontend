@@ -45,7 +45,7 @@ export default function AdminLogin() {
 
       const response = await axios.post(
 
-        'http://localhost:5000/api/admin/login',
+        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
 
         formData
 
