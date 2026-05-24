@@ -15,8 +15,9 @@ export default function AdminLogin() {
 
   });
 
-
-
+  // =====================================
+  // HANDLE INPUT CHANGE
+  // =====================================
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -32,8 +33,9 @@ export default function AdminLogin() {
 
   };
 
-
-
+  // =====================================
+  // HANDLE LOGIN
+  // =====================================
 
   const handleSubmit = async (
     e: React.FormEvent
@@ -45,13 +47,11 @@ export default function AdminLogin() {
 
       const response = await axios.post(
 
-        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/login`,
 
         formData
 
       );
-
-
 
       localStorage.setItem(
 
@@ -61,11 +61,11 @@ export default function AdminLogin() {
 
       );
 
-
-
       router.push('/admin');
 
     } catch (error) {
+
+      console.log(error);
 
       alert('Invalid Credentials');
 
@@ -73,22 +73,27 @@ export default function AdminLogin() {
 
   };
 
-
-
+  // =====================================
+  // UI
+  // =====================================
 
   return (
 
-    <div className="
-      min-h-screen
-      bg-black
-      flex
-      items-center
-      justify-center
-      p-10
-    ">
+    <div
+      className="
+        min-h-screen
+        bg-black
+        flex
+        items-center
+        justify-center
+        p-10
+      "
+    >
 
       <form
+
         onSubmit={handleSubmit}
+
         className="
           bg-white/10
           backdrop-blur-lg
@@ -101,24 +106,34 @@ export default function AdminLogin() {
         "
       >
 
-        <h1 className="
-          text-4xl
-          font-bold
-          text-yellow-300
-          text-center
-          mb-10
-        ">
+        <h1
+          className="
+            text-4xl
+            font-bold
+            text-yellow-300
+            text-center
+            mb-10
+          "
+        >
           Admin Login
         </h1>
 
-
+        {/* USERNAME */}
 
         <input
+
           type="text"
+
           name="username"
+
           placeholder="Username"
+
+          value={formData.username}
+
           onChange={handleChange}
+
           required
+
           className="
             w-full
             p-4
@@ -126,17 +141,31 @@ export default function AdminLogin() {
             rounded-xl
             bg-white/10
             text-white
+            placeholder-gray-400
+            border
+            border-white/20
+            focus:outline-none
+            focus:ring-2
+            focus:ring-yellow-400
           "
         />
 
-
+        {/* PASSWORD */}
 
         <input
+
           type="password"
+
           name="password"
+
           placeholder="Password"
+
+          value={formData.password}
+
           onChange={handleChange}
+
           required
+
           className="
             w-full
             p-4
@@ -144,13 +173,21 @@ export default function AdminLogin() {
             rounded-xl
             bg-white/10
             text-white
+            placeholder-gray-400
+            border
+            border-white/20
+            focus:outline-none
+            focus:ring-2
+            focus:ring-yellow-400
           "
         />
 
-
+        {/* LOGIN BUTTON */}
 
         <button
+
           type="submit"
+
           className="
             w-full
             bg-yellow-400
@@ -164,7 +201,6 @@ export default function AdminLogin() {
             transition
             shadow-lg
             shadow-yellow-500/30
-            
           "
         >
           Login
