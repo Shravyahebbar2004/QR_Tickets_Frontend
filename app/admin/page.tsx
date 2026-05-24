@@ -3,184 +3,178 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { CSVLink } from 'react-csv';
+import Image from 'next/image';
 
 import {
-
   LineChart,
   Line,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer
-
 } from 'recharts';
 
+interface User {
+  registration_id: number;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  ticket_type: string;
+  payment_proof: string;
+  payment_status: string;
+  used_entries: number;
+  allowed_entries: number;
+}
+
+interface Analytics {
+  hourlyEntries: {
+    hour: string;
+    entries: number;
+  }[];
+
+  recentEntries: {
+    full_name: string;
+    username: string;
+    entry_time: string;
+  }[];
+}
+
 export default function AdminPage() {
+  const exportCSV = () => {
+  const headers = [
+    'Name',
+    'Email',
+    'Phone',
+    'Ticket',
+    'Payment Status',
+    'Entries'
+  ];
 
+  const rows = users.map((user) => [
+    user.full_name,
+    user.email,
+    user.phone_number,
+    user.ticket_type,
+    user.payment_status,
+    `${user.used_entries}/${user.allowed_entries}`
+  ]);
+
+  const csvContent =
+    [headers, ...rows]
+      .map((e) => e.join(','))
+      .join('\n');
+
+  const blob = new Blob(
+    [csvContent],
+    { type: 'text/csv;charset=utf-8;' }
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+
+  link.href = url;
+
+  link.setAttribute(
+    'download',
+    'attendees.csv'
+  );
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+};
   const router = useRouter();
-
-
-
 
   // ====================================
   // STATES
   // ====================================
 
-  const [users, setUsers] = useState<any[]>([]);
-
+  const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
-
   const [mounted, setMounted] = useState(false);
 
-  const [analytics, setAnalytics] = useState<any>(null);
-
-
-
+  const [analytics, setAnalytics] =
+    useState<Analytics | null>(null);
 
   // ====================================
   // FETCH USERS
   // ====================================
 
   const fetchUsers = async () => {
-
     try {
-
       const response = await axios.get(
-
-        'http://localhost:5000/api/registrations'
-
+        `${process.env.NEXT_PUBLIC_API_URL}/api/registrations`,
       );
 
-      setUsers(response.data.data);
-
+      setUsers(response.data.data || []);
     } catch (error) {
-
       console.log(error);
-
     }
-
   };
-
-
-
 
   // ====================================
   // FETCH ANALYTICS
   // ====================================
 
   const fetchAnalytics = async () => {
-
     try {
-
       const response = await axios.get(
-
-        'http://localhost:5000/api/analytics'
-
+        `${process.env.NEXT_PUBLIC_API_URL}/api/analytics`,
       );
 
-
-
       setAnalytics(response.data);
-
     } catch (error) {
-
       console.log(error);
-
     }
-
   };
-
-
-
 
   // ====================================
   // APPROVE PAYMENT
   // ====================================
 
-  const approvePayment = async (
-    id: number
-  ) => {
-
+  const approvePayment = async (id: number) => {
     try {
-
       await axios.post(
-
-        `http://localhost:5000/api/approve-payment/${id}`
-
+        `${process.env.NEXT_PUBLIC_API_URL}/api/registrations/approve/${id}`,
       );
-
-
 
       alert('Payment Approved & QR Sent');
 
-
-
       fetchUsers();
-
       fetchAnalytics();
-
     } catch (error) {
-
       console.log(error);
-
       alert('Approval Failed');
-
     }
-
   };
-
-
-
 
   // ====================================
   // AUTH CHECK + LIVE REFRESH
   // ====================================
 
   useEffect(() => {
-
     setMounted(true);
 
-    const token = localStorage.getItem(
-
-      'admin_token'
-
-    );
-
-
+    const token = localStorage.getItem('admin_token');
 
     if (!token) {
-
       router.push('/admin-login');
-
       return;
-
     }
 
-
-
     fetchUsers();
-
     fetchAnalytics();
 
-
-
     const interval = setInterval(() => {
-
       fetchUsers();
-
       fetchAnalytics();
-
     }, 3000);
 
-
-
     return () => clearInterval(interval);
-
   }, [router]);
-
-
-
 
   // ====================================
   // ANALYTICS
@@ -189,113 +183,76 @@ export default function AdminPage() {
   const totalUsers = users.length;
 
   const approvedUsers = users.filter(
-
-    (user: any) =>
-
-      user.payment_status === 'approved'
-
+    (user) => user.payment_status === 'approved'
   ).length;
 
   const pendingUsers = totalUsers - approvedUsers;
-
-
-
 
   // ====================================
   // SEARCH FILTER
   // ====================================
 
-  const filteredUsers = users.filter(
+  const filteredUsers = users.filter((user) => {
+    return (
+      user.full_name
+        ?.toLowerCase()
+        .includes(search.toLowerCase()) ||
 
-    (user: any) => {
-
-      return (
-
-        user.full_name
-          ?.toLowerCase()
-          .includes(
-
-            search.toLowerCase()
-
-          )
-
-        ||
-
-        user.email
-          ?.toLowerCase()
-          .includes(
-
-            search.toLowerCase()
-
-          )
-
-      );
-
-    }
-
-  );
-
-
-
+      user.email
+        ?.toLowerCase()
+        .includes(search.toLowerCase())
+    );
+  });
 
   // ====================================
   // HYDRATION FIX
   // ====================================
 
   if (!mounted) {
-
     return null;
-
   }
-
-
-
 
   // ====================================
   // MAIN RETURN
   // ====================================
 
   return (
-
-    <div className="
-      min-h-screen
-      bg-black
-      text-white
-      p-10
-    ">
-
+    <div
+      className="
+        min-h-screen
+        bg-black
+        text-white
+        p-10
+      "
+    >
       {/* HEADER */}
 
-      <div className="
-        flex
-        flex-col
-        md:flex-row
-        justify-between
-        items-center
-        gap-5
-        mb-10
-      ">
-
-        <h1 className="
-          text-5xl
-          font-black
-          text-yellow-300
-        ">
+      <div
+        className="
+          flex
+          flex-col
+          md:flex-row
+          justify-between
+          items-center
+          gap-5
+          mb-10
+        "
+      >
+        <h1
+          className="
+            text-5xl
+            font-black
+            text-yellow-300
+          "
+        >
           Admin Dashboard
         </h1>
 
-
-
         <div className="flex gap-4">
-
           {/* EXPORT CSV */}
 
           <CSVLink
-
-            data={users}
-
-            filename="attendees.csv"
-
+            onClick={exportCSV}
             className="
               bg-green-500
               hover:bg-green-600
@@ -305,29 +262,17 @@ export default function AdminPage() {
               font-bold
               transition
             "
-
           >
             Export CSV
           </CSVLink>
 
-
-
           {/* LOGOUT */}
 
           <button
-
             onClick={() => {
-
-              localStorage.removeItem(
-
-                'admin_token'
-
-              );
-
+              localStorage.removeItem('admin_token');
               router.push('/admin-login');
-
             }}
-
             className="
               bg-red-500
               hover:bg-red-600
@@ -340,34 +285,19 @@ export default function AdminPage() {
               w-full
               md:w-auto
             "
-
           >
             Logout
           </button>
-
         </div>
-
       </div>
-
-
-
 
       {/* SEARCH */}
 
       <input
-
         type="text"
-
         placeholder="Search attendee by name or email..."
-
         value={search}
-
-        onChange={(e) =>
-
-          setSearch(e.target.value)
-
-        }
-
+        onChange={(e) => setSearch(e.target.value)}
         className="
           w-full
           mb-10
@@ -382,130 +312,127 @@ export default function AdminPage() {
           focus:ring-2
           focus:ring-yellow-400
         "
-
       />
-
-
-
 
       {/* ANALYTICS CARDS */}
 
-      <div className="
-        grid
-        grid-cols-1
-        md:grid-cols-3
-        gap-6
-        mb-10
-      ">
-
+      <div
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-3
+          gap-6
+          mb-10
+        "
+      >
         {/* TOTAL */}
 
-        <div className="
-          bg-white/10
-          border
-          border-white/20
-          rounded-3xl
-          p-8
-          text-center
-          backdrop-blur-xl
-        ">
-
-          <h2 className="
-            text-2xl
-            text-gray-300
-            mb-3
-          ">
+        <div
+          className="
+            bg-white/10
+            border
+            border-white/20
+            rounded-3xl
+            p-8
+            text-center
+            backdrop-blur-xl
+          "
+        >
+          <h2
+            className="
+              text-2xl
+              text-gray-300
+              mb-3
+            "
+          >
             Total Registrations
           </h2>
 
-          <p className="
-            text-5xl
-            font-black
-            text-yellow-300
-          ">
+          <p
+            className="
+              text-5xl
+              font-black
+              text-yellow-300
+            "
+          >
             {totalUsers}
           </p>
-
         </div>
-
-
-
 
         {/* APPROVED */}
 
-        <div className="
-          bg-white/10
-          border
-          border-white/20
-          rounded-3xl
-          p-8
-          text-center
-          backdrop-blur-xl
-        ">
-
-          <h2 className="
-            text-2xl
-            text-gray-300
-            mb-3
-          ">
+        <div
+          className="
+            bg-white/10
+            border
+            border-white/20
+            rounded-3xl
+            p-8
+            text-center
+            backdrop-blur-xl
+          "
+        >
+          <h2
+            className="
+              text-2xl
+              text-gray-300
+              mb-3
+            "
+          >
             Approved Tickets
           </h2>
 
-          <p className="
-            text-5xl
-            font-black
-            text-green-400
-          ">
+          <p
+            className="
+              text-5xl
+              font-black
+              text-green-400
+            "
+          >
             {approvedUsers}
           </p>
-
         </div>
-
-
-
 
         {/* PENDING */}
 
-        <div className="
-          bg-white/10
-          border
-          border-white/20
-          rounded-3xl
-          p-8
-          text-center
-          backdrop-blur-xl
-        ">
-
-          <h2 className="
-            text-2xl
-            text-gray-300
-            mb-3
-          ">
+        <div
+          className="
+            bg-white/10
+            border
+            border-white/20
+            rounded-3xl
+            p-8
+            text-center
+            backdrop-blur-xl
+          "
+        >
+          <h2
+            className="
+              text-2xl
+              text-gray-300
+              mb-3
+            "
+          >
             Pending Approvals
           </h2>
 
-          <p className="
-            text-5xl
-            font-black
-            text-red-400
-          ">
+          <p
+            className="
+              text-5xl
+              font-black
+              text-red-400
+            "
+          >
             {pendingUsers}
           </p>
-
         </div>
-
       </div>
-
-
-
 
       {/* LIVE ANALYTICS GRAPH */}
 
-      {
-
-        analytics && (
-
-          <div className="
+      {analytics && (
+        <div
+          className="
             bg-white/10
             border
             border-white/10
@@ -513,66 +440,48 @@ export default function AdminPage() {
             p-10
             mb-10
             backdrop-blur-xl
-          ">
-
-            <h2 className="
+          "
+        >
+          <h2
+            className="
               text-4xl
               font-black
               text-yellow-300
               mb-10
-            ">
-              Live Entry Analytics
-            </h2>
+            "
+          >
+            Live Entry Analytics
+          </h2>
 
-
-
-            <ResponsiveContainer
-              width="100%"
-              height={400}
+          <ResponsiveContainer
+            width="100%"
+            height={400}
+          >
+            <LineChart
+              data={analytics?.hourlyEntries || []}
             >
+              <XAxis dataKey="hour" />
 
-              <LineChart
-                data={analytics.hourlyEntries}
-              >
+              <YAxis />
 
-                <XAxis dataKey="hour" />
+              <Tooltip />
 
-                <YAxis />
-
-                <Tooltip />
-
-                <Line
-
-                  type="monotone"
-
-                  dataKey="entries"
-
-                  stroke="#facc15"
-
-                  strokeWidth={4}
-
-                />
-
-              </LineChart>
-
-            </ResponsiveContainer>
-
-          </div>
-
-        )
-
-      }
-
-
-
+              <Line
+                type="monotone"
+                dataKey="entries"
+                stroke="#facc15"
+                strokeWidth={4}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* RECENT ENTRIES */}
 
-      {
-
-        analytics && (
-
-          <div className="
+      {analytics && (
+        <div
+          className="
             bg-white/10
             border
             border-white/10
@@ -580,368 +489,231 @@ export default function AdminPage() {
             p-10
             mb-10
             backdrop-blur-xl
-          ">
-
-            <h2 className="
+          "
+        >
+          <h2
+            className="
               text-4xl
               font-black
               text-yellow-300
               mb-8
-            ">
-              Recent Entries
-            </h2>
+            "
+          >
+            Recent Entries
+          </h2>
 
-
-
-            <div className="space-y-4">
-
-              {
-
-                analytics.recentEntries.map(
-
-                  (
-
-                    entry: any,
-
-                    index: number
-
-                  ) => (
-
-                    <div
-
-                      key={index}
-
+          <div className="space-y-4">
+            {analytics?.recentEntries?.map(
+              (entry, index) => (
+                <div
+                  key={index}
+                  className="
+                    bg-black/40
+                    border
+                    border-white/10
+                    rounded-2xl
+                    p-5
+                    flex
+                    justify-between
+                    items-center
+                  "
+                >
+                  <div>
+                    <p
                       className="
-                        bg-black/40
-                        border
-                        border-white/10
-                        rounded-2xl
-                        p-5
-                        flex
-                        justify-between
-                        items-center
+                        text-xl
+                        font-bold
                       "
-
                     >
+                      {entry.full_name}
+                    </p>
 
-                      <div>
+                    <p
+                      className="
+                        text-gray-400
+                      "
+                    >
+                      Scanned by {entry.username}
+                    </p>
+                  </div>
 
-                        <p className="
-                          text-xl
-                          font-bold
-                        ">
-                          {entry.full_name}
-                        </p>
-
-                        <p className="
-                          text-gray-400
-                        ">
-                          Scanned by:
-                          {' '}
-                          {entry.username}
-                        </p>
-
-                      </div>
-
-
-
-                      <p className="
-                        text-yellow-300
-                      ">
-
-                        {
-
-                          new Date(
-
-                            entry.entry_time
-
-                          ).toLocaleTimeString()
-
-                        }
-
-                      </p>
-
-                    </div>
-
-                  )
-
-                )
-
-              }
-
-            </div>
-
+                  <p
+                    className="
+                      text-yellow-300
+                    "
+                  >
+                    {new Date(
+                      entry.entry_time
+                    ).toLocaleTimeString()}
+                  </p>
+                </div>
+              )
+            )}
           </div>
-
-        )
-
-      }
-
-
-
+        </div>
+      )}
 
       {/* TABLE */}
 
-      <div className="
-        overflow-x-auto
-        bg-white/10
-        border
-        border-white/20
-        rounded-3xl
-        backdrop-blur-xl
-      ">
-
-        <table className="
-     w-full
-  min-w-[1000px]
-">  
-
+      <div
+        className="
+          overflow-x-auto
+          bg-white/10
+          border
+          border-white/20
+          rounded-3xl
+          backdrop-blur-xl
+        "
+      >
+        <table
+          className="
+            w-full
+            min-w-[1000px]
+          "
+        >
           <thead>
+            <tr
+              className="
+                bg-yellow-400
+                text-black
+              "
+            >
+              <th className="p-5">Name</th>
 
-            <tr className="
-              bg-yellow-400
-              text-black
-            ">
+              <th className="p-5">Email</th>
 
-              <th className="p-5">
-                Name
-              </th>
+              <th className="p-5">Phone</th>
 
-              <th className="p-5">
-                Email
-              </th>
+              <th className="p-5">Ticket</th>
 
-              <th className="p-5">
-                Phone
-              </th>
+              <th className="p-5">Payment</th>
 
-              <th className="p-5">
-                Ticket
-              </th>
+              <th className="p-5">Approval</th>
 
-              <th className="p-5">
-                Payment
-              </th>
-
-              <th className="p-5">
-                Approval
-              </th>
-
-              <th className="p-5">
-                Entries
-              </th>
-
+              <th className="p-5">Entries</th>
             </tr>
-
           </thead>
 
-
-
-
           <tbody>
+            {filteredUsers.map((user) => (
+              <tr
+                key={user.registration_id}
+                className="
+                  text-center
+                  border-t
+                  border-white/10
+                  hover:bg-white/5
+                  transition
+                "
+              >
+                {/* NAME */}
 
-            {
+                <td className="p-5">
+                  {user.full_name}
+                </td>
 
-              filteredUsers.map(
+                {/* EMAIL */}
 
-                (user: any) => (
+                <td className="p-5">
+                  {user.email}
+                </td>
 
-                  <tr
+                {/* PHONE */}
 
-                    key={user.registration_id}
+                <td className="p-5">
+                  {user.phone_number}
+                </td>
 
+                {/* TICKET */}
+
+                <td className="p-5">
+                  <span
                     className="
-                      text-center
-                      border-t
-                      border-white/10
-                      hover:bg-white/5
-                      transition
+                      bg-yellow-400/10
+                      text-yellow-300
+                      px-4
+                      py-2
+                      rounded-xl
+                      font-bold
                     "
-
                   >
+                    {user.ticket_type}
+                  </span>
+                </td>
 
-                    {/* NAME */}
+                {/* PAYMENT IMAGE */}
 
-                    <td className="p-5">
+                <td className="p-5">
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`}
+                    alt="Payment Proof"
+                    width={100}
+                    height={100}
+                    className="
+                      rounded-xl
+                      mx-auto
+                      border
+                      border-white/20
+                    "
+                  />
+                </td>
 
-                      {user.full_name}
+                {/* APPROVAL */}
 
-                    </td>
-
-
-
-
-                    {/* EMAIL */}
-
-                    <td className="p-5">
-
-                      {user.email}
-
-                    </td>
-
-
-
-
-                    {/* PHONE */}
-
-                    <td className="p-5">
-
-                      {user.phone_number}
-
-                    </td>
-
-
-
-
-                    {/* TICKET */}
-
-                    <td className="p-5">
-
-                      <span className="
-                        bg-yellow-400/10
-                        text-yellow-300
-                        px-4
-                        py-2
-                        rounded-xl
+                <td className="p-5">
+                  {user.payment_status ===
+                  'approved' ? (
+                    <span
+                      className="
+                        text-green-400
                         font-bold
-                      ">
-
-                        {user.ticket_type}
-
-                      </span>
-
-                    </td>
-
-
-
-
-                    {/* PAYMENT IMAGE */}
-
-                    <td className="p-5">
-
-                      <img
-
-                        src={`http://localhost:5000/uploads/${user.payment_proof}`}
-
-                        alt="Payment Proof"
-
-                        className="
-                          w-24
-                          rounded-xl
-                          mx-auto
-                          border
-                          border-white/20
-                        "
-
-                      />
-
-                    </td>
-
-
-
-
-                    {/* APPROVAL */}
-
-                    <td className="p-5">
-
-                      {
-
-                        user.payment_status === 'approved'
-
-                          ? (
-
-                            <span className="
-                              text-green-400
-                              font-bold
-                            ">
-                              Approved ✅
-                            </span>
-
-                          )
-
-                          : (
-
-                            <button
-
-                              onClick={() =>
-
-                                approvePayment(
-
-                                  user.registration_id
-
-                                )
-
-                              }
-
-                              className="
-                                bg-green-500
-                                hover:bg-green-600
-                                px-6
-                                py-4
-                                rounded-2xl
-                                font-bold
-                                text-lg
-                                transition
-                                w-full
-                                md:w-auto
-                              "
-
-                            >
-                              Approve
-                            </button>
-
-                          )
-
+                      "
+                    >
+                      Approved ✅
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        approvePayment(
+                          user.registration_id
+                        )
                       }
-
-                    </td>
-
-
-
-
-                    {/* ENTRY COUNT */}
-
-                    <td className="p-5">
-
-                      <span className="
-                        text-yellow-300
+                      className="
+                        bg-green-500
+                        hover:bg-green-600
+                        px-6
+                        py-4
+                        rounded-2xl
                         font-bold
-                      ">
+                        text-lg
+                        transition
+                        w-full
+                        md:w-auto
+                      "
+                    >
+                      Approve
+                    </button>
+                  )}
+                </td>
 
-                        {
+                {/* ENTRY COUNT */}
 
-                          user.used_entries
-
-                        }
-
-                        /
-
-                        {
-
-                          user.allowed_entries
-
-                        }
-
-                      </span>
-
-                    </td>
-
-                  </tr>
-
-                )
-
-              )
-
-            }
-
+                <td className="p-5">
+                  <span
+                    className="
+                      text-yellow-300
+                      font-bold
+                    "
+                  >
+                    {user.used_entries}/
+                    {user.allowed_entries}
+                  </span>
+                </td>
+              </tr>
+            ))}
           </tbody>
-
         </table>
-
       </div>
-
     </div>
-
   );
-
 }
