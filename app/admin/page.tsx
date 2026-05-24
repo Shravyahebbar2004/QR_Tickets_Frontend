@@ -251,20 +251,20 @@ export default function AdminPage() {
         <div className="flex gap-4">
           {/* EXPORT CSV */}
 
-          <CSVLink
-            onClick={exportCSV}
-            className="
-              bg-green-500
-              hover:bg-green-600
-              px-6
-              py-3
-              rounded-xl
-              font-bold
-              transition
-            "
-          >
-            Export CSV
-          </CSVLink>
+          <button
+           onClick={exportCSV}
+           className="
+           bg-green-500
+           hover:bg-green-600
+           px-6
+           py-3
+           rounded-xl
+           font-bold
+           transition
+           "
+        >
+          Export CSV
+      </button>
 
           {/* LOGOUT */}
 
