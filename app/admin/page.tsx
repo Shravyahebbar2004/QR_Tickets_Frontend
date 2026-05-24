@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import Image from 'next/image';
+
 
 import {
   LineChart,
@@ -138,7 +138,7 @@ export default function AdminPage() {
   const approvePayment = async (id: number) => {
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/register/approve/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/registrations/approve/${id}`,
       );
 
       alert('Payment Approved & QR Sent');
@@ -644,16 +644,16 @@ export default function AdminPage() {
                 {/* PAYMENT IMAGE */}
 
                 <td className="p-5">
-                  <Image
+                  <img
                     src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`}
                     alt="Payment Proof"
-                    width={100}
-                    height={100}
+                  
                     className="
-                      rounded-xl
-                      mx-auto
-                      border
-                      border-white/20
+                       w-24
+                       rounded-xl
+                       mx-auto
+                       border
+                       border-white/20
                     "
                   />
                 </td>
