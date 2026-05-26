@@ -31,7 +31,7 @@ export default function ScannerLoginPage() {
 
       const response = await axios.post(
 
-        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/scanner/login`,
 
         {
 
