@@ -395,6 +395,23 @@ export default function HomePage() {
 
           </Link>
 
+          <Link href="/scanner-login">
+
+             <button className="
+              bg-blue-500
+              hover:bg-blue-600
+              font-bold
+              px-5
+              py-3
+              rounded-2xl
+              transition
+              text-white
+            ">
+             Scanner
+            </button>
+
+          </Link>
+
         </div>
 
       </nav>
@@ -494,6 +511,28 @@ export default function HomePage() {
               </button>
 
             </Link>
+
+             <Link href="/scanner-login">
+
+                <button
+
+                   onClick={() =>
+
+                   setMenuOpen(false)
+
+                 }
+
+               className="
+               text-4xl
+               font-black
+               text-blue-400
+               "
+
+              >
+             Scanner
+           </button>
+
+          </Link>     
 
           </div>
 
@@ -654,8 +693,33 @@ export default function HomePage() {
               </button>
 
             </Link>
+                   
+               <Link href="/scanner-login">
 
-          </div>
+                 <button className="
+                 bg-blue-500/20
+                 hover:bg-blue-500/30
+                 border
+                 border-blue-400/30
+                 px-8
+                 md:px-10
+                 py-4
+                 md:py-5
+                 rounded-2xl
+                 text-lg
+                 md:text-xl
+                 transition
+                 w-full
+                 md:w-auto
+                 text-white
+                 font-bold
+                ">
+              Scanner Login
+            </button>
+
+          </Link>
+
+        </div>
 
 
 
