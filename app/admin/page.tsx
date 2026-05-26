@@ -138,7 +138,7 @@ export default function AdminPage() {
   const approvePayment = async (id: number) => {
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/register/approve/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/approve-payment/${id}`,
       );
 
       alert('Payment Approved & QR Sent');
