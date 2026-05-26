@@ -18,18 +18,15 @@ export default function RegisterPage() {
 
   });
 
-
-
   const [paymentProof, setPaymentProof] = useState<any>(null);
 
   const [submitted, setSubmitted] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const [totalAmount, setTotalAmount] = useState(299);
 
   const [allowedEntries, setAllowedEntries] = useState(1);
-
-
-
 
   // ====================================
   // TICKET PRICE LOGIC
@@ -45,8 +42,6 @@ export default function RegisterPage() {
 
     }
 
-
-
     if (formData.ticket_type === 'couple') {
 
       setTotalAmount(499);
@@ -54,8 +49,6 @@ export default function RegisterPage() {
       setAllowedEntries(2);
 
     }
-
-
 
     if (formData.ticket_type === 'group') {
 
@@ -66,9 +59,6 @@ export default function RegisterPage() {
     }
 
   }, [formData.ticket_type]);
-
-
-
 
   // ====================================
   // HANDLE INPUT CHANGE
@@ -90,9 +80,6 @@ export default function RegisterPage() {
 
   };
 
-
-
-
   // ====================================
   // HANDLE SUBMIT
   // ====================================
@@ -102,6 +89,12 @@ export default function RegisterPage() {
   ) => {
 
     e.preventDefault();
+
+    // PREVENT MULTIPLE CLICKS
+
+    if (loading) return;
+
+    setLoading(true);
 
     try {
 
@@ -127,8 +120,6 @@ export default function RegisterPage() {
         formData.ticket_type
       );
 
-
-
       if (paymentProof) {
 
         data.append(
@@ -137,8 +128,6 @@ export default function RegisterPage() {
         );
 
       }
-
-
 
       const response = await axios.post(
 
@@ -158,15 +147,9 @@ export default function RegisterPage() {
 
       );
 
-
-
       console.log(response.data);
 
-
-
       setSubmitted(true);
-
-
 
       // CLEAR FORM
 
@@ -179,19 +162,11 @@ export default function RegisterPage() {
 
       });
 
-
-
       setPaymentProof(null);
 
-
-
       alert(
-
         'Registration Submitted Successfully'
-
       );
-
-
 
     } catch (error) {
 
@@ -199,12 +174,13 @@ export default function RegisterPage() {
 
       alert('Registration Failed');
 
+    } finally {
+
+      setLoading(false);
+
     }
 
   };
-
-
-
 
   // ====================================
   // MAIN RETURN
@@ -265,9 +241,6 @@ export default function RegisterPage() {
 
           </div>
 
-
-
-
           {/* FULL NAME */}
 
           <input
@@ -300,9 +273,6 @@ export default function RegisterPage() {
             "
 
           />
-
-
-
 
           {/* EMAIL */}
 
@@ -337,9 +307,6 @@ export default function RegisterPage() {
 
           />
 
-
-
-
           {/* PHONE */}
 
           <input
@@ -373,9 +340,6 @@ export default function RegisterPage() {
 
           />
 
-
-
-
           {/* TICKET TYPE */}
 
           <select
@@ -403,27 +367,18 @@ export default function RegisterPage() {
           >
 
             <option value="solo">
-
               Solo Pass — ₹299
-
             </option>
 
             <option value="couple">
-
               Couple Pass — ₹499
-
             </option>
 
             <option value="group">
-
               Group Pass (4 Entries) — ₹899
-
             </option>
 
           </select>
-
-
-
 
           {/* BILL SUMMARY */}
 
@@ -445,8 +400,6 @@ export default function RegisterPage() {
               Booking Summary
             </h2>
 
-
-
             <div className="
               text-white
               space-y-3
@@ -456,45 +409,41 @@ export default function RegisterPage() {
               <p>
 
                 Ticket Type:
-                {' '}
 
                 <span className="
                   text-yellow-300
                   font-bold
                 ">
+                  {' '}
                   {formData.ticket_type}
                 </span>
 
               </p>
 
-
-
               <p>
 
                 Allowed Entries:
-                {' '}
 
                 <span className="
                   text-yellow-300
                   font-bold
                 ">
+                  {' '}
                   {allowedEntries}
                 </span>
 
               </p>
 
-
-
               <p>
 
                 Total Amount:
-                {' '}
 
                 <span className="
                   text-yellow-300
                   font-bold
                   text-2xl
                 ">
+                  {' '}
                   ₹{totalAmount}
                 </span>
 
@@ -503,9 +452,6 @@ export default function RegisterPage() {
             </div>
 
           </div>
-
-
-
 
           {/* PAYMENT QR */}
 
@@ -525,32 +471,31 @@ export default function RegisterPage() {
 
             <img
 
-             src={
+              src={
 
-             formData.ticket_type === 'solo'
+                formData.ticket_type === 'solo'
 
-             ? '/solo.png'
+                ? '/solo.png'
 
-             : formData.ticket_type === 'couple'
+                : formData.ticket_type === 'couple'
 
-             ? '/couple.png'
+                ? '/couple.png'
 
-             : '/group.png'
+                : '/group.png'
 
-            }
+              }
 
-             alt="Payment QR"
+              alt="Payment QR"
 
-             className="
-             w-72
-             mx-auto
-             rounded-2xl
-             border
-             border-yellow-500
-            "
+              className="
+                w-72
+                mx-auto
+                rounded-2xl
+                border
+                border-yellow-500
+              "
 
-          />
-
+            />
 
             <p className="
               text-gray-300
@@ -560,9 +505,6 @@ export default function RegisterPage() {
             </p>
 
           </div>
-
-
-
 
           {/* PAYMENT SCREENSHOT */}
 
@@ -579,9 +521,7 @@ export default function RegisterPage() {
               if (e.target.files) {
 
                 setPaymentProof(
-
                   e.target.files[0]
-
                 );
 
               }
@@ -601,38 +541,46 @@ export default function RegisterPage() {
 
           />
 
-
-
-
           {/* SUBMIT BUTTON */}
 
           <button
 
             type="submit"
 
-         className="
-         w-full
-         bg-yellow-400
-         hover:bg-yellow-300
-         text-black
-         font-bold
-         py-4
-         px-6
-         rounded-2xl
-         text-lg
-         transition
-         shadow-lg
-         shadow-yellow-500/30
-         "
+            disabled={loading}
+
+            className="
+              w-full
+              bg-yellow-400
+              hover:bg-yellow-300
+              disabled:bg-gray-500
+              disabled:cursor-not-allowed
+              text-black
+              font-bold
+              py-4
+              px-6
+              rounded-2xl
+              text-lg
+              transition
+              shadow-lg
+              shadow-yellow-500/30
+            "
 
           >
-            Reserve Seat
+
+            {
+
+              loading
+
+                ? 'Submitting...'
+
+                : 'Reserve Seat'
+
+            }
+
           </button>
 
         </form>
-
-
-
 
         {/* SUCCESS MESSAGE */}
 
