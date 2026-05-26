@@ -18,15 +18,23 @@ export default function RegisterPage() {
 
   });
 
-  const [paymentProof, setPaymentProof] = useState<any>(null);
+  const [paymentProof, setPaymentProof] =
+    useState<File | null>(null);
 
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] =
+    useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
-  const [totalAmount, setTotalAmount] = useState(299);
+  const [emailError, setEmailError] =
+    useState('');
 
-  const [allowedEntries, setAllowedEntries] = useState(1);
+  const [totalAmount, setTotalAmount] =
+    useState(299);
+
+  const [allowedEntries, setAllowedEntries] =
+    useState(1);
 
   // ====================================
   // TICKET PRICE LOGIC
@@ -94,6 +102,26 @@ export default function RegisterPage() {
 
     if (loading) return;
 
+    // ====================================
+    // EMAIL VALIDATION
+    // ====================================
+
+    const emailRegex =
+
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.email)) {
+
+      setEmailError(
+        'Please enter a valid email address'
+      );
+
+      return;
+
+    }
+
+    setEmailError('');
+
     setLoading(true);
 
     try {
@@ -139,7 +167,8 @@ export default function RegisterPage() {
 
           headers: {
 
-            'Content-Type': 'multipart/form-data'
+            'Content-Type':
+              'multipart/form-data'
 
           }
 
@@ -293,7 +322,7 @@ export default function RegisterPage() {
             className="
               w-full
               p-4
-              mb-5
+              mb-2
               rounded-xl
               bg-black
               border
@@ -306,6 +335,26 @@ export default function RegisterPage() {
             "
 
           />
+
+          {/* EMAIL ERROR */}
+
+          {
+
+            emailError && (
+
+              <p className="
+                text-red-400
+                text-sm
+                mb-4
+              ">
+
+                {emailError}
+
+              </p>
+
+            )
+
+          }
 
           {/* PHONE */}
 
@@ -475,13 +524,13 @@ export default function RegisterPage() {
 
                 formData.ticket_type === 'solo'
 
-                ? '/solo.png'
+                  ? '/solo.png'
 
-                : formData.ticket_type === 'couple'
+                  : formData.ticket_type === 'couple'
 
-                ? '/couple.png'
+                  ? '/couple.png'
 
-                : '/group.png'
+                  : '/group.png'
 
               }
 
@@ -518,11 +567,12 @@ export default function RegisterPage() {
 
             onChange={(e) => {
 
-              if (e.target.files) {
+              const file =
+                e.target.files?.[0];
 
-                setPaymentProof(
-                  e.target.files[0]
-                );
+              if (file) {
+
+                setPaymentProof(file);
 
               }
 
