@@ -241,15 +241,18 @@ export default function MyTicketPage() {
 
   return (
 
-    <div className="
-      min-h-screen
-      bg-black
-      flex
-      items-center
-      justify-center
-      px-5
-      py-10
-    ">
+   <div className="
+  min-h-screen
+  bg-gradient-to-br
+  from-black
+  via-zinc-950
+  to-violet-950
+  flex
+  items-center
+  justify-center
+  px-5
+  py-10
+">
 
       <div className="
         w-full
@@ -259,12 +262,13 @@ export default function MyTicketPage() {
         {/* LOGIN BOX */}
 
         <div className="
-          bg-black
-          border
-          border-yellow-700
-          rounded-3xl
-          p-10
-        ">
+  bg-white/5
+  border
+  border-white/10
+  backdrop-blur-xl
+  rounded-[35px]
+  p-10
+  ">
 
           {/* HEADING */}
 
@@ -273,7 +277,12 @@ export default function MyTicketPage() {
             <h1 className="
               text-3xl md:text-5xl
               font-bold
-              text-yellow-300
+              bg-gradient-to-r
+              from-violet-300
+              via-white
+              to-pink-300
+              bg-clip-text
+              text-transparent
               mb-3
             ">
               My Ticket
@@ -308,18 +317,19 @@ export default function MyTicketPage() {
             }
 
             className="
-              w-full
-              p-4
-              mb-5
-              rounded-xl
-              bg-black
-              border
-              border-gray-700
-              text-white
-              placeholder-gray-400
-              focus:outline-none
-              focus:ring-2
-              focus:ring-yellow-400
+            w-full
+            p-4
+            mb-5
+            rounded-[20px]
+            bg-white/5
+            border
+            border-white/10
+            backdrop-blur-xl
+            text-white
+            placeholder-gray-400
+            focus:outline-none
+            focus:ring-2
+            focus:ring-violet-50
             "
 
           />
@@ -344,19 +354,20 @@ export default function MyTicketPage() {
             }
 
             className="
-              w-full
-              p-4
-              mb-8
-              rounded-xl
-              bg-black
-              border
-              border-gray-700
-              text-white
-              placeholder-gray-400
-              focus:outline-none
-              focus:ring-2
-              focus:ring-yellow-400
-            "
+             w-full
+             p-4
+             mb-5
+             rounded-[20px]
+             bg-white/5
+             border
+             border-white/10
+             backdrop-blur-xl
+             text-white
+             placeholder-gray-400
+             focus:outline-none
+             focus:ring-2
+             focus:ring-violet-50
+             "
 
           />
 
@@ -373,9 +384,9 @@ export default function MyTicketPage() {
 
             className="
                w-full
-               bg-yellow-400
-               hover:bg-yellow-300
-               text-black
+              bg-violet-500
+              hover:bg-violet-600
+              text-white
                font-bold
                py-4
                px-6
@@ -415,9 +426,10 @@ export default function MyTicketPage() {
 
             <div className="
               mt-10
-              bg-black
+              bg-white/5
+              border-white/10
+              backdrop-blur-xl
               border
-              border-yellow-700
               rounded-3xl
               p-10
               text-center
@@ -425,7 +437,7 @@ export default function MyTicketPage() {
 
               <h2 className="
                 text-3xl
-                text-yellow-300
+                text-violet-300
                 font-bold
                 mb-5
               ">
@@ -458,9 +470,10 @@ export default function MyTicketPage() {
 
             <div className="
               mt-10
-              bg-black
+              bg-white/5
+              border-white/10
+              backdrop-blur-xl
               border
-              border-yellow-700
               rounded-3xl
               overflow-hidden
             ">
@@ -468,8 +481,8 @@ export default function MyTicketPage() {
               {/* HEADER */}
 
               <div className="
-                bg-yellow-400
-                text-black
+                bg-violet-500
+                text-white
                 text-center
                 py-5
               ">
@@ -478,7 +491,7 @@ export default function MyTicketPage() {
                   text-4xl
                   font-bold
                 ">
-                  MUSICAL JAM
+                  {user.title}
                 </h2>
 
                 <p className="
@@ -486,7 +499,7 @@ export default function MyTicketPage() {
                   mt-2
                   font-semibold
                 ">
-                  PASS FOR MUSICAL NIGHT 🎵
+                  PASS FOR {user.title}
                 </p>
 
               </div>
@@ -503,7 +516,7 @@ export default function MyTicketPage() {
 
                 <h3 className="
                   text-3xl
-                  text-yellow-300
+                  text-violet-300
                   font-bold
                   mb-8
                 ">
@@ -528,7 +541,7 @@ export default function MyTicketPage() {
                     text-lg
                   ">
                     <span className="
-                      text-yellow-300
+                      text-violet-300
                       font-bold
                     ">
                       Name:
@@ -544,13 +557,13 @@ export default function MyTicketPage() {
                     text-lg
                   ">
                     <span className="
-                      text-yellow-300
+                      text-violet-300
                       font-bold
                     ">
                       Event:
                     </span>
                     {' '}
-                    Musical Jam Night
+                    {user.title}
                   </p>
 
 
@@ -560,13 +573,13 @@ export default function MyTicketPage() {
                     text-lg
                   ">
                     <span className="
-                      text-yellow-300
+                      text-violet-300
                       font-bold
                     ">
                       Venue:
                     </span>
                     {' '}
-                    Jamming Arena
+                    {user.venue}
                   </p>
 
 
@@ -576,13 +589,15 @@ export default function MyTicketPage() {
                     text-lg
                   ">
                     <span className="
-                      text-yellow-300
+                      text-violet-300
                       font-bold
                     ">
                       Date:
                     </span>
                     {' '}
-                    June 13, 2026
+                    {new Date(
+                      user.event_date
+                      ).toLocaleDateString()}
                   </p>
 
                 </div>
@@ -639,9 +654,9 @@ export default function MyTicketPage() {
                      mt-8
                      w-full
                      md:w-auto
-                     bg-yellow-400
-                     hover:bg-yellow-300
-                     text-black
+                     bg-violet-500
+                     hover:bg-violet-600
+                     text-white
                      font-bold
                      px-8
                      py-4
@@ -649,7 +664,7 @@ export default function MyTicketPage() {
                      text-lg
                      transition
                      shadow-lg
-                     shadow-yellow-500/30
+                     shadow-violet-500/30
                   "
 
                 >

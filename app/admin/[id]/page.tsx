@@ -217,14 +217,17 @@ export default function AdminPage() {
   // ====================================
 
   return (
-    <div
-      className="
-        min-h-screen
-        bg-black
-        text-white
-        p-10
-      "
-    >
+   <div
+  className="
+    min-h-screen
+    bg-gradient-to-br
+    from-black
+    via-zinc-950
+    to-violet-950
+    text-white
+    p-10
+  "
+>
       {/* HEADER */}
 
       <div
@@ -239,14 +242,19 @@ export default function AdminPage() {
         "
       >
         <h1
-          className="
-            text-5xl
-            font-black
-            text-yellow-300
-          "
-        >
-          Admin Dashboard
-        </h1>
+  className="
+    text-6xl
+    font-black
+    bg-gradient-to-r
+    from-yellow-300
+    via-white
+    to-violet-300
+    bg-clip-text
+    text-transparent
+  "
+>
+  EventFlow Admin Console
+</h1>
 
         <div className="flex gap-4">
           {/* EXPORT CSV */}
@@ -303,9 +311,12 @@ export default function AdminPage() {
           mb-10
           p-4
           rounded-2xl
-          bg-white/10
+          bg-white/5
+          border-white/10
+          backdrop-blur-xl
+          hover:scale-105
+          transition          
           border
-          border-white/20
           text-white
           placeholder-gray-400
           focus:outline-none
@@ -329,10 +340,17 @@ export default function AdminPage() {
 
         <div
           className="
-            bg-white/10
-            border
-            border-white/20
-            rounded-3xl
+            bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition            
+border
+            bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition            rounded-3xl
             p-8
             text-center
             backdrop-blur-xl
@@ -363,8 +381,11 @@ export default function AdminPage() {
 
         <div
           className="
-            bg-white/10
-            border
+            bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition            border
             border-white/20
             rounded-3xl
             p-8
@@ -397,8 +418,11 @@ export default function AdminPage() {
 
         <div
           className="
-            bg-white/10
-            border
+            bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition            border
             border-white/20
             rounded-3xl
             p-8
@@ -433,8 +457,11 @@ export default function AdminPage() {
       {analytics && (
         <div
           className="
-            bg-white/10
-            border
+            bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition            border
             border-white/10
             rounded-3xl
             p-10
@@ -482,8 +509,11 @@ export default function AdminPage() {
       {analytics && (
         <div
           className="
-            bg-white/10
-            border
+            bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition            border
             border-white/10
             rounded-3xl
             p-10
@@ -558,8 +588,11 @@ export default function AdminPage() {
       <div
         className="
           overflow-x-auto
-          bg-white/10
-          border
+          bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition          border
           border-white/20
           rounded-3xl
           backdrop-blur-xl

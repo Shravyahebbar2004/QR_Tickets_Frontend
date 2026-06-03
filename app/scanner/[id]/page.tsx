@@ -258,8 +258,11 @@ export default function ScannerPage() {
 
       <div className="
         w-full
-        bg-white/10
-        border
+        bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition        border
         border-white/10
         rounded-3xl
         p-3

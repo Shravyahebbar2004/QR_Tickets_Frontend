@@ -88,8 +88,11 @@ export default function ScannerLoginPage() {
         onSubmit={handleLogin}
 
         className="
-          bg-white/10
-          border
+          bg-white/5
+border-white/10
+backdrop-blur-xl
+hover:scale-105
+transition          border
           border-white/10
           backdrop-blur-xl
           p-10

@@ -15,10 +15,6 @@ export default function AdminLogin() {
 
   });
 
-  // =====================================
-  // HANDLE INPUT CHANGE
-  // =====================================
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -32,10 +28,6 @@ export default function AdminLogin() {
     });
 
   };
-
-  // =====================================
-  // HANDLE LOGIN
-  // =====================================
 
   const handleSubmit = async (
     e: React.FormEvent
@@ -61,7 +53,7 @@ export default function AdminLogin() {
 
       );
 
-      router.push('/admin');
+      router.push('/admin/${id}');
 
     } catch (error) {
 
@@ -73,20 +65,19 @@ export default function AdminLogin() {
 
   };
 
-  // =====================================
-  // UI
-  // =====================================
-
   return (
 
-    <div
+    <main
       className="
         min-h-screen
-        bg-black
+        bg-gradient-to-br
+        from-black
+        via-zinc-950
+        to-violet-950
         flex
         items-center
         justify-center
-        p-10
+        p-6
       "
     >
 
@@ -95,30 +86,46 @@ export default function AdminLogin() {
         onSubmit={handleSubmit}
 
         className="
-          bg-white/10
-          backdrop-blur-lg
-          border
-          border-white/20
-          p-10
-          rounded-3xl
           w-full
           max-w-md
+          bg-white/5
+          border
+          border-white/10
+          backdrop-blur-xl
+          rounded-[35px]
+          p-10
+          shadow-2xl
         "
       >
 
-        <h1
-          className="
-            text-4xl
-            font-bold
-            text-yellow-300
-            text-center
-            mb-10
-          "
-        >
-          Admin Login
-        </h1>
+        <div className="text-center mb-10">
 
-        {/* USERNAME */}
+          <h1
+            className="
+              text-5xl
+              font-black
+              bg-gradient-to-r
+              from-yellow-300
+              via-white
+              to-violet-300
+              bg-clip-text
+              text-transparent
+              mb-4
+            "
+          >
+            Admin Login
+          </h1>
+
+          <p
+            className="
+              text-gray-400
+              text-lg
+            "
+          >
+            EventFlow Organizer Portal
+          </p>
+
+        </div>
 
         <input
 
@@ -138,19 +145,18 @@ export default function AdminLogin() {
             w-full
             p-4
             mb-5
-            rounded-xl
-            bg-white/10
+            rounded-[20px]
+            bg-white/5
+            border
+            border-white/10
+            backdrop-blur-xl
             text-white
             placeholder-gray-400
-            border
-            border-white/20
             focus:outline-none
             focus:ring-2
-            focus:ring-yellow-400
+            focus:ring-violet-500
           "
         />
-
-        {/* PASSWORD */}
 
         <input
 
@@ -170,19 +176,18 @@ export default function AdminLogin() {
             w-full
             p-4
             mb-8
-            rounded-xl
-            bg-white/10
+            rounded-[20px]
+            bg-white/5
+            border
+            border-white/10
+            backdrop-blur-xl
             text-white
             placeholder-gray-400
-            border
-            border-white/20
             focus:outline-none
             focus:ring-2
-            focus:ring-yellow-400
+            focus:ring-violet-500
           "
         />
-
-        {/* LOGIN BUTTON */}
 
         <button
 
@@ -190,17 +195,16 @@ export default function AdminLogin() {
 
           className="
             w-full
-            bg-yellow-400
-            hover:bg-yellow-300
-            text-black
+            bg-violet-500
+            hover:bg-violet-600
+            text-white
             font-bold
             py-4
-            px-6
-            rounded-2xl
+            rounded-[20px]
             text-lg
-            transition
+            transition-all
             shadow-lg
-            shadow-yellow-500/30
+            shadow-violet-500/30
           "
         >
           Login
@@ -208,8 +212,11 @@ export default function AdminLogin() {
 
       </form>
 
-    </div>
+    </main>
 
   );
 
 }
+
+
+
