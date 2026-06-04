@@ -984,35 +984,34 @@ transition            border
 
 {
 
- 
-
   events.map((event) => (
 
-    <div
+    <Link
 
       key={event.event_id}
 
+      href={`/event/${event.event_id}`}
+
       className="
-        flex
-        flex-col
-        gap-4
+        block
       "
 
     >
-
-      {/* EVENT CARD */}
 
       <div
 
         className="
           bg-white/5
+          backdrop-blur-2xl
           border
           border-white/10
-          rounded-3xl
+          rounded-[40px]
           p-8
-          backdrop-blur-xl
           hover:scale-105
-          transition
+          transition-all
+          duration-300
+          cursor-pointer
+          h-full
         "
 
       >
@@ -1020,7 +1019,7 @@ transition            border
         <h3 className="
           text-3xl
           font-black
-          mb-3
+          mb-5
         ">
 
           {event.title}
@@ -1029,7 +1028,9 @@ transition            border
 
         <p className="
           text-gray-400
-          mb-4
+          text-lg
+          leading-relaxed
+          mb-6
         ">
 
           {event.description}
@@ -1038,7 +1039,8 @@ transition            border
 
         <p className="
           text-violet-300
-          mb-2
+          text-lg
+          mb-3
         ">
 
           📍 {event.venue}
@@ -1047,45 +1049,44 @@ transition            border
 
         <p className="
           text-pink-300
+          text-lg
         ">
 
           🎫 {event.category}
 
         </p>
 
+        <div className="
+          mt-8
+        ">
+
+          <span className="
+            inline-block
+            bg-violet-500
+            hover:bg-violet-600
+            px-8
+            py-3
+            rounded-2xl
+            text-lg
+            font-bold
+            transition
+            shadow-xl
+            shadow-violet-500/30
+          ">
+
+            View Event →
+
+          </span>
+
+        </div>
+
       </div>
 
-      {/* VIEW EVENT BUTTON */}
-
-      <button
-
-  onClick={() => {
-
-    alert(
-      `Event ${event.event_id}`
-    );
-
-  }}
-
-  className="
-    bg-red-500
-    px-12
-    py-5
-    rounded-2xl
-  "
-
->
-
-  TEST BUTTON
-
-</button>
-
-    </div>
+    </Link>
 
   ))
 
-}
-        
+}    
 
 
 
