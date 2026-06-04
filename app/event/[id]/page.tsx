@@ -42,6 +42,16 @@ export default function EventPage({
   const [loading, setLoading] =
     useState(true);
 
+  const [timeLeft, setTimeLeft] =
+    useState({
+
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+
+  });
+
   // =====================================
   // FETCH EVENT
   // =====================================
@@ -75,6 +85,91 @@ export default function EventPage({
     }
 
   };
+
+  // =====================================
+  // COUNTDOWN TIMER
+  // =====================================
+
+  useEffect(() => {
+
+  if (!event) return;
+
+  const targetDate = new Date(
+    event.event_date
+  );
+
+  const interval = setInterval(() => {
+
+    const now = new Date().getTime();
+
+    const distance =
+      targetDate.getTime() - now;
+
+    const days = Math.floor(
+
+      distance /
+
+      (1000 * 60 * 60 * 24)
+
+    );
+
+    const hours = Math.floor(
+
+      (
+
+        distance %
+
+        (1000 * 60 * 60 * 24)
+
+      ) /
+
+      (1000 * 60 * 60)
+
+    );
+
+    const minutes = Math.floor(
+
+      (
+
+        distance %
+
+        (1000 * 60 * 60)
+
+      ) /
+
+      (1000 * 60)
+
+    );
+
+    const seconds = Math.floor(
+
+      (
+
+        distance %
+
+        (1000 * 60)
+
+      ) /
+
+      1000
+
+    );
+
+    setTimeLeft({
+
+      days,
+      hours,
+      minutes,
+      seconds
+
+    });
+
+  }, 1000);
+
+  return () => clearInterval(interval);
+
+}, [event]);
+
 
   // =====================================
   // LOADING
@@ -359,6 +454,65 @@ transition            border
           </div>
 
         </div>
+
+        <div className="
+  mt-10
+  grid
+  grid-cols-4
+  gap-5
+  max-w-4xl
+  mx-auto
+">
+
+  <div className="
+    bg-white/5
+    p-5
+    rounded-3xl
+    text-center
+  ">
+    <h2 className="text-4xl font-black">
+      {timeLeft.days}
+    </h2>
+    <p>Days</p>
+  </div>
+
+  <div className="
+    bg-white/5
+    p-5
+    rounded-3xl
+    text-center
+  ">
+    <h2 className="text-4xl font-black">
+      {timeLeft.hours}
+    </h2>
+    <p>Hours</p>
+  </div>
+
+  <div className="
+    bg-white/5
+    p-5
+    rounded-3xl
+    text-center
+  ">
+    <h2 className="text-4xl font-black">
+      {timeLeft.minutes}
+    </h2>
+    <p>Minutes</p>
+  </div>
+
+  <div className="
+    bg-white/5
+    p-5
+    rounded-3xl
+    text-center
+  ">
+    <h2 className="text-4xl font-black">
+      {timeLeft.seconds}
+    </h2>
+    <p>Seconds</p>
+  </div>
+
+</div>
 
         {/* DESCRIPTION */}
 
