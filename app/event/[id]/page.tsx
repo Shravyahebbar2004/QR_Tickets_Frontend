@@ -467,15 +467,19 @@ transition            border
   mx-auto
 ">
 
-  <div className="
-    bg-white/5
-    border
-    border-white/10
-    backdrop-blur-xl
-    p-6
-    rounded-3xl
-    text-center
-  ">
+ <div className="
+  h-56
+  bg-white/5
+  border
+  border-white/10
+  backdrop-blur-xl
+  rounded-3xl
+  flex
+  flex-col
+  items-center
+  justify-center
+  text-center
+">
 
     <h2 className="
       text-5xl
@@ -495,14 +499,18 @@ transition            border
   </div>
 
   <div className="
-    bg-white/5
-    border
-    border-white/10
-    backdrop-blur-xl
-    p-6
-    rounded-3xl
-    text-center
-  ">
+  h-56
+  bg-white/5
+  border
+  border-white/10
+  backdrop-blur-xl
+  rounded-3xl
+  flex
+  flex-col
+  items-center
+  justify-center
+  text-center
+">
 
     <h2 className="
       text-5xl
@@ -521,15 +529,19 @@ transition            border
 
   </div>
 
-  <div className="
-    bg-white/5
-    border
-    border-white/10
-    backdrop-blur-xl
-    p-6
-    rounded-3xl
-    text-center
-  ">
+<div className="
+  h-56
+  bg-white/5
+  border
+  border-white/10
+  backdrop-blur-xl
+  rounded-3xl
+  flex
+  flex-col
+  items-center
+  justify-center
+  text-center
+">
 
     <h2 className="
       text-5xl
@@ -549,14 +561,18 @@ transition            border
   </div>
 
   <div className="
-    bg-white/5
-    border
-    border-white/10
-    backdrop-blur-xl
-    p-6
-    rounded-3xl
-    text-center
-  ">
+  h-56
+  bg-white/5
+  border
+  border-white/10
+  backdrop-blur-xl
+  rounded-3xl
+  flex
+  flex-col
+  items-center
+  justify-center
+  text-center
+">
 
     <h2 className="
       text-5xl
