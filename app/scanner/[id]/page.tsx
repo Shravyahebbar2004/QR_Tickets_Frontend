@@ -179,13 +179,55 @@ export default function ScannerPage() {
 
   return (
 
-    <div className="
+  <main
+    className="
       min-h-screen
-      bg-black
+      bg-gradient-to-br
+      from-black
+      via-zinc-950
+      to-violet-950
       text-white
-      p-3
-      md:p-5
+      p-6
+      relative
+      overflow-hidden
+    "
+  >
+
+    {/* BACKGROUND GLOW */}
+
+    <div className="
+      absolute
+      inset-0
+      overflow-hidden
     ">
+
+      <div className="
+        absolute
+        top-[-200px]
+        left-[-200px]
+        w-[500px]
+        h-[500px]
+        bg-violet-500/20
+        blur-[180px]
+        rounded-full
+        animate-pulse
+      "></div>
+
+      <div className="
+        absolute
+        bottom-[-200px]
+        right-[-200px]
+        w-[500px]
+        h-[500px]
+        bg-cyan-500/20
+        blur-[180px]
+        rounded-full
+        animate-pulse
+      "></div>
+
+    </div>
+
+    <div className="relative z-10">
 
       {/* HEADER */}
 
@@ -196,21 +238,36 @@ export default function ScannerPage() {
         justify-between
         items-center
         gap-5
-        mb-8
+        mb-10
       ">
 
-        <h1 className="
-          text-3xl
-          md:text-5xl
-          font-black
-          text-yellow-300
-          text-center
-        ">
-          QR Scanner
-        </h1>
+        <div>
 
+          <h1
+            className="
+              text-5xl
+              font-black
+              bg-gradient-to-r
+              from-cyan-300
+              via-white
+              to-violet-300
+              bg-clip-text
+              text-transparent
+            "
+          >
+            QR Scanner
+          </h1>
 
+          <p
+            className="
+              text-gray-400
+              mt-2
+            "
+          >
+            EventFlow Verification Portal
+          </p>
 
+        </div>
 
         <button
 
@@ -221,8 +278,6 @@ export default function ScannerPage() {
               'scanner_token'
 
             );
-
-
 
             router.push(
 
@@ -236,46 +291,35 @@ export default function ScannerPage() {
             bg-red-500
             hover:bg-red-600
             px-6
-            py-4
+            py-3
             rounded-2xl
             font-bold
-            text-lg
-            transition
-            w-full
-            md:w-auto
+            transition-all
           "
 
         >
+
           Logout
+
         </button>
 
       </div>
 
-
-
-
-      {/* SCANNER */}
+      {/* SCANNER CARD */}
 
       <div className="
-        w-full
         bg-white/5
-border-white/10
-backdrop-blur-xl
-hover:scale-105
-transition        border
+        border
         border-white/10
-        rounded-3xl
-        p-3
-        md:p-8
         backdrop-blur-xl
+        rounded-[35px]
+        p-6
+        shadow-2xl
       ">
 
         <div id="reader"></div>
 
       </div>
-
-
-
 
       {/* RESULT */}
 
@@ -284,9 +328,7 @@ transition        border
         scanResult && (
 
           <div className="
-            w-full
-            mx-auto
-            mt-8
+            mt-10
           ">
 
             {
@@ -298,30 +340,28 @@ transition        border
                   <div className="
                     bg-green-500/10
                     border
-                    border-green-500
-                    rounded-3xl
-                    p-6
-                    md:p-10
+                    border-green-500/30
+                    backdrop-blur-xl
+                    rounded-[35px]
+                    p-10
                     text-center
                   ">
 
                     <h2 className="
-                      text-3xl
-                      md:text-5xl
+                      text-5xl
                       font-black
                       text-green-400
-                      mb-5
+                      mb-6
                     ">
+
                       ENTRY ALLOWED ✅
+
                     </h2>
 
-
-
                     <p className="
-                      text-2xl
-                      md:text-3xl
+                      text-3xl
                       font-bold
-                      mb-3
+                      mb-4
                     ">
 
                       {
@@ -332,15 +372,13 @@ transition        border
 
                     </p>
 
-
-
                     <p className="
-                      text-lg
-                      md:text-xl
+                      text-xl
                       text-gray-300
                     ">
 
-                      Ticket:
+                      Ticket Type:
+
                       {' '}
 
                       {
@@ -351,16 +389,14 @@ transition        border
 
                     </p>
 
-
-
                     <p className="
-                      text-lg
-                      md:text-xl
+                      text-xl
                       text-gray-300
-                      mt-2
+                      mt-3
                     ">
 
                       Entries:
+
                       {' '}
 
                       {
@@ -388,28 +424,27 @@ transition        border
                   <div className="
                     bg-red-500/10
                     border
-                    border-red-500
-                    rounded-3xl
-                    p-6
-                    md:p-10
+                    border-red-500/30
+                    backdrop-blur-xl
+                    rounded-[35px]
+                    p-10
                     text-center
                   ">
 
                     <h2 className="
-                      text-3xl
-                      md:text-5xl
+                      text-5xl
                       font-black
                       text-red-400
-                      mb-5
+                      mb-6
                     ">
+
                       ENTRY DENIED ❌
+
                     </h2>
 
-
-
                     <p className="
-                      text-xl
-                      md:text-2xl
+                      text-2xl
+                      text-gray-300
                     ">
 
                       {
@@ -434,6 +469,8 @@ transition        border
 
     </div>
 
-  );
+  </main>
+
+);
 
 }
