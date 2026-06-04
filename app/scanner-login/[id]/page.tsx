@@ -50,7 +50,11 @@ export default function ScannerLoginPage() {
 
       );
 
-      router.push('/scanner');
+      router.push(
+
+  `/scanner/${response.data.event_id}`
+
+);
 
     } catch (error) {
 
