@@ -454,106 +454,160 @@ transition            border
           </div>
 
         </div>
+{/* COUNTDOWN */}
 
-        <div className="
-  mt-10
-  mb-16
+<div className="
+  mt-16
+  mb-20
   grid
-  grid-cols-4
-  gap-5
-  max-w-4xl
+  grid-cols-2
+  md:grid-cols-4
+  gap-6
+  max-w-5xl
   mx-auto
 ">
 
   <div className="
-    mt-12
     bg-white/5
-    p-5
+    border
+    border-white/10
+    backdrop-blur-xl
+    p-6
     rounded-3xl
     text-center
   ">
-    <h2 className="text-4xl font-black">
+
+    <h2 className="
+      text-5xl
+      font-black
+      mb-2
+    ">
       {timeLeft.days}
     </h2>
-    <p>Days</p>
+
+    <p className="
+      text-lg
+      text-gray-300
+    ">
+      Days
+    </p>
+
   </div>
 
   <div className="
     bg-white/5
-    p-5
+    border
+    border-white/10
+    backdrop-blur-xl
+    p-6
     rounded-3xl
     text-center
   ">
-    <h2 className="text-4xl font-black">
+
+    <h2 className="
+      text-5xl
+      font-black
+      mb-2
+    ">
       {timeLeft.hours}
     </h2>
-    <p>Hours</p>
+
+    <p className="
+      text-lg
+      text-gray-300
+    ">
+      Hours
+    </p>
+
   </div>
 
   <div className="
     bg-white/5
-    p-5
+    border
+    border-white/10
+    backdrop-blur-xl
+    p-6
     rounded-3xl
     text-center
   ">
-    <h2 className="text-4xl font-black">
+
+    <h2 className="
+      text-5xl
+      font-black
+      mb-2
+    ">
       {timeLeft.minutes}
     </h2>
-    <p>Minutes</p>
+
+    <p className="
+      text-lg
+      text-gray-300
+    ">
+      Minutes
+    </p>
+
   </div>
 
   <div className="
     bg-white/5
-    p-5
+    border
+    border-white/10
+    backdrop-blur-xl
+    p-6
     rounded-3xl
     text-center
   ">
-    <h2 className="text-4xl font-black">
+
+    <h2 className="
+      text-5xl
+      font-black
+      mb-2
+    ">
       {timeLeft.seconds}
     </h2>
-    <p>Seconds</p>
+
+    <p className="
+      text-lg
+      text-gray-300
+    ">
+      Seconds
+    </p>
+
   </div>
 
 </div>
 
+{/* ABOUT EVENT */}
 
+<div className="
+  bg-white/5
+  border
+  border-white/10
+  rounded-[40px]
+  p-10
+  mb-16
+  backdrop-blur-xl
+">
 
-        {/* DESCRIPTION */}
+  <h2 className="
+    text-4xl
+    font-bold
+    mb-8
+  ">
+    About Event
+  </h2>
 
-        <div className="
-          bg-white/5
-          border
-          border-white/10
-          rounded-[40px]
-          p-10
-          mb-16
-          backdrop-blur-xl
-        ">
+  <p className="
+    text-xl
+    text-gray-400
+    leading-loose
+  ">
 
-          <h2 className="
-            text-4xl
-            font-bold
-            mb-8
-          ">
-            About Event
-          </h2>
+    {event.description}
 
-          <p className="
-            text-xl
-            text-gray-400
-            leading-10
-            leading-relaxed
-          ">
+  </p>
 
-            {
-
-              event.description
-
-            }
-
-          </p>
-
-        </div>
+</div>
 
         {/* HIGHLIGHTS */}
 
