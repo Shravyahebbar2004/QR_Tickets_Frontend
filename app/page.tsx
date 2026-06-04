@@ -1059,38 +1059,26 @@ transition            border
 
       <button
 
-        onClick={() => {
+  onClick={() => {
 
-          console.log(
-            'Opening Event:',
-            event.event_id
-          );
+    alert(
+      `Event ${event.event_id}`
+    );
 
-          router.push(
-            `/event/${event.event_id}`
-          );
+  }}
 
-        }}
+  className="
+    bg-red-500
+    px-12
+    py-5
+    rounded-2xl
+  "
 
-        className="
-          bg-violet-500
-          hover:bg-violet-600
-          px-12
-          py-5
-          rounded-2xl
-          text-xl
-          font-bold
-          transition
-          shadow-2xl
-          shadow-violet-500/30
-          hover:scale-105
-        "
+>
 
-      >
+  TEST BUTTON
 
-        View Event →
-
-      </button>
+</button>
 
     </div>
 
