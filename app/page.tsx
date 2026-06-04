@@ -3,6 +3,9 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+
 import axios from 'axios';
 import {
 
@@ -31,6 +34,8 @@ import { motion } from 'framer-motion';
 export default function HomePage() {
 
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const router = useRouter();
 
   const [timeLeft, setTimeLeft] = useState({
 
@@ -979,6 +984,8 @@ transition            border
 
 {
 
+ 
+
   events.map((event) => (
 
     <div
@@ -986,79 +993,118 @@ transition            border
       key={event.event_id}
 
       className="
-        bg-white/5
-        border
-        border-white/10
-        rounded-3xl
-        p-8
-        hover:scale-105
-        transition
+        flex
+        flex-col
+        gap-4
       "
 
     >
 
-      <h3 className="
-        text-3xl
-        font-black
-        mb-3
-      ">
+      {/* EVENT CARD */}
 
-        {event.title}
+      <div
 
-      </h3>
+        className="
+          bg-white/5
+          border
+          border-white/10
+          rounded-3xl
+          p-8
+          backdrop-blur-xl
+          hover:scale-105
+          transition
+        "
 
-      <p className="
-        text-gray-400
-        mb-4
-      ">
+      >
 
-        {event.description}
+        <h3 className="
+          text-3xl
+          font-black
+          mb-3
+        ">
 
-      </p>
+          {event.title}
 
-      <p className="
-        text-violet-300
-        mb-2
-      ">
+        </h3>
 
-        📍 {event.venue}
+        <p className="
+          text-gray-400
+          mb-4
+        ">
 
-      </p>
+          {event.description}
 
-      <p className="
-        text-pink-300
-      ">
+        </p>
 
-        🎫 {event.category}
+        <p className="
+          text-violet-300
+          mb-2
+        ">
 
-      </p>
-   
-            <Link href={`/event/${event.event_id}`}>
+          📍 {event.venue}
 
-            <button className="
-              bg-violet-500
-              hover:bg-violet-600
-              px-12
-              py-5
-              rounded-2xl
-              text-xl
-              font-bold
-              transition
-              shadow-2xl
-              shadow-violet-500/30
-              hover:scale-105
-            ">
-              View Event
-            </button>
+        </p>
 
-          </Link>
+        <p className="
+          text-pink-300
+        ">
 
+          🎫 {event.category}
+
+        </p>
+
+      </div>
+
+      {/* VIEW EVENT BUTTON */}
+
+      <button
+
+        onClick={() => {
+
+          console.log(
+            'Opening Event:',
+            event.event_id
+          );
+
+          router.push(
+            `/event/${event.event_id}`
+          );
+
+        }}
+
+        className="
+          bg-violet-500
+          hover:bg-violet-600
+          px-12
+          py-5
+          rounded-2xl
+          text-xl
+          font-bold
+          transition
+          shadow-2xl
+          shadow-violet-500/30
+          hover:scale-105
+        "
+
+      >
+
+        View Event →
+
+      </button>
 
     </div>
 
   ))
 
 }
+        
+
+
+
+
+
+
+  
 
       </div>
 
