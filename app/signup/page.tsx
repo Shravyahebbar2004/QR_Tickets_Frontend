@@ -50,7 +50,7 @@ export default function SignupPage() {
 
       const response = await axios.post(
 
-        'http://localhost:5000/api/signup',
+        `${process.env.NEXT_PUBLIC_API_URL}/api/signup`,
 
         formData
 

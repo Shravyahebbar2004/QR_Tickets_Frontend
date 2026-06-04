@@ -61,7 +61,7 @@ const fetchEvents = async () => {
 
     const response = await axios.get(
 
-      'http://localhost:5000/api/events'
+       `${process.env.NEXT_PUBLIC_API_URL}/api/events`
 
     );
 

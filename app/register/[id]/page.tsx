@@ -77,7 +77,7 @@ export default function RegisterPage({
 
       const response = await axios.get(
 
-        `http://localhost:5000/api/event/${id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/event/${id}`
 
       );
 
@@ -251,7 +251,7 @@ submitData.append(
 
       const response = await axios.get(
 
-  `http://localhost:5000/api/event/${id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/event/${id}`
 
 );
 
