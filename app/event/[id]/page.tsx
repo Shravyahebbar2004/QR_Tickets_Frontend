@@ -457,6 +457,7 @@ transition            border
 
         <div className="
   mt-10
+  mb-16
   grid
   grid-cols-4
   gap-5
@@ -465,6 +466,7 @@ transition            border
 ">
 
   <div className="
+    mt-12
     bg-white/5
     p-5
     rounded-3xl
@@ -514,6 +516,8 @@ transition            border
 
 </div>
 
+
+
         {/* DESCRIPTION */}
 
         <div className="
@@ -537,6 +541,7 @@ transition            border
           <p className="
             text-xl
             text-gray-400
+            leading-10
             leading-relaxed
           ">
 
