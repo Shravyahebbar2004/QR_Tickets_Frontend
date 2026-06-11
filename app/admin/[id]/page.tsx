@@ -100,6 +100,7 @@ export default function AdminPage({
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [approvingId, setApprovingId] = useState<number | null>(null);
 
   const [analytics, setAnalytics] =
     useState<Analytics | null>(null);
@@ -142,6 +143,7 @@ export default function AdminPage({
 
   const approvePayment = async (id: number) => {
     try {
+      setApprovingId(id);
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/approve-payment/${id}`,
       );
@@ -153,6 +155,8 @@ export default function AdminPage({
     } catch (error) {
       console.log(error);
       alert('Approval Failed');
+    } finally {
+      setApprovingId(null);
     }
   };
 
@@ -716,7 +720,8 @@ transition          border
                           user.registration_id
                         )
                       }
-                      className="
+                      disabled={approvingId === user.registration_id}
+                      className={`
                         bg-green-500
                         hover:bg-green-600
                         px-6
@@ -727,9 +732,10 @@ transition          border
                         transition
                         w-full
                         md:w-auto
-                      "
+                        ${approvingId === user.registration_id ? 'opacity-50 cursor-not-allowed' : ''}
+                      `}
                     >
-                      Approve
+                      {approvingId === user.registration_id ? 'Approving...' : 'Approve'}
                     </button>
                   )}
                 </td>
