@@ -1,56 +1,37 @@
 'use client';
 
-import {
-
-  useEffect,
-  useState,
-  use
-
-} from 'react';
-
+import { useEffect, useState, use } from 'react';
 import axios from 'axios';
 
 export default function RegisterPage({
-
   params
-
 }: {
-
-  params: Promise<{
-
-    id: string
-
-  }>
-
+  params: Promise<{ id: string }>
 }) {
-
   const { id } = use(params);
 
   // =====================================
   // STATES
   // =====================================
 
-  const [event, setEvent] =
-    useState<any>(null);
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [allowedEntries, setAllowedEntries] = useState(0);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [formData, setFormData] = useState({
+    full_name: '',
+    email: '',
+    phone_number: ''
+  });
 
-  const [totalAmount, setTotalAmount] =
-    useState(299);
-
-  const [allowedEntries, setAllowedEntries] =
-    useState(1);
-
-  const [formData, setFormData] =
-    useState({
-
-      full_name: '',
-      email: '',
-      phone_number: '',
-      ticket_type: 'solo'
-
-    });
+  const [quantities, setQuantities] = useState({
+    solo: 0,
+    couple: 0,
+    group: 0,
+    bulk: 0
+  });
 
   const [activeSlabKey, setActiveSlabKey] = useState<string>('slab1');
   const [activeSlabName, setActiveSlabName] = useState<string>('Standard Ticket');
@@ -59,48 +40,46 @@ export default function RegisterPage({
   useEffect(() => {
     if (!event) return;
     
-    if (formData.ticket_type === 'bulk') {
-      setTotalAmount(Number(event.bulk_pass_price) || 0);
-      setAllowedEntries(Number(event.bulk_pass_entries) || 0);
-    } else {
-      const priceField = `${activeSlabKey}_${formData.ticket_type}_price`;
-      setTotalAmount(Number(event[priceField]) || 0);
+    let amount = 0;
+    let entries = 0;
 
-      if (formData.ticket_type === 'solo') setAllowedEntries(1);
-      else if (formData.ticket_type === 'couple') setAllowedEntries(2);
-      else if (formData.ticket_type === 'group') setAllowedEntries(5);
-    }
-  }, [formData.ticket_type, activeSlabKey, event]);
+    const soloPrice = Number(event[`${activeSlabKey}_solo_price`]) || 0;
+    amount += quantities.solo * soloPrice;
+    entries += quantities.solo * 1;
 
-  const [paymentProof, setPaymentProof] =
-    useState<any>(null);
+    const couplePrice = Number(event[`${activeSlabKey}_couple_price`]) || 0;
+    amount += quantities.couple * couplePrice;
+    entries += quantities.couple * 2;
 
-  const [submitting, setSubmitting] =
-    useState(false);
+    const groupPrice = Number(event[`${activeSlabKey}_group_price`]) || 0;
+    amount += quantities.group * groupPrice;
+    entries += quantities.group * 4;
 
-  const [submitted, setSubmitted] =
-    useState(false);
+    const bulkPrice = Number(event.bulk_pass_price) || 0;
+    amount += quantities.bulk * bulkPrice;
+    entries += quantities.bulk * (Number(event.bulk_pass_entries) || 0);
+
+    setTotalAmount(amount);
+    setAllowedEntries(entries);
+  }, [quantities, activeSlabKey, event]);
+
+  const [paymentProof, setPaymentProof] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   // =====================================
   // FETCH EVENT
   // =====================================
 
   useEffect(() => {
-
     fetchEvent();
-
   }, []);
 
   const fetchEvent = async () => {
-
     try {
-
       const response = await axios.get(
-
         `${process.env.NEXT_PUBLIC_API_URL}/api/event/${id}`
-
       );
-
       const evt = response.data.event;
       setEvent(evt);
 
@@ -119,678 +98,245 @@ export default function RegisterPage({
         slabKey = 'slab3';
         slabName = "Late (Slab 3)";
       } else if (evt.slab3_solo_price) {
-        slabKey = 'slab3'; // Fallback to last slab if past deadline
+        slabKey = 'slab3';
         slabName = "Last Minute";
       }
 
       setActiveSlabKey(slabKey);
       setActiveSlabName(slabName);
-
     } catch (error) {
-
       console.log(error);
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   // =====================================
   // HANDLE INPUT CHANGE
   // =====================================
 
-  const handleChange = (
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
-  e: React.ChangeEvent<
-
-    HTMLInputElement |
-
-    HTMLSelectElement
-
-  >
-
-) => {
-
-  const {
-
-    name,
-    value
-
-  } = e.target;
-
-  setFormData({
-
-    ...formData,
-
-    [name]: value
-
-  });
-
-};
   // =====================================
   // HANDLE REGISTER
   // =====================================
 
-  const handleSubmit = async (
-
-    e: React.FormEvent
-
-  ) => {
-
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-
       setSubmitting(true);
 
+      const tickets = [];
+      for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
+      for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
+      for (let i = 0; i < quantities.group; i++) tickets.push('group');
+      for (let i = 0; i < quantities.bulk; i++) tickets.push('bulk');
+
+      if (tickets.length === 0) {
+        alert("Please select at least one pass!");
+        setSubmitting(false);
+        return;
+      }
+
       const submitData = new FormData();
-
-      submitData.append(
-
-        'full_name',
-
-        formData.full_name
-
-      );
-
-      submitData.append(
-
-        'email',
-
-        formData.email
-
-      );
-
-      submitData.append(
-
-        'phone_number',
-
-        formData.phone_number
-
-      );
-
-      submitData.append(
-
-        'ticket_type',
-
-        formData.ticket_type
-
-      );
-
-      submitData.append(
-
-  'total_amount',
-
-  totalAmount.toString()
-
-);
-
-submitData.append(
-
-  'allowed_entries',
-
-  allowedEntries.toString()
-
-);
-
-      // IMPORTANT
-
-      submitData.append(
-
-        'event_id',
-
-        id
-
-      );
+      submitData.append('full_name', formData.full_name);
+      submitData.append('email', formData.email);
+      submitData.append('phone_number', formData.phone_number);
+      
+      // We pass tickets array as JSON
+      submitData.append('tickets', JSON.stringify(tickets));
+      
+      submitData.append('total_amount', totalAmount.toString());
+      submitData.append('allowed_entries', allowedEntries.toString());
+      submitData.append('event_id', id);
 
       if (paymentProof) {
-
-        submitData.append(
-
-          'payment_proof',
-
-          paymentProof
-
-        );
-
+        submitData.append('payment_proof', paymentProof);
       }
 
       const response = await axios.post(
-
         `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
-
         submitData,
-
-        {
-
-          headers: {
-
-            'Content-Type': 'multipart/form-data'
-
-          }
-
-        }
-
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
       console.log('API RESPONSE:', response.data);
-
       setSubmitted(true);
-
       console.log('REGISTRATION SUCCESS');
 
     } catch (error: any) {
-
-  console.log('FULL ERROR:', error);
-
-  console.log('ERROR RESPONSE:', error?.response);
-
-  console.log('ERROR DATA:', error?.response?.data);
-  
-  alert(error?.response?.data?.message || 'Registration Failed');
-
-} finally {
-
+      console.log('FULL ERROR:', error);
+      alert(error?.response?.data?.message || 'Registration Failed');
+    } finally {
       setSubmitting(false);
-
     }
-
   };
 
   // =====================================
-  // LOADING
+  // UI HELPERS
+  // =====================================
+
+  const renderCounter = (type: 'solo' | 'couple' | 'group' | 'bulk', label: string, subtitle: string, price: number) => (
+    <div className="flex justify-between items-center p-5 bg-white/5 border border-white/10 rounded-3xl mb-4 hover:bg-white/10 transition">
+      <div>
+        <h3 className="text-xl font-bold">{label}</h3>
+        <p className="text-gray-400 text-sm">{subtitle} • ₹{price}</p>
+      </div>
+      <div className="flex items-center gap-4 bg-black/40 p-2 rounded-2xl">
+        <button 
+          type="button" 
+          onClick={() => setQuantities({...quantities, [type]: Math.max(0, quantities[type] - 1)})}
+          className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
+        >
+          -
+        </button>
+        <span className="text-xl font-bold w-4 text-center">{quantities[type]}</span>
+        <button 
+          type="button"
+          onClick={() => setQuantities({...quantities, [type]: quantities[type] + 1})}
+          className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
+        >
+          +
+        </button>
+      </div>
+    </div>
+  );
+
+  // =====================================
+  // RENDER BLOCKS
   // =====================================
 
   if (loading) {
-
     return (
-
-      <div className="
-        min-h-screen
-        bg-black
-        flex
-        items-center
-        justify-center
-        text-white
-        text-2xl
-      ">
-
+      <div className="min-h-screen bg-black flex items-center justify-center text-white text-2xl">
         Loading...
-
       </div>
-
     );
-
   }
-
-  // =====================================
-  // EVENT NOT FOUND
-  // =====================================
 
   if (!event) {
-
     return (
-
-      <div className="
-        min-h-screen
-        bg-black
-        flex
-        items-center
-        justify-center
-        text-red-500
-        text-3xl
-        font-bold
-      ">
-
+      <div className="min-h-screen bg-black flex items-center justify-center text-red-500 text-3xl font-bold">
         Event Not Found
-
       </div>
-
     );
-
   }
-
-  // =====================================
-  // SUCCESS
-  // =====================================
 
   if (submitted) {
-
     return (
-
-      <div className="
-        min-h-screen
-        bg-black
-        flex
-        items-center
-        justify-center
-        text-white
-        text-center
-        p-10
-      ">
-
+      <div className="min-h-screen bg-black flex items-center justify-center text-white text-center p-10">
         <div>
-
-          <h1 className="
-            text-5xl
-            font-black
-            mb-5
-          ">
-
-            Registration Submitted ✅
-
-          </h1>
-
-          <p className="
-            text-gray-400
-            text-xl
-          ">
-
-            Wait for admin approval.
-
-          </p>
-
+          <h1 className="text-5xl font-black mb-5">Registration Submitted ✅</h1>
+          <p className="text-gray-400 text-xl">Wait for admin approval.</p>
         </div>
-
       </div>
-
     );
-
   }
 
-  // =====================================
-  // UI
-  // =====================================
-
   return (
-
-    <div className="
-      min-h-screen
-      bg-black
-      text-white
-      flex
-      items-center
-      justify-center
-      p-10
-    ">
-
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-10">
       <form
-
         onSubmit={handleSubmit}
-
-        className="
-          bg-white/5
-border-white/10
-backdrop-blur-xl
-hover:scale-105
-transition          border
-          border-white/10
-          backdrop-blur-xl
-          rounded-3xl
-          p-10
-          w-full
-          max-w-2xl
-        "
+        className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 w-full max-w-2xl shadow-2xl"
       >
+        <h1 className="text-5xl font-black mb-3">{event.title}</h1>
+        <p className="text-gray-400 mb-10">Register for this event</p>
 
-        <h1 className="
-          text-5xl
-          font-black
-          mb-3
-        ">
-
-          {event.title}
-
-        </h1>
-
-        <p className="
-          text-gray-400
-          mb-10
-        ">
-
-          Register for this event
-
-        </p>
-
-        {/* FULL NAME */}
-
+        {/* DETAILS */}
         <input
-
           type="text"
-
           name="full_name"
-
           placeholder="Full Name"
-
           value={formData.full_name}
-
           onChange={handleChange}
-
           required
-
-          className="
-            w-full
-            p-4
-            rounded-2xl
-            bg-black/30
-            border
-            border-white/10
-            mb-5
-          "
+          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
         />
-
-        {/* EMAIL */}
-
         <input
-
           type="email"
-
           name="email"
-
           placeholder="Email"
-
           value={formData.email}
-
           onChange={handleChange}
-
           required
-
-          className="
-            w-full
-            p-4
-            rounded-2xl
-            bg-black/30
-            border
-            border-white/10
-            mb-5
-          "
+          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
         />
-
-        {/* PHONE */}
-
         <input
-
           type="text"
-
           name="phone_number"
-
           placeholder="Phone Number"
-
           value={formData.phone_number}
-
           onChange={handleChange}
-
           required
-
-          className="
-            w-full
-            p-4
-            rounded-2xl
-            bg-black/30
-            border
-            border-white/10
-            mb-5
-          "
+          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-8 focus:ring-2 focus:ring-violet-500 outline-none"
         />
 
-        {/* TICKET TYPE SELECTION */}
+        {/* TICKET SELECTION */}
         <div className="mb-4">
           <p className="text-gray-400 mb-2">Active Pricing Tier: <span className="text-cyan-300 font-bold">{activeSlabName}</span></p>
         </div>
 
-        <div className={`grid gap-5 mb-8 ${event && event.bulk_pass_price ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
-          {/* SOLO */}
-          <button
-            type="button"
-            onClick={() => setFormData({ ...formData, ticket_type: 'solo' })}
-            className={`p-6 rounded-3xl border transition text-left ${formData.ticket_type === 'solo' ? 'bg-violet-500 border-violet-400' : 'bg-white/5 border-white/10'}`}
-          >
-            <h3 className="text-2xl font-bold mb-2">Solo</h3>
-            <p className="text-gray-300 mb-4">Single Entry</p>
-            <h1 className="text-4xl font-black">₹{event ? event[`${activeSlabKey}_solo_price`] : 0}</h1>
-          </button>
-
-          {/* COUPLE */}
-          <button
-            type="button"
-            onClick={() => setFormData({ ...formData, ticket_type: 'couple' })}
-            className={`p-6 rounded-3xl border transition text-left ${formData.ticket_type === 'couple' ? 'bg-pink-500 border-pink-400' : 'bg-white/5 border-white/10'}`}
-          >
-            <h3 className="text-2xl font-bold mb-2">Couple</h3>
-            <p className="text-gray-300 mb-4">Entry For Two</p>
-            <h1 className="text-4xl font-black">₹{event ? event[`${activeSlabKey}_couple_price`] : 0}</h1>
-          </button>
-
-          {/* GROUP */}
-          <button
-            type="button"
-            onClick={() => setFormData({ ...formData, ticket_type: 'group' })}
-            className={`p-6 rounded-3xl border transition text-left ${formData.ticket_type === 'group' ? 'bg-cyan-500 border-cyan-400' : 'bg-white/5 border-white/10'}`}
-          >
-            <h3 className="text-2xl font-bold mb-2">Group</h3>
-            <p className="text-gray-300 mb-4">Group of 5</p>
-            <h1 className="text-4xl font-black">₹{event ? event[`${activeSlabKey}_group_price`] : 0}</h1>
-          </button>
-
-          {/* BULK PASS (CONDITIONAL) */}
-          {event && event.bulk_pass_price && (
-            <button
-              type="button"
-              onClick={() => setFormData({ ...formData, ticket_type: 'bulk' })}
-              className={`p-6 rounded-3xl border transition text-left ${formData.ticket_type === 'bulk' ? 'bg-amber-500 border-amber-400' : 'bg-white/5 border-white/10'}`}
-            >
-              <h3 className="text-2xl font-bold mb-2">Bulk</h3>
-              <p className="text-gray-300 mb-4">{event.bulk_pass_entries} Members</p>
-              <h1 className="text-4xl font-black">₹{event.bulk_pass_price}</h1>
-            </button>
-          )}
+        <div className="mb-8">
+          {renderCounter('solo', 'Solo Pass', '1 Member', Number(event[`${activeSlabKey}_solo_price`]) || 0)}
+          {renderCounter('couple', 'Couple Pass', '2 Members', Number(event[`${activeSlabKey}_couple_price`]) || 0)}
+          {renderCounter('group', 'Group Pass', '4 Members', Number(event[`${activeSlabKey}_group_price`]) || 0)}
+          
+          {event.bulk_pass_price && 
+            renderCounter('bulk', 'Bulk Pass', `${event.bulk_pass_entries} Members`, Number(event.bulk_pass_price) || 0)
+          }
         </div>
 
-{/* PAYMENT BOX */}
+        {/* PAYMENT BOX */}
+        <div className="bg-gradient-to-br from-violet-500/20 to-pink-500/20 border border-white/10 rounded-3xl p-8 mb-8">
+          <h2 className="text-3xl font-black mb-4">Payment Details</h2>
+          <div className="flex justify-between items-center mb-5">
+            <p className="text-xl text-gray-300">Selected Plan</p>
+            <h3 className="text-2xl font-bold capitalize">{activeSlabName}</h3>
+          </div>
+          <div className="flex justify-between items-center mb-5">
+            <p className="text-xl text-gray-300">Allowed Entries</p>
+            <h3 className="text-2xl font-bold">{allowedEntries}</h3>
+          </div>
+          <div className="flex justify-between items-center">
+            <p className="text-xl text-gray-300">Total Amount</p>
+            <h1 className="text-5xl font-black text-violet-300">₹{totalAmount}</h1>
+          </div>
+        </div>
 
-<div className="
-  bg-gradient-to-br
-  from-violet-500/20
-  to-pink-500/20
-  border
-  border-white/10
-  rounded-3xl
-  p-8
-  mb-8
-">
-
-  <h2 className="
-    text-3xl
-    font-black
-    mb-4
-  ">
-
-    Payment Details
-
-  </h2>
-
-  <div className="
-    flex
-    justify-between
-    items-center
-    mb-5
-  ">
-
-    <p className="
-      text-xl
-      text-gray-300
-    ">
-
-      Selected Plan
-
-    </p>
-
-    <h3 className="
-      text-2xl
-      font-bold
-      capitalize
-    ">
-
-      {activeSlabName}
-
-    </h3>
-
-  </div>
-
-  <div className="
-    flex
-    justify-between
-    items-center
-    mb-5
-  ">
-
-    <p className="
-      text-xl
-      text-gray-300
-    ">
-
-      Allowed Entries
-
-    </p>
-
-    <h3 className="
-      text-2xl
-      font-bold
-    ">
-
-      {allowedEntries}
-
-    </h3>
-
-  </div>
-
-  <div className="
-    flex
-    justify-between
-    items-center
-  ">
-
-    <p className="
-      text-xl
-      text-gray-300
-    ">
-
-      Total Amount
-
-    </p>
-
-    <h1 className="
-      text-5xl
-      font-black
-      text-violet-300
-    ">
-
-      ₹{totalAmount}
-
-    </h1>
-
-  </div>
-
-</div>
-
-<div className="
-  bg-white
-  rounded-3xl
-  p-6
-  mb-8
-  text-center
-">
-
-  <img
-
-    src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay"
-
-    alt="UPI QR"
-
-    className="
-      mx-auto
-      rounded-2xl
-    "
-  />
-
-  <p className="
-    text-black
-    mt-5
-    font-bold
-    text-lg
-  ">
-
-    Scan & Pay Using UPI
-
-  </p>
-
-</div>
+        <div className="bg-white rounded-3xl p-6 mb-8 text-center">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay"
+            alt="UPI QR"
+            className="mx-auto rounded-2xl"
+          />
+          <p className="text-black mt-5 font-bold text-lg">Scan & Pay Using UPI</p>
+        </div>
 
         {/* PAYMENT PROOF */}
-
+        <label className="block text-gray-400 mb-2 ml-2">Upload Payment Screenshot</label>
         <input
-
           type="file"
-
           accept="image/*"
-
-          onChange={(e) =>
-
-            setPaymentProof(
-
-              e.target.files?.[0]
-
-            )
-
-          }
-
+          onChange={(e) => setPaymentProof(e.target.files?.[0])}
           required
-
-          className="
-            w-full
-            mb-8
-          "
+          className="w-full mb-8 text-gray-300 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-violet-500 file:text-white hover:file:bg-violet-600 transition cursor-pointer"
         />
 
         {/* BUTTON */}
-
         <button
-
           type="submit"
-
           disabled={submitting}
-
-          className="
-            w-full
-            bg-violet-500
-            hover:bg-violet-600
-            transition
-            py-5
-            rounded-2xl
-            font-bold
-            text-xl
-          "
+          className="w-full bg-violet-500 hover:bg-violet-600 transition py-5 rounded-2xl font-bold text-xl disabled:opacity-50"
         >
-
-          {
-
-            submitting
-
-              ? 'Submitting...'
-
-              : 'Complete Registration'
-
-          }
-
+          {submitting ? 'Submitting...' : 'Complete Registration'}
         </button>
-
       </form>
-
     </div>
-
   );
-
 }
