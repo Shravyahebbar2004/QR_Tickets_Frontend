@@ -283,6 +283,26 @@ export default function AdminPage({
           Export CSV
       </button>
 
+          {/* EDIT EVENT */}
+
+          <button
+            onClick={() => router.push(`/edit-event/${id}`)}
+            className="
+              bg-blue-500
+              hover:bg-blue-600
+              px-6
+              py-4
+              rounded-2xl
+              font-bold
+              text-lg
+              transition
+              w-full
+              md:w-auto
+            "
+          >
+            Edit Event Details
+          </button>
+
           {/* LOGOUT */}
 
           <button

@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import axios from 'axios';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 import {
 
@@ -25,9 +25,11 @@ import {
 
 import { motion } from 'framer-motion';
 
-export default function CreateEventPage() {
+export default function EditEventPage() {
 
     const router = useRouter();
+    const params = useParams();
+    const id = params.id;
 
   // =====================================
   // FORM STATE
@@ -79,6 +81,60 @@ export default function CreateEventPage() {
     useState(false);
 
   // =====================================
+  // FETCH EVENT DATA
+  // =====================================
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/event/${id}`);
+        const event = res.data.event;
+        
+        const formatDateTimeLocal = (dateString: string) => {
+          if (!dateString) return '';
+          const date = new Date(dateString);
+          return date.toISOString().slice(0, 16);
+        };
+
+        setFormData({
+          title: event.title || '',
+          tagline: event.tagline || '',
+          venue: event.venue || '',
+          event_date: formatDateTimeLocal(event.event_date) || '',
+          organizer_name: event.organizer_name || '',
+          organizer_username: '',
+          organizer_password: '',
+          description: event.description || '',
+          category: event.category || '',
+
+          slab1_solo_price: event.slab1_solo_price || '',
+          slab1_couple_price: event.slab1_couple_price || '',
+          slab1_group_price: event.slab1_group_price || '',
+          slab1_deadline: formatDateTimeLocal(event.slab1_deadline) || '',
+          slab2_solo_price: event.slab2_solo_price || '',
+          slab2_couple_price: event.slab2_couple_price || '',
+          slab2_group_price: event.slab2_group_price || '',
+          slab2_deadline: formatDateTimeLocal(event.slab2_deadline) || '',
+          slab3_solo_price: event.slab3_solo_price || '',
+          slab3_couple_price: event.slab3_couple_price || '',
+          slab3_group_price: event.slab3_group_price || '',
+          slab3_deadline: formatDateTimeLocal(event.slab3_deadline) || '',
+
+          feature1_title: event.feature1_title || 'Attendees',
+          feature1_value: event.feature1_value || '5K+',
+          feature2_title: event.feature2_title || 'Smart Tickets',
+          feature2_value: event.feature2_value || 'QR',
+          feature3_title: event.feature3_title || 'Experience',
+          feature3_value: event.feature3_value || 'Live'
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchEvent();
+  }, [id]);
+
+  // =====================================
   // HANDLE INPUT
   // =====================================
 
@@ -100,29 +156,6 @@ export default function CreateEventPage() {
   };
 
   // =====================================
-  // HANDLE BANNER
-  // =====================================
-
-  const handleBanner = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-
-    const file = e.target.files?.[0];
-
-    if (file) {
-
-      setBannerFile(file);
-
-      const imageUrl =
-        URL.createObjectURL(file);
-
-      setBannerPreview(imageUrl);
-
-    }
-
-  };
-
-  // =====================================
   // HANDLE SUBMIT
   // =====================================
 
@@ -136,150 +169,17 @@ export default function CreateEventPage() {
 
     try {
 
-      const data = new FormData();
-
-      data.append(
-        'title',
-        formData.title
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/edit-event/${id}`,
+        formData,
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
 
-      data.append(
-        'tagline',
-        formData.tagline
-      );
+      console.log(response.data);
 
-      data.append(
-        'venue',
-        formData.venue
-      );
-
-      data.append(
-        'event_date',
-        formData.event_date
-      );
-
-      data.append(
-        'organizer_name',
-        formData.organizer_name
-      );
-
-      data.append('organizer_username', formData.organizer_username);
-      data.append('organizer_password', formData.organizer_password);
-
-      data.append(
-        'description',
-        formData.description
-      );
-
-      data.append(
-        'category',
-        formData.category
-      );
-
-      data.append('slab1_solo_price', formData.slab1_solo_price);
-      data.append('slab1_couple_price', formData.slab1_couple_price);
-      data.append('slab1_group_price', formData.slab1_group_price);
-      data.append('slab1_deadline', formData.slab1_deadline);
-      data.append('slab2_solo_price', formData.slab2_solo_price);
-      data.append('slab2_couple_price', formData.slab2_couple_price);
-      data.append('slab2_group_price', formData.slab2_group_price);
-      data.append('slab2_deadline', formData.slab2_deadline);
-      data.append('slab3_solo_price', formData.slab3_solo_price);
-      data.append('slab3_couple_price', formData.slab3_couple_price);
-      data.append('slab3_group_price', formData.slab3_group_price);
-      data.append('slab3_deadline', formData.slab3_deadline);
-
-      data.append(
-        'feature1_title',
-        formData.feature1_title
-      );
-
-      data.append(
-        'feature1_value',
-        formData.feature1_value
-      );
-
-      data.append(
-        'feature2_title',
-        formData.feature2_title
-      );
-
-      data.append(
-        'feature2_value',
-        formData.feature2_value
-      );
-
-      data.append(
-        'feature3_title',
-        formData.feature3_title
-      );
-
-      data.append(
-        'feature3_value',
-        formData.feature3_value
-      );
-
-      if (bannerFile) {
-
-        data.append(
-          'banner',
-          bannerFile
-        );
-
-      }
-
-      const response = await axios.post(
-
-  `${process.env.NEXT_PUBLIC_API_URL}/api/create-event`,
-
-  data,
-
-  {
-
-    headers: {
-
-      'Content-Type':
-        'multipart/form-data'
-
-    }
-
-  }
-
-);
-
-console.log(response.data);
-
-console.log(
-
-  'EVENT OBJECT:',
-
-  response.data.event
-
-);
-
-console.log(
-
-  'EVENT ID:',
-
-  response.data.event?.event_id
-
-);
-
-// GET EVENT ID
-
-const eventId =
-
-  response.data.event.event_id;
-
-// REDIRECT TO EVENT WEBSITE
-
-router.push(
-
-  `/event/${eventId}`
-
-);
-
-
+      router.push(`/event/${id}`);
 
     } catch (error) {
 
@@ -408,7 +308,7 @@ transition            border
             mb-8
           ">
 
-            Create Your
+            Edit Your
 
             <span className="
               bg-gradient-to-r
@@ -751,17 +651,6 @@ Ex: EventFlow Studios
 
               />
 
-              <div className="grid md:grid-cols-2 gap-5">
-                <div>
-                  <label className="block mb-3 text-lg text-gray-300">Organizer Login Username</label>
-                  <input type="text" name="organizer_username" placeholder="admin123" value={formData.organizer_username} onChange={handleChange} className="w-full p-5 rounded-2xl bg-black/40 border border-white/10 text-white" />
-                </div>
-                <div>
-                  <label className="block mb-3 text-lg text-gray-300">Organizer Login Password</label>
-                  <input type="text" name="organizer_password" placeholder="SecurePass!" value={formData.organizer_password} onChange={handleChange} className="w-full p-5 rounded-2xl bg-black/40 border border-white/10 text-white" />
-                </div>
-              </div>
-
             </div>
 
             {/* DESCRIPTION */}
@@ -1039,47 +928,6 @@ Tell attendees what makes your event special...
 
             </div>
 
-            {/* BANNER */}
-
-            <div className="mb-10">
-
-              <label className="
-                flex
-                items-center
-                gap-2
-                mb-3
-                text-lg
-                text-gray-300
-              ">
-
-                <ImageIcon size={18} />
-
-                Event Banner
-
-              </label>
-
-              <input
-
-                type="file"
-
-                accept="image/*"
-
-                onChange={handleBanner}
-
-                className="
-                  w-full
-                  p-5
-                  rounded-2xl
-                  bg-black/40
-                  border
-                  border-white/10
-                  text-white
-                "
-
-              />
-
-            </div>
-
             {/* SUBMIT */}
 
             <button
@@ -1113,9 +961,9 @@ Tell attendees what makes your event special...
 
                 loading
 
-                  ? 'Launching...'
+                  ? 'Saving...'
 
-                  : 'Launch Event Website'
+                  : 'Save Event Details'
 
               }
 
