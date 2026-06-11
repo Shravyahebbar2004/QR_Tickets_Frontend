@@ -16,6 +16,8 @@ export default function ScannerPage({
   const scannerRef = useRef<any>(null);
 
   const [scanResult, setScanResult] = useState<any>(null);
+  
+  const isScanningRef = useRef(true);
 
 
 
@@ -93,7 +95,15 @@ export default function ScannerPage({
 
         async (decodedText: string) => {
 
+          if (!isScanningRef.current) return; // Prevent multiple requests if already paused
+
           try {
+
+            // Pause UI to prevent rapid-fire scans
+            isScanningRef.current = false;
+            if (scannerRef.current) {
+              scannerRef.current.pause(true);
+            }
 
             const token = localStorage.getItem(
 
@@ -147,7 +157,8 @@ export default function ScannerPage({
 
         (error: any) => {
 
-          console.log(error);
+          // Mute constant scanning errors to prevent lag
+          // console.log(error);
 
         }
 
@@ -312,7 +323,7 @@ export default function ScannerPage({
 
       {/* SCANNER CARD */}
 
-      <div className="
+      <div className={`
         bg-white/5
         border
         border-white/10
@@ -320,7 +331,10 @@ export default function ScannerPage({
         rounded-[35px]
         p-6
         shadow-2xl
-      ">
+        transition-all
+        duration-300
+        ${scanResult ? 'hidden' : 'block'}
+      `}>
 
         <div id="reader"></div>
 
@@ -465,6 +479,34 @@ export default function ScannerPage({
                 )
 
             }
+
+            {/* SCAN NEXT BUTTON */}
+            <button
+              onClick={() => {
+                setScanResult(null);
+                isScanningRef.current = true;
+                if (scannerRef.current) {
+                  scannerRef.current.resume();
+                }
+              }}
+              className="
+                w-full
+                mt-8
+                bg-cyan-500
+                hover:bg-cyan-600
+                text-black
+                font-black
+                text-xl
+                py-5
+                rounded-[25px]
+                transition-all
+                shadow-lg
+                shadow-cyan-500/30
+                hover:scale-105
+              "
+            >
+              SCAN NEXT TICKET
+            </button>
 
           </div>
 
