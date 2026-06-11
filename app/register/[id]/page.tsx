@@ -249,17 +249,29 @@ submitData.append(
 
       }
 
-      const response = await axios.get(
+      const response = await axios.post(
 
-        `${process.env.NEXT_PUBLIC_API_URL}/api/event/${id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
 
-);
+        submitData,
 
-console.log('API RESPONSE:', response.data);
+        {
 
-setEvent(response.data.event);
+          headers: {
 
-console.log('EVENT SET SUCCESS');
+            'Content-Type': 'multipart/form-data'
+
+          }
+
+        }
+
+      );
+
+      console.log('API RESPONSE:', response.data);
+
+      setSubmitted(true);
+
+      console.log('REGISTRATION SUCCESS');
 
     }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
@@ -39,7 +39,12 @@ interface Analytics {
   }[];
 }
 
-export default function AdminPage() {
+export default function AdminPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = use(params);
   const exportCSV = () => {
   const headers = [
     'Name',
@@ -106,10 +111,10 @@ export default function AdminPage() {
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/registrations`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/${id}`,
       );
 
-      setUsers(response.data.data || []);
+      setUsers(response.data.registrations || []);
     } catch (error) {
       console.log(error);
     }
