@@ -294,13 +294,15 @@ router.push(
 
 
 
-    } catch (error) {
+    } catch (error: any) {
 
       console.log(error);
 
-      alert(
-        'Event Creation Failed'
-      );
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('Event creation failed. Please try again.');
+      }
 
     } finally {
 
