@@ -258,7 +258,7 @@ export default function EventPage({
 
             <img
 
-              src={`${process.env.NEXT_PUBLIC_API_URL}/${event.banner_url}`}
+              src={`${process.env.NEXT_PUBLIC_API_URL}/${event.banner_url?.replace(/\\/g, '/')}`}
 
               alt="Banner"
 
