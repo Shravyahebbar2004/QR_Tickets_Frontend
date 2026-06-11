@@ -4,7 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 
-export default function MyTicketPage() {
+export default function MyTicketPage({ params }: { params: { id: string } }) {
 
   // ====================================
   // STATES
@@ -41,7 +41,9 @@ export default function MyTicketPage() {
 
           email,
 
-          phone_number: phone
+          phone_number: phone,
+
+          event_id: params.id
 
         }
 
