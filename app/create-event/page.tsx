@@ -58,6 +58,9 @@ export default function CreateEventPage() {
     slab3_group_price: '',
     slab3_deadline: '',
 
+    bulk_pass_price: '',
+    bulk_pass_entries: '',
+
     feature1_title: 'Attendees',
     feature1_value: '5K+',
 
@@ -217,6 +220,16 @@ export default function CreateEventPage() {
       data.append(
         'feature3_value',
         formData.feature3_value
+      );
+
+      data.append(
+        'bulk_pass_price',
+        formData.bulk_pass_price
+      );
+
+      data.append(
+        'bulk_pass_entries',
+        formData.bulk_pass_entries
       );
 
       if (bannerFile) {
@@ -847,6 +860,42 @@ Tell attendees what makes your event special...
                   <input type="number" name="slab3_couple_price" value={formData.slab3_couple_price} onChange={handleChange} placeholder="899" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                   <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
                   <input type="number" name="slab3_group_price" value={formData.slab3_group_price} onChange={handleChange} placeholder="1599" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                </div>
+              </div>
+            </div>
+
+            {/* BULK PASS */}
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold mb-6 text-pink-300">
+                Bulk Pass Options (Optional)
+              </h2>
+              <div className="bg-black/20 p-6 rounded-3xl border border-pink-500/30">
+                <p className="text-gray-400 mb-6">
+                  Offer a custom bulk ticket that allows users to register multiple members at a flat price.
+                </p>
+                <div className="grid md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-gray-300 text-lg mb-2">Flat Price (₹)</label>
+                    <input 
+                      type="number" 
+                      name="bulk_pass_price" 
+                      value={formData.bulk_pass_price} 
+                      onChange={handleChange} 
+                      placeholder="5000" 
+                      className="w-full p-4 rounded-2xl bg-black/40 border border-white/10 text-white" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-300 text-lg mb-2">Number of Members</label>
+                    <input 
+                      type="number" 
+                      name="bulk_pass_entries" 
+                      value={formData.bulk_pass_entries} 
+                      onChange={handleChange} 
+                      placeholder="10" 
+                      className="w-full p-4 rounded-2xl bg-black/40 border border-white/10 text-white" 
+                    />
+                  </div>
                 </div>
               </div>
             </div>

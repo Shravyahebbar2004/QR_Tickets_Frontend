@@ -420,7 +420,7 @@ export default function ScannerPage({
 
                       {
 
-                        scanResult.attendee.used_entries + 1
+                        scanResult.attendee.used_entries
 
                       }
 

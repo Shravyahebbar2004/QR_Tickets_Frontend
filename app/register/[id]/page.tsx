@@ -58,12 +58,18 @@ export default function RegisterPage({
   // Dynamic price calculator
   useEffect(() => {
     if (!event) return;
-    const priceField = `${activeSlabKey}_${formData.ticket_type}_price`;
-    setTotalAmount(Number(event[priceField]) || 0);
+    
+    if (formData.ticket_type === 'bulk') {
+      setTotalAmount(Number(event.bulk_pass_price) || 0);
+      setAllowedEntries(Number(event.bulk_pass_entries) || 0);
+    } else {
+      const priceField = `${activeSlabKey}_${formData.ticket_type}_price`;
+      setTotalAmount(Number(event[priceField]) || 0);
 
-    if (formData.ticket_type === 'solo') setAllowedEntries(1);
-    else if (formData.ticket_type === 'couple') setAllowedEntries(2);
-    else if (formData.ticket_type === 'group') setAllowedEntries(5);
+      if (formData.ticket_type === 'solo') setAllowedEntries(1);
+      else if (formData.ticket_type === 'couple') setAllowedEntries(2);
+      else if (formData.ticket_type === 'group') setAllowedEntries(5);
+    }
   }, [formData.ticket_type, activeSlabKey, event]);
 
   const [paymentProof, setPaymentProof] =
@@ -535,7 +541,7 @@ transition          border
           <p className="text-gray-400 mb-2">Active Pricing Tier: <span className="text-cyan-300 font-bold">{activeSlabName}</span></p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5 mb-8">
+        <div className={`grid gap-5 mb-8 ${event && event.bulk_pass_price ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
           {/* SOLO */}
           <button
             type="button"
@@ -568,6 +574,19 @@ transition          border
             <p className="text-gray-300 mb-4">Group of 5</p>
             <h1 className="text-4xl font-black">₹{event ? event[`${activeSlabKey}_group_price`] : 0}</h1>
           </button>
+
+          {/* BULK PASS (CONDITIONAL) */}
+          {event && event.bulk_pass_price && (
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, ticket_type: 'bulk' })}
+              className={`p-6 rounded-3xl border transition text-left ${formData.ticket_type === 'bulk' ? 'bg-amber-500 border-amber-400' : 'bg-white/5 border-white/10'}`}
+            >
+              <h3 className="text-2xl font-bold mb-2">Bulk</h3>
+              <p className="text-gray-300 mb-4">{event.bulk_pass_entries} Members</p>
+              <h1 className="text-4xl font-black">₹{event.bulk_pass_price}</h1>
+            </button>
+          )}
         </div>
 
 {/* PAYMENT BOX */}
