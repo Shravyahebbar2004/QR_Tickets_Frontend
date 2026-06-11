@@ -52,6 +52,8 @@ export default function EventPage({
 
   });
 
+  const [isExpired, setIsExpired] = useState(false);
+
   // =====================================
   // FETCH EVENT
   // =====================================
@@ -154,6 +156,12 @@ export default function EventPage({
       1000
 
     );
+
+    if (distance < 0) {
+      setIsExpired(true);
+      clearInterval(interval);
+      return;
+    }
 
     setTimeLeft({
 
@@ -456,6 +464,7 @@ transition            border
         </div>
 {/* COUNTDOWN */}
 
+{!isExpired ? (
 <div className="
   mt-16
   mb-20
@@ -582,16 +591,15 @@ transition            border
       {timeLeft.seconds}
     </h2>
 
-    <p className="
-      text-lg
-      text-gray-300
-    ">
-      Seconds
-    </p>
-
   </div>
 
 </div>
+) : (
+  <div className="mt-16 mb-20 max-w-5xl mx-auto bg-red-500/10 border border-red-500/30 p-10 rounded-3xl text-center">
+    <h2 className="text-4xl font-black text-red-400 mb-2">Event Concluded</h2>
+    <p className="text-xl text-gray-300">This event has already taken place and registrations are closed.</p>
+  </div>
+)}
 
 {/* ABOUT EVENT */}
 
@@ -843,6 +851,7 @@ transition            border
 
   {/* REGISTER */}
 
+  {!isExpired && (
   <Link
     href={`/register/${event.event_id}`}
   >
@@ -863,9 +872,11 @@ transition            border
     </button>
 
   </Link>
+  )}
 
   {/* MY TICKET */}
 
+  {!isExpired && (
   <Link
     href={`/my-ticket/${event.event_id}`}
   >
@@ -886,6 +897,7 @@ transition            border
     </button>
 
   </Link>
+  )}
 
   {/* ADMIN */}
 

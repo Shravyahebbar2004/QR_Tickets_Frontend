@@ -322,7 +322,7 @@ const fetchEvents = async () => {
                 shadow-violet-500/30
                 hover:scale-105
               ">
-                Register Your Event
+                Create Your Event (Organizers)
               </button>
 
             </Link>
@@ -361,7 +361,7 @@ const fetchEvents = async () => {
                   text-cyan-300
                 "
               >
-                Register Your Event
+                Create Your Event (Organizers)
               </button>
 
             </Link>
@@ -495,10 +495,31 @@ transition            border
                 w-full
                 md:w-auto
               ">
-                Register Your Event
+                Create Your Event
               </button>
 
             </Link>
+
+            <button
+              onClick={() => {
+                document.getElementById('live-events')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="
+                bg-white/10
+                hover:bg-white/20
+                px-10
+                py-5
+                rounded-2xl
+                text-lg
+                md:text-xl
+                font-bold
+                transition
+                w-full
+                md:w-auto
+              "
+            >
+              Browse Live Events
+            </button>
 
           </div>
 
@@ -934,7 +955,7 @@ transition            border
 {/* LIVE EVENTS */}
 {/* ===================================== */}
 
-<section className="
+<section id="live-events" className="
   px-6
   md:px-20
   py-24

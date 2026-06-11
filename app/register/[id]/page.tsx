@@ -52,6 +52,20 @@ export default function RegisterPage({
 
     });
 
+  const [activeSlabKey, setActiveSlabKey] = useState<string>('slab1');
+  const [activeSlabName, setActiveSlabName] = useState<string>('Standard Ticket');
+
+  // Dynamic price calculator
+  useEffect(() => {
+    if (!event) return;
+    const priceField = `${activeSlabKey}_${formData.ticket_type}_price`;
+    setTotalAmount(Number(event[priceField]) || 0);
+
+    if (formData.ticket_type === 'solo') setAllowedEntries(1);
+    else if (formData.ticket_type === 'couple') setAllowedEntries(2);
+    else if (formData.ticket_type === 'group') setAllowedEntries(5);
+  }, [formData.ticket_type, activeSlabKey, event]);
+
   const [paymentProof, setPaymentProof] =
     useState<any>(null);
 
@@ -81,7 +95,30 @@ export default function RegisterPage({
 
       );
 
-      setEvent(response.data.event);
+      const evt = response.data.event;
+      setEvent(evt);
+
+      // Determine Slab
+      const now = new Date().getTime();
+      let slabKey = 'slab1';
+      let slabName = "Standard Ticket";
+
+      if (evt.slab1_deadline && now <= new Date(evt.slab1_deadline).getTime()) {
+        slabKey = 'slab1';
+        slabName = "Early Bird (Slab 1)";
+      } else if (evt.slab2_deadline && now <= new Date(evt.slab2_deadline).getTime()) {
+        slabKey = 'slab2';
+        slabName = "Regular (Slab 2)";
+      } else if (evt.slab3_deadline && now <= new Date(evt.slab3_deadline).getTime()) {
+        slabKey = 'slab3';
+        slabName = "Late (Slab 3)";
+      } else if (evt.slab3_solo_price) {
+        slabKey = 'slab3'; // Fallback to last slab if past deadline
+        slabName = "Last Minute";
+      }
+
+      setActiveSlabKey(slabKey);
+      setActiveSlabName(slabName);
 
     } catch (error) {
 
@@ -126,48 +163,6 @@ export default function RegisterPage({
 
   });
 
-  // TICKET LOGIC
-
-  if (
-
-    name === 'ticket_type'
-
-  ) {
-
-    if (value === 'solo') {
-
-      setTotalAmount(299);
-
-      setAllowedEntries(1);
-
-    }
-
-    else if (
-
-      value === 'couple'
-
-    ) {
-
-      setTotalAmount(499);
-
-      setAllowedEntries(2);
-
-    }
-
-    else if (
-
-      value === 'group'
-
-    ) {
-
-      setTotalAmount(999);
-
-      setAllowedEntries(5);
-
-    }
-
-  }
-
 };
   // =====================================
   // HANDLE REGISTER
@@ -208,6 +203,14 @@ export default function RegisterPage({
         'phone_number',
 
         formData.phone_number
+
+      );
+
+      submitData.append(
+
+        'ticket_type',
+
+        formData.ticket_type
 
       );
 
@@ -527,229 +530,45 @@ transition          border
           "
         />
 
-        {/* TICKET */}
-
-        <div className="
-  grid
-  md:grid-cols-3
-  gap-5
-  mb-8
-">
-
-  {/* SOLO */}
-
-  <button
-
-    type="button"
-
-    onClick={() => {
-
-      setFormData({
-
-        ...formData,
-
-        ticket_type: 'solo'
-
-      });
-
-      setTotalAmount(299);
-
-      setAllowedEntries(1);
-
-    }}
-
-    className={`
-      p-6
-      rounded-3xl
-      border
-      transition
-      text-left
-
-      ${
-
-        formData.ticket_type === 'solo'
-
-        ? 'bg-violet-500 border-violet-400'
-
-        : 'bg-white/5 border-white/10'
-
-      }
-    `}
-  >
-
-    <h3 className="
-      text-2xl
-      font-bold
-      mb-2
-    ">
-
-      Solo
-
-    </h3>
-
-    <p className="
-      text-gray-300
-      mb-4
-    ">
-
-      Single Entry Pass
-
-    </p>
-
-    <h1 className="
-      text-4xl
-      font-black
-    ">
-
-      ₹299
-
-    </h1>
-
-  </button>
-
-  {/* COUPLE */}
-
-  <button
-
-    type="button"
-
-    onClick={() => {
-
-      setFormData({
-
-        ...formData,
-
-        ticket_type: 'couple'
-
-      });
-
-      setTotalAmount(499);
-
-      setAllowedEntries(2);
-
-    }}
-
-    className={`
-      p-6
-      rounded-3xl
-      border
-      transition
-      text-left
-
-      ${
-
-        formData.ticket_type === 'couple'
-
-        ? 'bg-pink-500 border-pink-400'
-
-        : 'bg-white/5 border-white/10'
-
-      }
-    `}
-  >
-
-    <h3 className="
-      text-2xl
-      font-bold
-      mb-2
-    ">
-
-      Couple
-
-    </h3>
-
-    <p className="
-      text-gray-300
-      mb-4
-    ">
-
-      Entry For Two
-
-    </p>
-
-    <h1 className="
-      text-4xl
-      font-black
-    ">
-
-      ₹499
-
-    </h1>
-
-  </button>
-
-  {/* GROUP */}
-
-  <button
-
-    type="button"
-
-    onClick={() => {
-
-      setFormData({
-
-        ...formData,
-
-        ticket_type: 'group'
-
-      });
-
-      setTotalAmount(999);
-
-      setAllowedEntries(5);
-
-    }}
-
-    className={`
-      p-6
-      rounded-3xl
-      border
-      transition
-      text-left
-
-      ${
-
-        formData.ticket_type === 'group'
-
-        ? 'bg-cyan-500 border-cyan-400'
-
-        : 'bg-white/5 border-white/10'
-
-      }
-    `}
-  >
-
-    <h3 className="
-      text-2xl
-      font-bold
-      mb-2
-    ">
-
-      Group
-
-    </h3>
-
-    <p className="
-      text-gray-300
-      mb-4
-    ">
-
-      Group Entry Pass
-
-    </p>
-
-    <h1 className="
-      text-4xl
-      font-black
-    ">
-
-      ₹999
-
-    </h1>
-
-  </button>
-
-</div>
+        {/* TICKET TYPE SELECTION */}
+        <div className="mb-4">
+          <p className="text-gray-400 mb-2">Active Pricing Tier: <span className="text-cyan-300 font-bold">{activeSlabName}</span></p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-5 mb-8">
+          {/* SOLO */}
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, ticket_type: 'solo' })}
+            className={`p-6 rounded-3xl border transition text-left ${formData.ticket_type === 'solo' ? 'bg-violet-500 border-violet-400' : 'bg-white/5 border-white/10'}`}
+          >
+            <h3 className="text-2xl font-bold mb-2">Solo</h3>
+            <p className="text-gray-300 mb-4">Single Entry</p>
+            <h1 className="text-4xl font-black">₹{event ? event[`${activeSlabKey}_solo_price`] : 0}</h1>
+          </button>
+
+          {/* COUPLE */}
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, ticket_type: 'couple' })}
+            className={`p-6 rounded-3xl border transition text-left ${formData.ticket_type === 'couple' ? 'bg-pink-500 border-pink-400' : 'bg-white/5 border-white/10'}`}
+          >
+            <h3 className="text-2xl font-bold mb-2">Couple</h3>
+            <p className="text-gray-300 mb-4">Entry For Two</p>
+            <h1 className="text-4xl font-black">₹{event ? event[`${activeSlabKey}_couple_price`] : 0}</h1>
+          </button>
+
+          {/* GROUP */}
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, ticket_type: 'group' })}
+            className={`p-6 rounded-3xl border transition text-left ${formData.ticket_type === 'group' ? 'bg-cyan-500 border-cyan-400' : 'bg-white/5 border-white/10'}`}
+          >
+            <h3 className="text-2xl font-bold mb-2">Group</h3>
+            <p className="text-gray-300 mb-4">Group of 5</p>
+            <h1 className="text-4xl font-black">₹{event ? event[`${activeSlabKey}_group_price`] : 0}</h1>
+          </button>
+        </div>
 
 {/* PAYMENT BOX */}
 
@@ -796,7 +615,7 @@ transition          border
       capitalize
     ">
 
-      {formData.ticket_type}
+      {activeSlabName}
 
     </h3>
 
