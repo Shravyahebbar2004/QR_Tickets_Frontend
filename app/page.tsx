@@ -47,42 +47,42 @@ export default function HomePage() {
   });
 
   const [events, setEvents] =
-  useState<any[]>([]);
+    useState<any[]>([]);
 
-const [loading, setLoading] =
-  useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
   // FETCH EVENTS //
 
   useEffect(() => {
 
-  fetchEvents();
+    fetchEvents();
 
-}, []);
+  }, []);
 
-const fetchEvents = async () => {
+  const fetchEvents = async () => {
 
-  try {
+    try {
 
-    const response = await axios.get(
+      const response = await axios.get(
 
-       `${process.env.NEXT_PUBLIC_API_URL}/api/events`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/events`
 
-    );
+      );
 
-    setEvents(response.data.events);
+      setEvents(response.data.events);
 
-  } catch (error) {
+    } catch (error) {
 
-    console.log(error);
+      console.log(error);
 
-  } finally {
+    } finally {
 
-    setLoading(false);
+      setLoading(false);
 
-  }
+    }
 
-};
+  };
 
   // =====================================
   // COUNTDOWN TIMER
@@ -327,6 +327,26 @@ const fetchEvents = async () => {
 
             </Link>
 
+            <Link href="/admin-login">
+
+              <button className="
+                bg-cyan-500
+                hover:bg-cyan-600
+                px-6
+                py-3
+                rounded-2xl
+                font-bold
+                transition
+                shadow-lg
+                shadow-cyan-500/30
+                hover:scale-105
+                text-black
+              ">
+                Organizer Login
+              </button>
+
+            </Link>
+
           </div>
 
         </div>
@@ -362,6 +382,21 @@ const fetchEvents = async () => {
                 "
               >
                 Create Your Event (Organizers)
+              </button>
+
+            </Link>
+
+            <Link href="/admin-login">
+
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="
+                  text-4xl
+                  font-black
+                  text-violet-300
+                "
+              >
+                Organizer Login
               </button>
 
             </Link>
@@ -952,76 +987,76 @@ transition            border
       </section>
 
       {/* ===================================== */}
-{/* LIVE EVENTS */}
-{/* ===================================== */}
+      {/* LIVE EVENTS */}
+      {/* ===================================== */}
 
-<section id="live-events" className="
+      <section id="live-events" className="
   px-6
   md:px-20
   py-24
 ">
 
-  <h2 className="
+        <h2 className="
     text-5xl
     font-black
     mb-4
   ">
 
-    Live Events
+          Live Events
 
-  </h2>
+        </h2>
 
-  <p className="
+        <p className="
     text-gray-400
     mb-12
     text-xl
   ">
 
-    Discover events created by organizers
+          Discover events created by organizers
 
-  </p>
+        </p>
 
-  {
+        {
 
-    loading
+          loading
 
-    ? (
+            ? (
 
-      <p>
+              <p>
 
-        Loading Events...
+                Loading Events...
 
-      </p>
+              </p>
 
-    )
+            )
 
-    : (
+            : (
 
-      <div className="
+              <div className="
         grid
         md:grid-cols-3
         gap-8
       ">
 
-{
+                {
 
-  events.map((event) => (
+                  events.map((event) => (
 
-    <Link
+                    <Link
 
-      key={event.event_id}
+                      key={event.event_id}
 
-      href={`/event/${event.event_id}`}
+                      href={`/event/${event.event_id}`}
 
-      className="
+                      className="
         block
       "
 
-    >
+                    >
 
-      <div
+                      <div
 
-        className="
+                        className="
           bg-white/5
           backdrop-blur-2xl
           border
@@ -1035,53 +1070,53 @@ transition            border
           h-full
         "
 
-      >
+                      >
 
-        <h3 className="
+                        <h3 className="
           text-3xl
           font-black
           mb-5
         ">
 
-          {event.title}
+                          {event.title}
 
-        </h3>
+                        </h3>
 
-        <p className="
+                        <p className="
           text-gray-400
           text-lg
           leading-relaxed
           mb-6
         ">
 
-          {event.description}
+                          {event.description}
 
-        </p>
+                        </p>
 
-        <p className="
+                        <p className="
           text-violet-300
           text-lg
           mb-3
         ">
 
-          📍 {event.venue}
+                          📍 {event.venue}
 
-        </p>
+                        </p>
 
-        <p className="
+                        <p className="
           text-pink-300
           text-lg
         ">
 
-          🎫 {event.category}
+                          🎫 {event.category}
 
-        </p>
+                        </p>
 
-        <div className="
+                        <div className="
           mt-8
         ">
 
-          <span className="
+                          <span className="
             inline-block
             bg-violet-500
             hover:bg-violet-600
@@ -1095,34 +1130,34 @@ transition            border
             shadow-violet-500/30
           ">
 
-            View Event →
+                            View Event →
 
-          </span>
+                          </span>
 
-        </div>
+                        </div>
 
-      </div>
+                      </div>
 
-    </Link>
+                    </Link>
 
-  ))
+                  ))
 
-}    
-
-
+                }
 
 
 
 
-  
 
-      </div>
 
-    )
 
-  }
 
-</section>
+              </div>
+
+            )
+
+        }
+
+      </section>
 
       {/* FOOTER */}
 
