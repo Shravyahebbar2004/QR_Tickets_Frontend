@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
+import { useParams } from 'next/navigation';
 
-export default function MyTicketPage({ params }: { params: { id: string } }) {
+export default function MyTicketPage() {
+  const params = useParams();
 
   // ====================================
   // STATES
