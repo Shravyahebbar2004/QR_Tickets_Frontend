@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
-export default function ScannerPage() {
+export default function ScannerPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = use(params);
 
   const router = useRouter();
 

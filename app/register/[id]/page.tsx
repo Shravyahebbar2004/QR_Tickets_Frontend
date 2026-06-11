@@ -273,15 +273,15 @@ submitData.append(
 
       console.log('REGISTRATION SUCCESS');
 
-    }
-
-catch (error: any) {
+    } catch (error: any) {
 
   console.log('FULL ERROR:', error);
 
   console.log('ERROR RESPONSE:', error?.response);
 
   console.log('ERROR DATA:', error?.response?.data);
+  
+  alert(error?.response?.data?.message || 'Registration Failed');
 
 } finally {
 

@@ -53,7 +53,7 @@ export default function AdminLogin() {
 
       );
 
-      router.push('/admin/${id}');
+      router.push(`/admin/${response.data.event_id}`);
 
     } catch (error) {
 
