@@ -706,18 +706,25 @@ transition          border
                 {/* PAYMENT IMAGE */}
 
                 <td className="p-5">
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`}
-                    alt="Payment Proof"
-                  
-                    className="
-                       w-24
-                       rounded-xl
-                       mx-auto
-                       border
-                       border-white/20
-                    "
-                  />
+                  <a 
+                    href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="cursor-pointer block hover:scale-105 transition"
+                  >
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`}
+                      alt="Payment Proof"
+                    
+                      className="
+                         w-24
+                         rounded-xl
+                         mx-auto
+                         border
+                         border-white/20
+                      "
+                    />
+                  </a>
                 </td>
 
                 {/* APPROVAL */}
