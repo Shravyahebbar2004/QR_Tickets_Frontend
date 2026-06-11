@@ -890,7 +890,7 @@ transition            border
   {/* ADMIN */}
 
   <Link
-    href={`/admin-login/${event.event_id}`}
+    href={`/admin-login`}
   >
 
     <button className="
@@ -913,7 +913,7 @@ transition            border
   {/* SCANNER */}
 
   <Link
-    href={`/scanner-login/${event.event_id}`}
+    href={`/scanner-login`}
   >
 
     <button className="
