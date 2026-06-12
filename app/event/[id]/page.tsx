@@ -309,7 +309,7 @@ export default function EventPage({
 
             <img
 
-              src={`${process.env.NEXT_PUBLIC_API_URL}/${event.banner_url?.replace(/\\/g, '/')}`}
+              src={event.banner_url?.startsWith('http') ? event.banner_url : `${process.env.NEXT_PUBLIC_API_URL}/${event.banner_url?.replace(/\\/g, '/')}`}
 
               alt="Banner"
 
