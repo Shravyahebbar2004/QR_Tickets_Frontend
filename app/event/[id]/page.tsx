@@ -13,8 +13,9 @@ import {
   ArrowRight,
   Users,
   ShieldCheck,
-  ScanLine
-
+  ScanLine,
+  Menu,
+  X
 } from 'lucide-react';
 
 import { motion } from 'framer-motion';
@@ -41,6 +42,8 @@ export default function EventPage({
 
   const [loading, setLoading] =
     useState(true);
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [timeLeft, setTimeLeft] =
     useState({
@@ -245,62 +248,52 @@ export default function EventPage({
       relative
     ">
 
-      {/* FLOATING ADMIN/SCANNER SIDEBAR */}
-      <div className="
-        fixed
-        top-1/2
-        right-4
-        transform
-        -translate-y-1/2
-        flex
-        flex-col
-        gap-4
-        z-50
-      ">
-        <Link href={`/admin-login`}>
-          <button className="
-            bg-yellow-500/20
-            hover:bg-yellow-500/40
-            border border-yellow-500/50
-            backdrop-blur-md
-            p-4
-            rounded-2xl
-            flex
-            flex-col
-            items-center
-            justify-center
-            text-yellow-400
-            transition
-            w-24
-            h-24
-            shadow-xl
-          ">
-            <span className="font-bold text-sm text-center">Admin</span>
-          </button>
-        </Link>
+      {/* HAMBURGER BUTTON */}
+      <button 
+        onClick={() => setIsSidebarOpen(true)}
+        className="fixed top-6 right-6 z-40 bg-white/10 hover:bg-white/20 p-3 rounded-xl border border-white/20 backdrop-blur-md transition shadow-xl"
+      >
+        <Menu size={28} className="text-white" />
+      </button>
 
-        <Link href={`/scanner-login`}>
-          <button className="
-            bg-green-500/20
-            hover:bg-green-500/40
-            border border-green-500/50
-            backdrop-blur-md
-            p-4
-            rounded-2xl
-            flex
-            flex-col
-            items-center
-            justify-center
-            text-green-400
-            transition
-            w-24
-            h-24
-            shadow-xl
-          ">
-            <span className="font-bold text-sm text-center">Scanner</span>
-          </button>
-        </Link>
-      </div>
+      {/* SIDEBAR OVERLAY */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm flex justify-end"
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          <motion.div 
+            initial={{ x: 300 }}
+            animate={{ x: 0 }}
+            exit={{ x: 300 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-72 bg-zinc-950 border-l border-white/10 h-full p-6 shadow-2xl flex flex-col relative"
+          >
+            <button 
+              onClick={() => setIsSidebarOpen(false)}
+              className="absolute top-6 right-6 bg-white/5 hover:bg-white/10 p-2 rounded-lg transition"
+            >
+              <X size={24} className="text-gray-400" />
+            </button>
+
+            <h3 className="text-2xl font-black text-white mb-10 mt-4">Management</h3>
+
+            <div className="flex flex-col gap-4">
+              <Link href={`/admin-login`} onClick={() => setIsSidebarOpen(false)}>
+                <button className="w-full bg-yellow-500/20 hover:bg-yellow-500/40 border border-yellow-500/50 p-4 rounded-xl text-yellow-400 font-bold transition text-left">
+                  Admin Dashboard
+                </button>
+              </Link>
+
+              <Link href={`/scanner-login`} onClick={() => setIsSidebarOpen(false)}>
+                <button className="w-full bg-green-500/20 hover:bg-green-500/40 border border-green-500/50 p-4 rounded-xl text-green-400 font-bold transition text-left">
+                  Scanner
+                </button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* HERO */}
 
