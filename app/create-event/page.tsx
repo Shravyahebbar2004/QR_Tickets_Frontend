@@ -42,6 +42,8 @@ export default function CreateEventPage() {
     organizer_name: '',
     organizer_username: '',
     organizer_password: '',
+    scanner_username: '',
+    scanner_password: '',
     description: '',
     category: '',
 
@@ -168,6 +170,8 @@ export default function CreateEventPage() {
 
       data.append('organizer_username', formData.organizer_username);
       data.append('organizer_password', formData.organizer_password);
+      data.append('scanner_username', formData.scanner_username);
+      data.append('scanner_password', formData.scanner_password);
 
       data.append(
         'description',
@@ -774,6 +778,17 @@ Ex: EventFlow Studios
                 <div>
                   <label className="block mb-3 text-lg text-gray-300">Organizer Login Password</label>
                   <input type="text" name="organizer_password" placeholder="SecurePass!" value={formData.organizer_password} onChange={handleChange} className="w-full p-5 rounded-2xl bg-black/40 border border-white/10 text-white" />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mt-8">
+                <div>
+                  <label className="block mb-3 text-lg text-gray-300">Scanner Login Username (Optional)</label>
+                  <input type="text" name="scanner_username" placeholder="scanner123" value={formData.scanner_username} onChange={handleChange} className="w-full p-5 rounded-2xl bg-black/40 border border-white/10 text-white" />
+                </div>
+                <div>
+                  <label className="block mb-3 text-lg text-gray-300">Scanner Login Password (Optional)</label>
+                  <input type="text" name="scanner_password" placeholder="ScanPass!" value={formData.scanner_password} onChange={handleChange} className="w-full p-5 rounded-2xl bg-black/40 border border-white/10 text-white" />
                 </div>
               </div>
 
