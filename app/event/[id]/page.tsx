@@ -242,7 +242,65 @@ export default function EventPage({
       to-violet-950
       text-white
       overflow-hidden
+      relative
     ">
+
+      {/* FLOATING ADMIN/SCANNER SIDEBAR */}
+      <div className="
+        fixed
+        top-1/2
+        right-4
+        transform
+        -translate-y-1/2
+        flex
+        flex-col
+        gap-4
+        z-50
+      ">
+        <Link href={`/admin-login`}>
+          <button className="
+            bg-yellow-500/20
+            hover:bg-yellow-500/40
+            border border-yellow-500/50
+            backdrop-blur-md
+            p-4
+            rounded-2xl
+            flex
+            flex-col
+            items-center
+            justify-center
+            text-yellow-400
+            transition
+            w-24
+            h-24
+            shadow-xl
+          ">
+            <span className="font-bold text-sm text-center">Admin</span>
+          </button>
+        </Link>
+
+        <Link href={`/scanner-login`}>
+          <button className="
+            bg-green-500/20
+            hover:bg-green-500/40
+            border border-green-500/50
+            backdrop-blur-md
+            p-4
+            rounded-2xl
+            flex
+            flex-col
+            items-center
+            justify-center
+            text-green-400
+            transition
+            w-24
+            h-24
+            shadow-xl
+          ">
+            <span className="font-bold text-sm text-center">Scanner</span>
+          </button>
+        </Link>
+      </div>
 
       {/* HERO */}
 
@@ -899,52 +957,7 @@ transition            border
   </Link>
   )}
 
-  {/* ADMIN */}
-
-  <Link
-    href={`/admin-login`}
-  >
-
-    <button className="
-      bg-yellow-500
-      hover:bg-yellow-600
-      px-8
-      py-4
-      rounded-2xl
-      text-xl
-      font-bold
-      transition
-    ">
-
-      Admin Dashboard
-
-    </button>
-
-  </Link>
-
-  {/* SCANNER */}
-
-  <Link
-    href={`/scanner-login`}
-  >
-
-    <button className="
-      bg-green-500
-      hover:bg-green-600
-      px-8
-      py-4
-      rounded-2xl
-      text-xl
-      font-bold
-      transition
-    ">
-
-      Scanner
-
-    </button>
-
-  </Link>
-
+  {/* Admin & Scanner buttons moved to fixed top-right bar */}
 </div>
 
         </div>
