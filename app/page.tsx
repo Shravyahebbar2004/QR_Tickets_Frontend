@@ -411,12 +411,14 @@ export default function HomePage() {
       <section className="
         relative
         z-10
-        min-h-screen
         flex
         items-center
         justify-center
         px-5
-        pt-32
+        pt-40
+        pb-20
+        md:pt-48
+        md:pb-32
       ">
 
         <motion.div
@@ -558,71 +560,7 @@ transition            border
 
           </div>
 
-          {/* COUNTDOWN */}
-
-          <div className="
-            grid
-            grid-cols-2
-            md:grid-cols-4
-            gap-5
-            max-w-5xl
-            mx-auto
-          ">
-
-            {
-              [
-                {
-                  label: 'Days',
-                  value: timeLeft.days
-                },
-                {
-                  label: 'Hours',
-                  value: timeLeft.hours
-                },
-                {
-                  label: 'Minutes',
-                  value: timeLeft.minutes
-                },
-                {
-                  label: 'Seconds',
-                  value: timeLeft.seconds
-                }
-              ].map((item) => (
-
-                <div
-                  key={item.label}
-                  className="
-                    bg-white/5
-                    backdrop-blur-2xl
-                    border
-                    border-white/10
-                    rounded-3xl
-                    p-6
-                  "
-                >
-
-                  <h2 className="
-                    text-4xl
-                    md:text-5xl
-                    font-black
-                    text-cyan-300
-                  ">
-                    {item.value}
-                  </h2>
-
-                  <p className="
-                    text-gray-400
-                    mt-3
-                  ">
-                    {item.label}
-                  </p>
-
-                </div>
-
-              ))
-            }
-
-          </div>
+          {/* COUNTDOWN REMOVED */}
 
         </motion.div>
 
@@ -739,183 +677,64 @@ transition            border
 
       </section>
 
-      {/* STATS */}
-
-      <section className="
-        relative
-        z-10
-        px-5
-        py-24
-      ">
-
-        <div className="
-          max-w-6xl
-          mx-auto
-          grid
-          md:grid-cols-4
-          gap-8
-        ">
-
-          {
-            [
-              {
-                label: 'Registrations',
-                value: '10K+'
-              },
-              {
-                label: 'Events Managed',
-                value: '250+'
-              },
-              {
-                label: 'QR Scans',
-                value: '50K+'
-              },
-              {
-                label: 'Organizers',
-                value: '500+'
-              }
-            ].map((item, index) => (
-
-              <div
-                key={index}
-                className="
-                  bg-white/5
-                  backdrop-blur-2xl
-                  border
-                  border-white/10
-                  rounded-3xl
-                  p-8
-                  text-center
-                "
-              >
-
-                <h2 className="
-                  text-5xl
-                  font-black
-                  bg-gradient-to-r
-                  from-cyan-300
-                  to-violet-500
-                  text-transparent
-                  bg-clip-text
-                  mb-4
-                ">
-                  {item.value}
-                </h2>
-
-                <p className="text-gray-400">
-                  {item.label}
-                </p>
-
-              </div>
-
-            ))
-          }
-
-        </div>
-
-      </section>
-
-      {/* WHY CHOOSE */}
-
-      <section className="
-        relative
-        z-10
-        px-5
-        py-24
-      ">
-
-        <div className="max-w-6xl mx-auto">
-
+      {/* HOW IT HELPS */}
+      <section className="relative z-10 px-5 py-24">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-
-            <h2 className="
-              text-5xl
-              md:text-6xl
-              font-black
-              mb-6
-            ">
-              Why Choose EventFlow
+            <h2 className="text-5xl md:text-6xl font-black mb-6">
+              Transforming Experiences
             </h2>
-
-            <p className="
-              text-gray-400
-              text-xl
-              max-w-3xl
-              mx-auto
-            ">
-              Designed for modern organizers,
-              universities, festivals,
-              conferences and communities.
+            <p className="text-gray-400 text-xl max-w-3xl mx-auto">
+              EventFlow is engineered to deliver a seamless, premium experience for both the people running the show and the attendees enjoying it.
             </p>
-
           </div>
 
-          <div className="
-            grid
-            md:grid-cols-3
-            gap-8
-          ">
+          <div className="grid md:grid-cols-2 gap-10">
+            {/* For Organizers */}
+            <div className="bg-gradient-to-br from-violet-900/40 to-black border border-violet-500/20 rounded-[40px] p-10 md:p-14 shadow-2xl backdrop-blur-xl hover:scale-[1.02] transition">
+              <div className="w-16 h-16 bg-violet-500/20 rounded-2xl flex items-center justify-center mb-8 border border-violet-500/30">
+                <ShieldCheck size={32} className="text-violet-300" />
+              </div>
+              <h3 className="text-4xl font-black text-white mb-6">For Organizers</h3>
+              <ul className="space-y-5">
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 bg-violet-500/20 p-1.5 rounded-full"><ArrowRight size={16} className="text-violet-300"/></div>
+                  <p className="text-lg text-gray-300 leading-relaxed">Instantly generate and distribute secure, unforgeable QR tickets to all attendees.</p>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 bg-violet-500/20 p-1.5 rounded-full"><ArrowRight size={16} className="text-violet-300"/></div>
+                  <p className="text-lg text-gray-300 leading-relaxed">Dedicated Scanner Dashboard allows your staff to validate entries in milliseconds at the gate.</p>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 bg-violet-500/20 p-1.5 rounded-full"><ArrowRight size={16} className="text-violet-300"/></div>
+                  <p className="text-lg text-gray-300 leading-relaxed">Manage bulk passes, solo tickets, and payment approvals from a centralized admin panel.</p>
+                </li>
+              </ul>
+            </div>
 
-            {
-              [
-                {
-                  icon: Users,
-                  title: 'Easy Management',
-                  desc: 'Manage attendees, approvals and tickets easily.'
-                },
-                {
-                  icon: CalendarDays,
-                  title: 'Multi Event Support',
-                  desc: 'Host workshops, fests, concerts and conferences.'
-                },
-                {
-                  icon: QrCode,
-                  title: 'Instant QR Access',
-                  desc: 'Secure real-time QR validation for entry.'
-                }
-              ].map((item, index) => (
-
-                <div
-                  key={index}
-                  className="
-                    bg-white/5
-                    backdrop-blur-2xl
-                    border
-                    border-white/10
-                    rounded-[32px]
-                    p-8
-                  "
-                >
-
-                  <item.icon
-                    className="
-                      text-cyan-300
-                      mb-6
-                    "
-                    size={48}
-                  />
-
-                  <h3 className="
-                    text-3xl
-                    font-bold
-                    mb-4
-                  ">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-gray-400">
-                    {item.desc}
-                  </p>
-
-                </div>
-
-              ))
-            }
-
+            {/* For Attendees */}
+            <div className="bg-gradient-to-br from-cyan-900/40 to-black border border-cyan-500/20 rounded-[40px] p-10 md:p-14 shadow-2xl backdrop-blur-xl hover:scale-[1.02] transition">
+              <div className="w-16 h-16 bg-cyan-500/20 rounded-2xl flex items-center justify-center mb-8 border border-cyan-500/30">
+                <Ticket size={32} className="text-cyan-300" />
+              </div>
+              <h3 className="text-4xl font-black text-white mb-6">For Attendees</h3>
+              <ul className="space-y-5">
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 bg-cyan-500/20 p-1.5 rounded-full"><ArrowRight size={16} className="text-cyan-300"/></div>
+                  <p className="text-lg text-gray-300 leading-relaxed">Lightning-fast registration process with instant email delivery of your digital pass.</p>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 bg-cyan-500/20 p-1.5 rounded-full"><ArrowRight size={16} className="text-cyan-300"/></div>
+                  <p className="text-lg text-gray-300 leading-relaxed">No more waiting in massive queues—just flash your QR code at the entrance and walk in.</p>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="mt-1 bg-cyan-500/20 p-1.5 rounded-full"><ArrowRight size={16} className="text-cyan-300"/></div>
+                  <p className="text-lg text-gray-300 leading-relaxed">Beautifully formatted mobile tickets that are easy to screenshot or download directly to your phone.</p>
+                </li>
+              </ul>
+            </div>
           </div>
-
         </div>
-
       </section>
 
       {/* CTA */}
