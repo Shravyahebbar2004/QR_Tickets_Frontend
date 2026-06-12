@@ -707,13 +707,13 @@ transition          border
 
                 <td className="p-5">
                   <a 
-                    href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`} 
+                    href={user.payment_proof?.startsWith('http') ? user.payment_proof : `${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="cursor-pointer block hover:scale-105 transition"
                   >
                     <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`}
+                      src={user.payment_proof?.startsWith('http') ? user.payment_proof : `${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.payment_proof}`}
                       alt="Payment Proof"
                     
                       className="
