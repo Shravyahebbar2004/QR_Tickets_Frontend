@@ -19,6 +19,14 @@ export default function PlatformSignup() {
     setLoading(true);
     setError('');
 
+    // Basic email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/platform/signup`, formData);
       if (response.data.success) {
@@ -64,7 +72,7 @@ export default function PlatformSignup() {
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-12 text-white outline-none focus:border-violet-500 transition focus:ring-2 focus:ring-violet-500/50" 
-                placeholder="shravyahebbar07@gmail.com"
+                placeholder="abc@gmail.com"
               />
             </div>
           </div>
