@@ -84,6 +84,16 @@ export default function CreateEventPage() {
     useState(false);
 
   // =====================================
+  // DATE HELPER
+  // =====================================
+
+  const getMinDateTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16);
+  };
+
+  // =====================================
   // HANDLE INPUT
   // =====================================
 
@@ -710,6 +720,8 @@ Ex: Bangalore International Arena
 
                 type="datetime-local"
 
+                min={getMinDateTime()}
+
                 name="event_date"
 
                 value={formData.event_date}
@@ -846,7 +858,7 @@ Tell attendees what makes your event special...
                 <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
                   <h3 className="font-bold mb-4">Slab 1 (Early Bird)</h3>
                   <label className="block text-gray-400 text-sm mb-2">Deadline</label>
-                  <input type="datetime-local" name="slab1_deadline" value={formData.slab1_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                  <input type="datetime-local" min={getMinDateTime()} name="slab1_deadline" value={formData.slab1_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                   <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
                   <input type="number" name="slab1_solo_price" value={formData.slab1_solo_price} onChange={handleChange} placeholder="299" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                   <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
@@ -858,7 +870,7 @@ Tell attendees what makes your event special...
                 <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
                   <h3 className="font-bold mb-4">Slab 2 (Regular)</h3>
                   <label className="block text-gray-400 text-sm mb-2">Deadline</label>
-                  <input type="datetime-local" name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                  <input type="datetime-local" min={getMinDateTime()} name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                   <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
                   <input type="number" name="slab2_solo_price" value={formData.slab2_solo_price} onChange={handleChange} placeholder="399" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                   <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
@@ -870,7 +882,7 @@ Tell attendees what makes your event special...
                 <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
                   <h3 className="font-bold mb-4">Slab 3 (Late)</h3>
                   <label className="block text-gray-400 text-sm mb-2">Deadline</label>
-                  <input type="datetime-local" name="slab3_deadline" value={formData.slab3_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                  <input type="datetime-local" min={getMinDateTime()} name="slab3_deadline" value={formData.slab3_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                   <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
                   <input type="number" name="slab3_solo_price" value={formData.slab3_solo_price} onChange={handleChange} placeholder="499" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                   <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
