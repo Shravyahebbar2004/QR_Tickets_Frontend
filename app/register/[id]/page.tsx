@@ -49,7 +49,7 @@ export default function RegisterPage({
     let amount = 0;
     let entries = 0;
 
-    const isMarathon = event.category?.toLowerCase() === 'marathon';
+    const isMarathon = event.category?.toLowerCase()?.trim() === 'marathon';
 
     if (isMarathon && event.custom_pricing) {
       try {
@@ -194,7 +194,7 @@ export default function RegisterPage({
       setSubmitting(true);
 
       const tickets = [];
-      const isMarathon = event.category?.toLowerCase() === 'marathon';
+      const isMarathon = event.category?.toLowerCase()?.trim() === 'marathon';
       
       if (isMarathon) {
         Object.keys(customQuantities).forEach(key => {
@@ -244,7 +244,7 @@ export default function RegisterPage({
       setOtpSending(true);
 
       const tickets = [];
-      const isMarathon = event.category?.toLowerCase() === 'marathon';
+      const isMarathon = event.category?.toLowerCase()?.trim() === 'marathon';
       
       if (isMarathon) {
         Object.keys(customQuantities).forEach(key => {
@@ -457,7 +457,7 @@ export default function RegisterPage({
         </div>
 
         <div className="mb-8">
-          {event.category?.toLowerCase() === 'marathon' && event.custom_pricing ? (
+          {event.category?.toLowerCase()?.trim() === 'marathon' && event.custom_pricing ? (
             (() => {
               try {
                 const customPricing = typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing;

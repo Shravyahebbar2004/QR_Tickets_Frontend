@@ -731,7 +731,7 @@ Tell attendees what makes your event special...
 
             </div>
 
-            {formData.category.toLowerCase() === 'marathon' ? (
+            {formData.category?.toLowerCase()?.trim() === 'marathon' ? (
               <div className="mb-10">
                 <h2 className="text-2xl font-bold mb-6 text-cyan-300">
                   Manage Marathon Distances
