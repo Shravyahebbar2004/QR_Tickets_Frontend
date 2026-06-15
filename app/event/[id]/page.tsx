@@ -442,7 +442,7 @@ transition              border
         </div>
 
         {/* INFO */}
-        <div className="flex flex-wrap justify-center md:justify-start gap-6 mb-12">
+        <div className="flex flex-wrap justify-center gap-6 mb-12">
           <div className="bg-white/5 border border-white/10 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50">
             <MapPin size={32} className="text-cyan-300" />
             <p className="text-xl md:text-2xl font-bold">

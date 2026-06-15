@@ -132,6 +132,33 @@ export default function RegisterPage({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validations
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert("Please enter a valid email address!");
+      return;
+    }
+
+    const parsePhone = (phone: string) => {
+      let cleaned = phone.replace(/\D/g, '');
+      if (cleaned.length === 12 && cleaned.startsWith('91')) {
+        cleaned = cleaned.substring(2);
+      }
+      return cleaned;
+    };
+
+    const phoneRegex = /^[6-9]\d{9}$/;
+    
+    if (!phoneRegex.test(parsePhone(formData.phone_number))) {
+      alert("Please enter a valid 10-digit Indian phone number!");
+      return;
+    }
+
+    if (formData.emergency_contact && !phoneRegex.test(parsePhone(formData.emergency_contact))) {
+      alert("Please enter a valid 10-digit Indian phone number for emergency contact!");
+      return;
+    }
+
     try {
       setSubmitting(true);
 
