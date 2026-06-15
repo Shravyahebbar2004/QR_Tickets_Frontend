@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from 'react';
 import axios from 'axios';
+import { ShieldCheck } from 'lucide-react';
 
 export default function RegisterPage({
   params
@@ -69,6 +70,10 @@ export default function RegisterPage({
   const [paymentProof, setPaymentProof] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpSending, setOtpSending] = useState(false);
 
   // =====================================
   // FETCH EVENT
@@ -174,6 +179,42 @@ export default function RegisterPage({
         return;
       }
 
+      if (!paymentProof) {
+        alert("Payment screenshot required!");
+        setSubmitting(false);
+        return;
+      }
+
+      // SEND OTP FIRST
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/send-otp`, {
+        email: formData.email
+      });
+
+      if (response.data.success) {
+        setShowOtpModal(true);
+      }
+    } catch (error: any) {
+      console.log('FULL ERROR:', error);
+      alert(error?.response?.data?.message || 'Failed to send verification code. Please check your email address.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // =====================================
+  // HANDLE OTP VERIFY AND REGISTER
+  // =====================================
+
+  const handleVerifyAndRegister = async () => {
+    try {
+      setOtpSending(true);
+
+      const tickets = [];
+      for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
+      for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
+      for (let i = 0; i < quantities.group; i++) tickets.push('group');
+      for (let i = 0; i < quantities.bulk; i++) tickets.push('bulk');
+
       const submitData = new FormData();
       submitData.append('full_name', formData.full_name);
       submitData.append('email', formData.email);
@@ -188,6 +229,7 @@ export default function RegisterPage({
       submitData.append('total_amount', totalAmount.toString());
       submitData.append('allowed_entries', allowedEntries.toString());
       submitData.append('event_id', id);
+      submitData.append('otp', otp);
 
       if (paymentProof) {
         submitData.append('payment_proof', paymentProof);
@@ -200,6 +242,7 @@ export default function RegisterPage({
       );
 
       console.log('API RESPONSE:', response.data);
+      setShowOtpModal(false);
       setSubmitted(true);
       console.log('REGISTRATION SUCCESS');
 
@@ -207,7 +250,7 @@ export default function RegisterPage({
       console.log('FULL ERROR:', error);
       alert(error?.response?.data?.message || 'Registration Failed');
     } finally {
-      setSubmitting(false);
+      setOtpSending(false);
     }
   };
 
@@ -273,7 +316,7 @@ export default function RegisterPage({
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-10">
+    <main className="min-h-screen bg-black text-white flex items-center justify-center p-10">
       <form
         onSubmit={handleSubmit}
         className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 w-full max-w-2xl shadow-2xl"
@@ -394,9 +437,47 @@ export default function RegisterPage({
           disabled={submitting}
           className="w-full bg-violet-500 hover:bg-violet-600 transition py-5 rounded-2xl font-bold text-xl disabled:opacity-50"
         >
-          {submitting ? 'Submitting...' : 'Complete Registration'}
+          {submitting ? 'Sending Verification Code...' : 'Complete Registration'}
         </button>
       </form>
-    </div>
+
+      {/* OTP MODAL */}
+      {showOtpModal && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-5">
+          <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/10 rounded-[30px] p-8 md:p-12 w-full max-w-md shadow-2xl relative">
+            <button 
+              type="button"
+              onClick={() => setShowOtpModal(false)}
+              className="absolute top-6 right-6 text-gray-500 hover:text-white"
+            >
+              ✕
+            </button>
+            <div className="w-16 h-16 bg-cyan-500/20 rounded-2xl flex items-center justify-center mb-6 mx-auto border border-cyan-500/30">
+              <ShieldCheck size={32} className="text-cyan-400" />
+            </div>
+            <h2 className="text-3xl font-black text-center mb-2">Verify Your Email</h2>
+            <p className="text-gray-400 text-center mb-8">We've sent a 6-digit code to <strong>{formData.email}</strong>. Please enter it below to confirm your registration.</p>
+            
+            <input 
+              type="text" 
+              placeholder="Enter 6-digit code" 
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-center text-2xl font-bold tracking-widest text-white outline-none focus:border-cyan-500 transition mb-6"
+              maxLength={6}
+            />
+            
+            <button 
+              type="button"
+              onClick={handleVerifyAndRegister}
+              disabled={otpSending || otp.length < 6}
+              className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 rounded-2xl transition disabled:opacity-50"
+            >
+              {otpSending ? 'Verifying...' : 'Verify & Register'}
+            </button>
+          </div>
+        </div>
+      )}
+    </main>
   );
 }
