@@ -424,7 +424,7 @@ transition              border
       ">
 
         {/* MAIN CTA */}
-        <div className="flex flex-wrap justify-center md:justify-start gap-6 mb-16">
+        <div className="flex flex-wrap justify-center gap-6 mb-16">
           {!isExpired && (
             <Link href={`/register/${event.event_id}`}>
               <button className="bg-violet-500 hover:bg-violet-600 px-10 py-4 rounded-3xl text-2xl font-black shadow-2xl shadow-violet-500/40 transition hover:-translate-y-1">
@@ -459,135 +459,34 @@ transition              border
 {/* COUNTDOWN */}
 
 {!isExpired ? (
-<div className="
-  mt-16
-  mb-20
-  grid
-  grid-cols-2
-  md:grid-cols-4
-  gap-6
-  max-w-5xl
-  mx-auto
-">
-
- <div className="
-  h-56
-  bg-white/5
-  border
-  border-white/10
-  backdrop-blur-xl
-  rounded-3xl
-  flex
-  flex-col
-  items-center
-  justify-center
-  text-center
-">
-
-    <h2 className="
-      text-5xl
-      font-black
-      mb-2
-    ">
-      {timeLeft.days}
-    </h2>
-
-    <p className="
-      text-lg
-      text-gray-300
-    ">
-      Days
-    </p>
-
+  <div className="mt-16 mb-20 max-w-4xl mx-auto bg-black/40 border border-white/10 p-8 md:p-12 rounded-[40px] backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center text-center">
+    <h3 className="text-xl text-cyan-300 font-bold mb-6 tracking-widest uppercase">Event Starts In</h3>
+    
+    <div className="flex items-center justify-center gap-2 md:gap-6 font-black text-5xl md:text-7xl lg:text-8xl tracking-tight font-mono text-white">
+      <div className="flex flex-col items-center">
+        <span>{String(timeLeft.days).padStart(2, '0')}</span>
+        <span className="text-sm md:text-lg text-gray-500 font-sans tracking-normal mt-2">DAYS</span>
+      </div>
+      <span className="text-gray-600 pb-8 md:pb-12">:</span>
+      
+      <div className="flex flex-col items-center">
+        <span>{String(timeLeft.hours).padStart(2, '0')}</span>
+        <span className="text-sm md:text-lg text-gray-500 font-sans tracking-normal mt-2">HOURS</span>
+      </div>
+      <span className="text-gray-600 pb-8 md:pb-12">:</span>
+      
+      <div className="flex flex-col items-center">
+        <span>{String(timeLeft.minutes).padStart(2, '0')}</span>
+        <span className="text-sm md:text-lg text-gray-500 font-sans tracking-normal mt-2">MINS</span>
+      </div>
+      <span className="text-gray-600 pb-8 md:pb-12">:</span>
+      
+      <div className="flex flex-col items-center">
+        <span className="text-violet-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
+        <span className="text-sm md:text-lg text-gray-500 font-sans tracking-normal mt-2">SECS</span>
+      </div>
+    </div>
   </div>
-
-  <div className="
-  h-56
-  bg-white/5
-  border
-  border-white/10
-  backdrop-blur-xl
-  rounded-3xl
-  flex
-  flex-col
-  items-center
-  justify-center
-  text-center
-">
-
-    <h2 className="
-      text-5xl
-      font-black
-      mb-2
-    ">
-      {timeLeft.hours}
-    </h2>
-
-    <p className="
-      text-lg
-      text-gray-300
-    ">
-      Hours
-    </p>
-
-  </div>
-
-<div className="
-  h-56
-  bg-white/5
-  border
-  border-white/10
-  backdrop-blur-xl
-  rounded-3xl
-  flex
-  flex-col
-  items-center
-  justify-center
-  text-center
-">
-
-    <h2 className="
-      text-5xl
-      font-black
-      mb-2
-    ">
-      {timeLeft.minutes}
-    </h2>
-
-    <p className="
-      text-lg
-      text-gray-300
-    ">
-      Minutes
-    </p>
-
-  </div>
-
-  <div className="
-  h-56
-  bg-white/5
-  border
-  border-white/10
-  backdrop-blur-xl
-  rounded-3xl
-  flex
-  flex-col
-  items-center
-  justify-center
-  text-center
-">
-
-    <h2 className="
-      text-5xl
-      font-black
-      mb-2
-    ">
-      {timeLeft.seconds}
-    </h2>
-
-  </div>
-
-</div>
 ) : (
   <div className="mt-16 mb-20 max-w-5xl mx-auto bg-red-500/10 border border-red-500/30 p-10 rounded-3xl text-center">
     <h2 className="text-4xl font-black text-red-400 mb-2">Event Concluded</h2>
