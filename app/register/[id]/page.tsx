@@ -314,15 +314,15 @@ export default function RegisterPage({
       <div className="flex items-center gap-4 bg-black/40 p-2 rounded-2xl">
         <button 
           type="button" 
-          onClick={() => setQuantities({...quantities, [type]: Math.max(0, quantities[type] - 1)})}
+          onClick={() => setQuantities({...quantities, [type]: Math.max(0, (quantities[type] || 0) - 1)})}
           className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
         >
           -
         </button>
-        <span className="text-xl font-bold w-4 text-center">{quantities[type]}</span>
+        <span className="text-xl font-bold w-4 text-center">{quantities[type] || 0}</span>
         <button 
           type="button"
-          onClick={() => setQuantities({...quantities, [type]: quantities[type] + 1})}
+          onClick={() => setQuantities({...quantities, [type]: (quantities[type] || 0) + 1})}
           className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
         >
           +
