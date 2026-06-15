@@ -51,37 +51,63 @@ export default function MyTicketPage() {
     try {
       const pdf = new jsPDF();
 
-      // BACKGROUND
-      pdf.setFillColor(0, 0, 0);
+      // BACKGROUND (Dark Violet Theme)
+      pdf.setFillColor(15, 23, 42); // slate-900 equivalent
       pdf.rect(0, 0, 210, 297, 'F');
 
       // HEADER
-      pdf.setFillColor(255, 215, 0);
+      pdf.setFillColor(139, 92, 246); // violet-500
       pdf.rect(0, 0, 210, 40, 'F');
 
       // TITLE
-      pdf.setTextColor(0, 0, 0);
-      pdf.setFontSize(28);
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(26);
       pdf.text(
         ticket.title.toUpperCase(),
-        55,
-        20
+        105,
+        20,
+        { align: 'center' }
       );
 
-      pdf.setFontSize(14);
+      pdf.setFontSize(12);
+      pdf.setTextColor(233, 213, 255); // violet-200
       pdf.text(
         `PASS FOR ${ticket.title.toUpperCase()}`,
-        50,
-        32
+        105,
+        32,
+        { align: 'center' }
       );
 
-      // BODY
+      // BODY SECTION (Bordered Box style)
+      pdf.setDrawColor(139, 92, 246); // violet-500 border
+      pdf.setLineWidth(0.5);
+      pdf.rect(20, 50, 170, 80);
+
       pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(18);
-      pdf.text(`Name: ${ticket.full_name}`, 20, 70);
-      pdf.text(`Event: ${ticket.title}`, 20, 90);
-      pdf.text(`Venue: ${ticket.venue}`, 20, 110);
-      pdf.text(`Date: ${new Date(ticket.event_date).toLocaleDateString()}`, 20, 130);
+      pdf.setFontSize(14);
+      
+      const startY = 60;
+      const gap = 10;
+      
+      pdf.setTextColor(196, 181, 253); // violet-300 for labels
+      pdf.text('Name:', 25, startY);
+      pdf.text('Phone No:', 25, startY + gap);
+      pdf.text('Amount Paid:', 25, startY + gap * 2);
+      pdf.text('Ticket:', 25, startY + gap * 3);
+      pdf.text('Venue:', 25, startY + gap * 4);
+      pdf.text('Date:', 25, startY + gap * 5);
+      
+      pdf.setTextColor(255, 255, 255); // white for values
+      pdf.text(ticket.full_name || 'N/A', 65, startY);
+      pdf.text(ticket.phone_number || 'N/A', 65, startY + gap);
+      pdf.text(`Rs ${ticket.total_amount || 0}`, 65, startY + gap * 2);
+      pdf.text(`${ticket.ticket_type} (${ticket.allowed_entries} members)`, 65, startY + gap * 3);
+      pdf.text(ticket.venue || 'N/A', 65, startY + gap * 4);
+      pdf.text(new Date(ticket.event_date).toLocaleDateString(), 65, startY + gap * 5);
+
+      // QR CODE BACKGROUND
+      pdf.setFillColor(255, 255, 255);
+      pdf.rect(50, 145, 110, 110, 'F');
 
       // QR CODE
       pdf.addImage(
@@ -94,11 +120,13 @@ export default function MyTicketPage() {
       );
 
       // FOOTER
+      pdf.setTextColor(233, 213, 255); // violet-200
       pdf.setFontSize(14);
       pdf.text(
-        'Show this QR at the entrance',
-        45,
-        270
+        'Show this pass at the entrance',
+        105,
+        275,
+        { align: 'center' }
       );
 
       // SAVE
@@ -304,6 +332,12 @@ export default function MyTicketPage() {
                       ">
                         <p className="text-white text-lg">
                           <span className="text-violet-300 font-bold">Name:</span> {ticket.full_name}
+                        </p>
+                        <p className="text-white text-lg">
+                          <span className="text-violet-300 font-bold">Phone No:</span> {ticket.phone_number}
+                        </p>
+                        <p className="text-white text-lg">
+                          <span className="text-violet-300 font-bold">Amount Paid:</span> ₹{ticket.total_amount}
                         </p>
                         <p className="text-white text-lg">
                           <span className="text-violet-300 font-bold">Event:</span> {ticket.title}
