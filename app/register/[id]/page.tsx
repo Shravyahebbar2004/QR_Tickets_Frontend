@@ -380,48 +380,6 @@ export default function RegisterPage({
                   return (
                     <div key={d.name} className="p-6 md:p-8 rounded-3xl border-2 border-white/10 bg-black/40 mb-4">
                       {renderCounter(d.name, d.name, "1 Member", price)}
-                      
-                      {/* EXTRA INFO GRID */}
-                      <div className="grid md:grid-cols-2 gap-4 mt-6 border-t border-white/10 pt-6">
-                        {d.bib_collection && (
-                          <div className="bg-black/50 p-4 rounded-2xl">
-                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Bib Collection</span>
-                            <span className="text-white font-medium">{d.bib_collection}</span>
-                          </div>
-                        )}
-                        {d.start_time && (
-                          <div className="bg-black/50 p-4 rounded-2xl">
-                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Base Start Time</span>
-                            <span className="text-white font-medium">{new Date(d.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                          </div>
-                        )}
-                        {d.start_time && (
-                          <div className="bg-black/50 p-4 rounded-2xl">
-                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Reporting Time</span>
-                            <span className="text-white font-medium">{new Date(new Date(d.start_time).getTime() - 60*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (1hr prior)</span>
-                          </div>
-                        )}
-                        {d.wave_size && (
-                          <div className="bg-black/50 p-4 rounded-2xl">
-                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Wave Allocation</span>
-                            <span className="text-white font-medium text-sm">Assigned dynamically based on Bib</span>
-                          </div>
-                        )}
-                        {d.additional_info && (
-                          <div className="bg-black/50 p-4 rounded-2xl md:col-span-2">
-                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Additional Info</span>
-                            <span className="text-white font-medium">{d.additional_info}</span>
-                          </div>
-                        )}
-                        {d.route_map_url && (
-                          <div className="md:col-span-2 mt-2">
-                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-2">Route Map</span>
-                            <a href={d.route_map_url} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 underline font-medium block overflow-hidden text-ellipsis whitespace-nowrap bg-black/50 p-4 rounded-2xl">
-                              View Route Map Image
-                            </a>
-                          </div>
-                        )}
-                      </div>
                     </div>
                   );
                 });
