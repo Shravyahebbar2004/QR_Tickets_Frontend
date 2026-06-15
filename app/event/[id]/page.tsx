@@ -407,26 +407,9 @@ transition              border
 
             </h1>
 
-            <p className="text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
+            <p className="text-2xl text-gray-300 max-w-3xl mx-auto">
               {event.tagline}
             </p>
-
-            <div className="flex flex-wrap justify-center gap-5 mt-8">
-              {!isExpired && (
-                <Link href={`/register/${event.event_id}`}>
-                  <button className="bg-violet-500 hover:bg-violet-600 px-8 py-4 rounded-2xl text-xl font-bold shadow-lg shadow-violet-500/30 transition hover:scale-105">
-                    Register Now
-                  </button>
-                </Link>
-              )}
-              {!isExpired && (
-                <Link href={`/my-ticket/${event.event_id}`}>
-                  <button className="bg-cyan-500 hover:bg-cyan-600 px-8 py-4 rounded-2xl text-xl font-bold shadow-lg shadow-cyan-500/30 transition hover:scale-105">
-                    View My Ticket
-                  </button>
-                </Link>
-              )}
-            </div>
           </div>
         </div>
       </div>
@@ -437,8 +420,26 @@ transition              border
         max-w-7xl
         mx-auto
         px-5
-        py-24
+        py-16
       ">
+
+        {/* MAIN CTA */}
+        <div className="flex flex-wrap justify-center md:justify-start gap-6 mb-16">
+          {!isExpired && (
+            <Link href={`/register/${event.event_id}`}>
+              <button className="bg-violet-500 hover:bg-violet-600 px-10 py-4 rounded-3xl text-2xl font-black shadow-2xl shadow-violet-500/40 transition hover:-translate-y-1">
+                Register Now
+              </button>
+            </Link>
+          )}
+          {!isExpired && (
+            <Link href={`/my-ticket/${event.event_id}`}>
+              <button className="bg-cyan-500 hover:bg-cyan-600 px-10 py-4 rounded-3xl text-2xl font-black shadow-2xl shadow-cyan-500/40 transition hover:-translate-y-1">
+                View My Ticket
+              </button>
+            </Link>
+          )}
+        </div>
 
         {/* INFO */}
         <div className="flex flex-wrap justify-center md:justify-start gap-6 mb-12">
