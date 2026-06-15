@@ -461,18 +461,19 @@ export default function MyTicketPage() {
             </h2>
             
             <div className="space-y-6">
-              {selectedRaceDetails.bib_number && (() => {
+              {(() => {
                 const waveSize = Number(selectedRaceDetails.wave_size || 100);
                 const gapMins = Number(selectedRaceDetails.wave_gap_mins || 15);
-                const baseNumber = parseInt(selectedRaceDetails.ticket_type.match(/\d+/)?.[0] || '1') * 1000;
+                const baseNumber = parseInt((selectedRaceDetails.ticket_type || '1').match(/\d+/)?.[0] || '1') * 1000;
                 
+                const hasBib = !!selectedRaceDetails.bib_number;
                 // Calculate Wave Index
-                const waveIndex = Math.max(0, Math.floor((selectedRaceDetails.bib_number - baseNumber - 1) / waveSize));
-                const waveLetter = String.fromCharCode(65 + waveIndex);
+                const waveIndex = hasBib ? Math.max(0, Math.floor((selectedRaceDetails.bib_number - baseNumber - 1) / waveSize)) : 0;
+                const waveLetter = hasBib ? String.fromCharCode(65 + waveIndex) : 'TBD';
                 
                 // Calculate Times
                 const baseStart = selectedRaceDetails.start_time ? new Date(selectedRaceDetails.start_time) : null;
-                const myStart = baseStart ? new Date(baseStart.getTime() + waveIndex * gapMins * 60000) : null;
+                const myStart = baseStart ? new Date(baseStart.getTime() + (hasBib ? waveIndex * gapMins * 60000 : 0)) : null;
                 const myReporting = myStart ? new Date(myStart.getTime() - 60 * 60000) : null;
 
                 return (
@@ -480,25 +481,25 @@ export default function MyTicketPage() {
                     <div className="bg-cyan-900/30 p-6 rounded-2xl border border-cyan-500/50 flex justify-between items-center shadow-[0_0_30px_rgba(34,211,238,0.1)]">
                       <div>
                         <h4 className="text-cyan-400 text-sm uppercase tracking-wider mb-1">Your Bib</h4>
-                        <p className="text-5xl font-black text-white">#{selectedRaceDetails.bib_number}</p>
+                        <p className="text-4xl md:text-5xl font-black text-white">{hasBib ? `#${selectedRaceDetails.bib_number}` : 'Pending'}</p>
                       </div>
                       <div className="text-right">
                         <h4 className="text-cyan-400 text-sm uppercase tracking-wider mb-1">Your Wave</h4>
-                        <p className="text-5xl font-black text-white">Wave {waveLetter}</p>
+                        <p className="text-4xl md:text-5xl font-black text-white">Wave {waveLetter}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       {myStart && (
                         <div className="bg-black/50 p-5 rounded-2xl border border-white/10">
-                          <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-1">Your Start Time</h4>
-                          <p className="text-2xl font-bold text-white">{myStart.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                          <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-1">{hasBib ? 'Your Start Time' : 'Base Start Time'}</h4>
+                          <p className="text-xl md:text-2xl font-bold text-white">{myStart.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                         </div>
                       )}
                       {myReporting && (
                         <div className="bg-black/50 p-5 rounded-2xl border border-white/10">
-                          <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-1">Your Reporting Time</h4>
-                          <p className="text-2xl font-bold text-white">{myReporting.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                          <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-1">{hasBib ? 'Your Reporting Time' : 'Base Reporting Time'}</h4>
+                          <p className="text-xl md:text-2xl font-bold text-white">{myReporting.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                         </div>
                       )}
                     </div>
