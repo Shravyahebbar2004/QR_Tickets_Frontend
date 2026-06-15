@@ -407,25 +407,28 @@ transition              border
 
             </h1>
 
-            <p className="
-              text-2xl
-              text-gray-300
-              max-w-3xl
-              mx-auto
-            ">
-
-              {
-
-                event.tagline
-
-              }
-
+            <p className="text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
+              {event.tagline}
             </p>
 
+            <div className="flex flex-wrap justify-center gap-5 mt-8">
+              {!isExpired && (
+                <Link href={`/register/${event.event_id}`}>
+                  <button className="bg-violet-500 hover:bg-violet-600 px-8 py-4 rounded-2xl text-xl font-bold shadow-lg shadow-violet-500/30 transition hover:scale-105">
+                    Register Now
+                  </button>
+                </Link>
+              )}
+              {!isExpired && (
+                <Link href={`/my-ticket/${event.event_id}`}>
+                  <button className="bg-cyan-500 hover:bg-cyan-600 px-8 py-4 rounded-2xl text-xl font-bold shadow-lg shadow-cyan-500/30 transition hover:scale-105">
+                    View My Ticket
+                  </button>
+                </Link>
+              )}
+            </div>
           </div>
-
         </div>
-
       </div>
 
       {/* DETAILS */}
@@ -438,80 +441,19 @@ transition              border
       ">
 
         {/* INFO */}
-
-        <div className="
-          flex
-          flex-wrap
-          gap-5
-          mb-12
-        ">
-
-          <div className="
-            bg-white/5
-border-white/10
-backdrop-blur-xl
-hover:scale-105
-transition            border
-            border-white/10
-            px-6
-            py-4
-            rounded-2xl
-            flex
-            items-center
-            gap-3
-          ">
-
-            <MapPin
-              className="text-cyan-300"
-            />
-
-            <p>
-
-              {
-
-                event.venue
-
-              }
-
+        <div className="flex flex-wrap justify-center md:justify-start gap-6 mb-12">
+          <div className="bg-white/5 border border-white/10 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50">
+            <MapPin size={32} className="text-cyan-300" />
+            <p className="text-xl md:text-2xl font-bold">
+              {event.venue}
             </p>
-
           </div>
-
-          <div className="
-            bg-white/5
-border-white/10
-backdrop-blur-xl
-hover:scale-105
-transition            border
-            border-white/10
-            px-6
-            py-4
-            rounded-2xl
-            flex
-            items-center
-            gap-3
-          ">
-
-            <CalendarDays
-              className="text-violet-300"
-            />
-
-            <p>
-
-              {
-
-                new Date(
-
-                  event.event_date
-
-                ).toLocaleString()
-
-              }
-
+          <div className="bg-white/5 border border-white/10 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50">
+            <CalendarDays size={32} className="text-violet-300" />
+            <p className="text-xl md:text-2xl font-bold text-yellow-300">
+              {new Date(event.event_date).toLocaleString()}
             </p>
-
           </div>
-
         </div>
 {/* COUNTDOWN */}
 
@@ -887,73 +829,7 @@ transition            border
 
         </div>
 
-        {/* CTA */}
-
-        <div className="
-          text-center
-        ">
-
-         <div className="
-  flex
-  flex-wrap
-  justify-center
-  gap-5
-">
-
-  {/* REGISTER */}
-
-  {!isExpired && (
-  <Link
-    href={`/register/${event.event_id}`}
-  >
-
-    <button className="
-      bg-violet-500
-      hover:bg-violet-600
-      px-8
-      py-4
-      rounded-2xl
-      text-xl
-      font-bold
-      transition
-    ">
-
-      Register Now
-
-    </button>
-
-  </Link>
-  )}
-
-  {/* MY TICKET */}
-
-  {!isExpired && (
-  <Link
-    href={`/my-ticket/${event.event_id}`}
-  >
-
-    <button className="
-      bg-cyan-500
-      hover:bg-cyan-600
-      px-8
-      py-4
-      rounded-2xl
-      text-xl
-      font-bold
-      transition
-    ">
-
-      My Ticket
-
-    </button>
-
-  </Link>
-  )}
-
-  {/* Admin & Scanner buttons moved to fixed top-right bar */}
-</div>
-
-        </div>
+        {/* Admin & Scanner buttons moved to fixed top-right bar */}
 
       </div>
 
