@@ -16,6 +16,7 @@ export default function MyTicketPage() {
   const [phone, setPhone] = useState('');
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedRaceDetails, setSelectedRaceDetails] = useState<any>(null);
 
   // ====================================
   // GET TICKET
@@ -374,30 +375,62 @@ export default function MyTicketPage() {
                         Show this pass at the entrance
                       </p>
 
-                      {/* DOWNLOAD */}
-                      {ticket.qr_code && (
-                        <button
-                          onClick={() => downloadPDF(ticket)}
-                          className="
-                             mt-8
-                             w-full
-                             md:w-auto
-                             bg-violet-500
-                             hover:bg-violet-600
-                             text-white
-                             font-bold
-                             px-8
-                             py-4
-                             rounded-2xl
-                             text-lg
-                             transition
-                             shadow-lg
-                             shadow-violet-500/30
-                          "
-                        >
-                          Download PDF Pass
-                        </button>
-                      )}
+                      {/* DOWNLOAD & DETAILS BUTTONS */}
+                      <div className="flex flex-col md:flex-row justify-center gap-4 mt-8">
+                        {ticket.qr_code && (
+                          <button
+                            onClick={() => downloadPDF(ticket)}
+                            className="
+                               w-full
+                               md:w-auto
+                               bg-violet-500
+                               hover:bg-violet-600
+                               text-white
+                               font-bold
+                               px-8
+                               py-4
+                               rounded-2xl
+                               text-lg
+                               transition
+                               shadow-lg
+                               shadow-violet-500/30
+                            "
+                          >
+                            Download PDF Pass
+                          </button>
+                        )}
+
+                        {ticket.category?.toLowerCase()?.trim() === 'marathon' && ticket.custom_pricing && (
+                          <button
+                            onClick={() => {
+                              try {
+                                const pricing = typeof ticket.custom_pricing === 'string' ? JSON.parse(ticket.custom_pricing) : ticket.custom_pricing;
+                                const details = pricing.find((p: any) => p.name === ticket.ticket_type);
+                                if (details) setSelectedRaceDetails(details);
+                              } catch (e) {
+                                console.error(e);
+                              }
+                            }}
+                            className="
+                               w-full
+                               md:w-auto
+                               bg-cyan-500
+                               hover:bg-cyan-600
+                               text-black
+                               font-bold
+                               px-8
+                               py-4
+                               rounded-2xl
+                               text-lg
+                               transition
+                               shadow-lg
+                               shadow-cyan-500/30
+                            "
+                          >
+                            View Race Details
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -406,6 +439,75 @@ export default function MyTicketPage() {
           </div>
         )}
       </div>
+
+      {/* RACE DETAILS MODAL */}
+      {selectedRaceDetails && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-5">
+          <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/10 rounded-[30px] p-8 md:p-10 w-full max-w-2xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={() => setSelectedRaceDetails(null)}
+              className="absolute top-6 right-6 text-gray-500 hover:text-white transition"
+            >
+              ✕
+            </button>
+            <h2 className="text-3xl font-black text-cyan-300 mb-6 border-b border-white/10 pb-4">
+              {selectedRaceDetails.name} Race Guide
+            </h2>
+            
+            <div className="space-y-6">
+              {selectedRaceDetails.bib_collection && (
+                <div>
+                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Bib Collection</h4>
+                  <p className="text-xl font-medium text-white">{selectedRaceDetails.bib_collection}</p>
+                </div>
+              )}
+              {selectedRaceDetails.reporting_time && (
+                <div>
+                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Reporting Time</h4>
+                  <p className="text-xl font-medium text-white">{selectedRaceDetails.reporting_time}</p>
+                </div>
+              )}
+              {selectedRaceDetails.start_time && (
+                <div>
+                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Race Start Time</h4>
+                  <p className="text-xl font-medium text-white">{selectedRaceDetails.start_time}</p>
+                </div>
+              )}
+              {selectedRaceDetails.wave_allocation && (
+                <div>
+                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Wave Allocation</h4>
+                  <p className="text-xl font-medium text-white">{selectedRaceDetails.wave_allocation}</p>
+                </div>
+              )}
+              {selectedRaceDetails.additional_info && (
+                <div>
+                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Important Info</h4>
+                  <p className="text-lg text-white bg-white/5 p-4 rounded-xl border border-white/10">{selectedRaceDetails.additional_info}</p>
+                </div>
+              )}
+              {selectedRaceDetails.route_map_url && (
+                <div>
+                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-3">Route Map</h4>
+                  <img 
+                    src={selectedRaceDetails.route_map_url} 
+                    alt="Route Map" 
+                    className="w-full rounded-2xl border border-white/10"
+                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                  />
+                  <a 
+                    href={selectedRaceDetails.route_map_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="block mt-3 text-cyan-400 hover:underline"
+                  >
+                    Open Image in New Tab
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
