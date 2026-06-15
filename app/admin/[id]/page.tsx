@@ -24,6 +24,9 @@ interface User {
   payment_status: string;
   used_entries: number;
   allowed_entries: number;
+  emergency_contact_name: string;
+  emergency_contact: string;
+  blood_group: string;
 }
 
 interface Analytics {
@@ -52,7 +55,10 @@ export default function AdminPage({
     'Phone',
     'Ticket',
     'Payment Status',
-    'Entries'
+    'Entries',
+    'Emergency Contact Name',
+    'Emergency Contact No',
+    'Blood Group'
   ];
 
   const rows = users.map((user) => [
@@ -61,7 +67,10 @@ export default function AdminPage({
     user.phone_number,
     user.ticket_type,
     user.payment_status,
-    `${user.used_entries}/${user.allowed_entries}`
+    `${user.used_entries}/${user.allowed_entries}`,
+    user.emergency_contact_name || '-',
+    user.emergency_contact || '-',
+    user.blood_group || '-'
   ]);
 
   const csvContent =
@@ -653,6 +662,12 @@ transition          border
               <th className="p-5">Approval</th>
 
               <th className="p-5">Entries</th>
+
+              <th className="p-5">Emg. Name</th>
+
+              <th className="p-5">Emg. Contact</th>
+
+              <th className="p-5">Blood Group</th>
             </tr>
           </thead>
 
@@ -779,6 +794,20 @@ transition          border
                     {user.used_entries}/
                     {user.allowed_entries}
                   </span>
+                </td>
+
+                {/* EMERGENCY INFO */}
+
+                <td className="p-5 text-gray-300 text-sm">
+                  {user.emergency_contact_name || '-'}
+                </td>
+
+                <td className="p-5 text-gray-300 text-sm">
+                  {user.emergency_contact || '-'}
+                </td>
+
+                <td className="p-5 text-red-400 font-bold">
+                  {user.blood_group || '-'}
                 </td>
               </tr>
             ))}
