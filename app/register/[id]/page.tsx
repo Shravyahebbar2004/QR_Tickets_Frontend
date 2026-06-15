@@ -37,6 +37,8 @@ export default function RegisterPage({
     bulk: 0
   });
 
+  const [customQuantities, setCustomQuantities] = useState<{ [key: string]: number }>({});
+
   const [activeSlabKey, setActiveSlabKey] = useState<string>('slab1');
   const [activeSlabName, setActiveSlabName] = useState<string>('Standard Ticket');
 
@@ -47,25 +49,49 @@ export default function RegisterPage({
     let amount = 0;
     let entries = 0;
 
-    const soloPrice = Number(event[`${activeSlabKey}_solo_price`]) || 0;
-    amount += quantities.solo * soloPrice;
-    entries += quantities.solo * 1;
+    const isMarathon = event.category?.toLowerCase() === 'marathon';
 
-    const couplePrice = Number(event[`${activeSlabKey}_couple_price`]) || 0;
-    amount += quantities.couple * couplePrice;
-    entries += quantities.couple * 2;
+    if (isMarathon && event.custom_pricing) {
+      try {
+        const customPricing = typeof event.custom_pricing === 'string' 
+          ? JSON.parse(event.custom_pricing) 
+          : event.custom_pricing;
+          
+        Object.keys(customQuantities).forEach(distanceName => {
+          const qty = customQuantities[distanceName];
+          if (qty > 0) {
+            const distanceDef = customPricing.find((d: any) => d.name === distanceName);
+            if (distanceDef) {
+              const price = Number(distanceDef[activeSlabKey]) || 0;
+              amount += qty * price;
+              entries += qty * 1; // 1 entry per marathon ticket
+            }
+          }
+        });
+      } catch (e) {
+        console.error("Error parsing custom pricing", e);
+      }
+    } else {
+      const soloPrice = Number(event[`${activeSlabKey}_solo_price`]) || 0;
+      amount += quantities.solo * soloPrice;
+      entries += quantities.solo * 1;
 
-    const groupPrice = Number(event[`${activeSlabKey}_group_price`]) || 0;
-    amount += quantities.group * groupPrice;
-    entries += quantities.group * 4;
+      const couplePrice = Number(event[`${activeSlabKey}_couple_price`]) || 0;
+      amount += quantities.couple * couplePrice;
+      entries += quantities.couple * 2;
 
-    const bulkPrice = Number(event.bulk_pass_price) || 0;
-    amount += quantities.bulk * bulkPrice;
-    entries += quantities.bulk * (Number(event.bulk_pass_entries) || 0);
+      const groupPrice = Number(event[`${activeSlabKey}_group_price`]) || 0;
+      amount += quantities.group * groupPrice;
+      entries += quantities.group * 4;
+
+      const bulkPrice = Number(event.bulk_pass_price) || 0;
+      amount += quantities.bulk * bulkPrice;
+      entries += quantities.bulk * (Number(event.bulk_pass_entries) || 0);
+    }
 
     setTotalAmount(amount);
     setAllowedEntries(entries);
-  }, [quantities, activeSlabKey, event]);
+  }, [quantities, customQuantities, activeSlabKey, event]);
 
   const [paymentProof, setPaymentProof] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -168,10 +194,18 @@ export default function RegisterPage({
       setSubmitting(true);
 
       const tickets = [];
-      for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
-      for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
-      for (let i = 0; i < quantities.group; i++) tickets.push('group');
-      for (let i = 0; i < quantities.bulk; i++) tickets.push('bulk');
+      const isMarathon = event.category?.toLowerCase() === 'marathon';
+      
+      if (isMarathon) {
+        Object.keys(customQuantities).forEach(key => {
+          for (let i = 0; i < customQuantities[key]; i++) tickets.push(key);
+        });
+      } else {
+        for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
+        for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
+        for (let i = 0; i < quantities.group; i++) tickets.push('group');
+        for (let i = 0; i < quantities.bulk; i++) tickets.push('bulk');
+      }
 
       if (tickets.length === 0) {
         alert("Please select at least one pass!");
@@ -210,10 +244,18 @@ export default function RegisterPage({
       setOtpSending(true);
 
       const tickets = [];
-      for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
-      for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
-      for (let i = 0; i < quantities.group; i++) tickets.push('group');
-      for (let i = 0; i < quantities.bulk; i++) tickets.push('bulk');
+      const isMarathon = event.category?.toLowerCase() === 'marathon';
+      
+      if (isMarathon) {
+        Object.keys(customQuantities).forEach(key => {
+          for (let i = 0; i < customQuantities[key]; i++) tickets.push(key);
+        });
+      } else {
+        for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
+        for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
+        for (let i = 0; i < quantities.group; i++) tickets.push('group');
+        for (let i = 0; i < quantities.bulk; i++) tickets.push('bulk');
+      }
 
       const submitData = new FormData();
       submitData.append('full_name', formData.full_name);
@@ -283,6 +325,35 @@ export default function RegisterPage({
       </div>
     </div>
   );
+
+  const renderCustomCounter = (distanceName: string, price: number) => {
+    const qty = customQuantities[distanceName] || 0;
+    return (
+      <div key={distanceName} className="flex justify-between items-center p-5 bg-white/5 border border-white/10 rounded-3xl mb-4 hover:bg-white/10 transition">
+        <div>
+          <h3 className="text-xl font-bold">{distanceName}</h3>
+          <p className="text-gray-400 text-sm">1 Member • ₹{price}</p>
+        </div>
+        <div className="flex items-center gap-4 bg-black/40 p-2 rounded-2xl">
+          <button 
+            type="button" 
+            onClick={() => setCustomQuantities({...customQuantities, [distanceName]: Math.max(0, qty - 1)})}
+            className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
+          >
+            -
+          </button>
+          <span className="text-xl font-bold w-4 text-center">{qty}</span>
+          <button 
+            type="button"
+            onClick={() => setCustomQuantities({...customQuantities, [distanceName]: qty + 1})}
+            className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
+          >
+            +
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   // =====================================
   // RENDER BLOCKS
@@ -386,13 +457,26 @@ export default function RegisterPage({
         </div>
 
         <div className="mb-8">
-          {renderCounter('solo', 'Solo Pass', '1 Member', Number(event[`${activeSlabKey}_solo_price`]) || 0)}
-          {renderCounter('couple', 'Couple Pass', '2 Members', Number(event[`${activeSlabKey}_couple_price`]) || 0)}
-          {renderCounter('group', 'Group Pass', '4 Members', Number(event[`${activeSlabKey}_group_price`]) || 0)}
-          
-          {event.bulk_pass_price && 
-            renderCounter('bulk', 'Bulk Pass', `${event.bulk_pass_entries} Members`, Number(event.bulk_pass_price) || 0)
-          }
+          {event.category?.toLowerCase() === 'marathon' && event.custom_pricing ? (
+            (() => {
+              try {
+                const customPricing = typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing;
+                return customPricing.map((d: any) => renderCustomCounter(d.name, Number(d[activeSlabKey]) || 0));
+              } catch (e) {
+                return <p className="text-red-500">Error loading custom tickets.</p>;
+              }
+            })()
+          ) : (
+            <>
+              {renderCounter('solo', 'Solo Pass', '1 Member', Number(event[`${activeSlabKey}_solo_price`]) || 0)}
+              {renderCounter('couple', 'Couple Pass', '2 Members', Number(event[`${activeSlabKey}_couple_price`]) || 0)}
+              {renderCounter('group', 'Group Pass', '4 Members', Number(event[`${activeSlabKey}_group_price`]) || 0)}
+              
+              {event.bulk_pass_price && 
+                renderCounter('bulk', 'Bulk Pass', `${event.bulk_pass_entries} Members`, Number(event.bulk_pass_price) || 0)
+              }
+            </>
+          )}
         </div>
 
         {/* PAYMENT BOX */}
