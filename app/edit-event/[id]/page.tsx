@@ -151,12 +151,14 @@ export default function EditEventPage() {
           feature3_title: event.feature3_title || 'Experience',
           feature3_value: event.feature3_value || 'Live'
         });
-        try {
-          if (event.custom_pricing) {
-            setCustomPricing(typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing);
+
+        if (event.custom_pricing) {
+          try {
+            const parsed = typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing;
+            if (Array.isArray(parsed)) setCustomPricing(parsed);
+          } catch(e) {
+            console.error(e);
           }
-        } catch (e) {
-          console.error(e);
         }
       } catch (err) {
         console.log(err);
@@ -199,7 +201,10 @@ export default function EditEventPage() {
     setLoading(true);
 
     try {
-      const submitData = { ...formData, custom_pricing: JSON.stringify(customPricing) };
+      const submitData = {
+        ...formData,
+        custom_pricing: JSON.stringify(customPricing)
+      };
 
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/api/edit-event/${id}`,
@@ -725,8 +730,6 @@ Tell attendees what makes your event special...
               />
 
             </div>
-
-            {/* SLAB PRICING */}
 
             {formData.category.toLowerCase() === 'marathon' ? (
               <div className="mb-10">
