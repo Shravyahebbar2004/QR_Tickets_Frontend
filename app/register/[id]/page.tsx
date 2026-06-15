@@ -37,7 +37,7 @@ export default function RegisterPage({
     bulk: 0
   });
 
-  const [customQuantities, setCustomQuantities] = useState<{ [key: string]: number }>({});
+  const [selectedDistance, setSelectedDistance] = useState<string>('');
 
   const [activeSlabKey, setActiveSlabKey] = useState<string>('slab1');
   const [activeSlabName, setActiveSlabName] = useState<string>('Standard Ticket');
@@ -57,17 +57,14 @@ export default function RegisterPage({
           ? JSON.parse(event.custom_pricing) 
           : event.custom_pricing;
           
-        Object.keys(customQuantities).forEach(distanceName => {
-          const qty = customQuantities[distanceName];
-          if (qty > 0) {
-            const distanceDef = customPricing.find((d: any) => d.name === distanceName);
-            if (distanceDef) {
-              const price = Number(distanceDef[activeSlabKey]) || 0;
-              amount += qty * price;
-              entries += qty * 1; // 1 entry per marathon ticket
-            }
+        if (selectedDistance) {
+          const distanceDef = customPricing.find((d: any) => d.name === selectedDistance);
+          if (distanceDef) {
+            const price = Number(distanceDef[activeSlabKey]) || 0;
+            amount += price;
+            entries += 1; // 1 entry per marathon ticket
           }
-        });
+        }
       } catch (e) {
         console.error("Error parsing custom pricing", e);
       }
@@ -91,7 +88,7 @@ export default function RegisterPage({
 
     setTotalAmount(amount);
     setAllowedEntries(entries);
-  }, [quantities, customQuantities, activeSlabKey, event]);
+  }, [quantities, selectedDistance, activeSlabKey, event]);
 
   const [paymentProof, setPaymentProof] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -197,9 +194,9 @@ export default function RegisterPage({
       const isMarathon = event.category?.toLowerCase()?.trim() === 'marathon';
       
       if (isMarathon) {
-        Object.keys(customQuantities).forEach(key => {
-          for (let i = 0; i < customQuantities[key]; i++) tickets.push(key);
-        });
+        if (selectedDistance) {
+          tickets.push(selectedDistance);
+        }
       } else {
         for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
         for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
@@ -247,9 +244,9 @@ export default function RegisterPage({
       const isMarathon = event.category?.toLowerCase()?.trim() === 'marathon';
       
       if (isMarathon) {
-        Object.keys(customQuantities).forEach(key => {
-          for (let i = 0; i < customQuantities[key]; i++) tickets.push(key);
-        });
+        if (selectedDistance) {
+          tickets.push(selectedDistance);
+        }
       } else {
         for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
         for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
@@ -326,30 +323,22 @@ export default function RegisterPage({
     </div>
   );
 
-  const renderCustomCounter = (distanceName: string, price: number) => {
-    const qty = customQuantities[distanceName] || 0;
+  const renderCustomRadio = (distanceName: string, price: number) => {
+    const isSelected = selectedDistance === distanceName;
     return (
-      <div key={distanceName} className="flex justify-between items-center p-5 bg-white/5 border border-white/10 rounded-3xl mb-4 hover:bg-white/10 transition">
+      <div 
+        key={distanceName} 
+        onClick={() => setSelectedDistance(distanceName)}
+        className={`flex justify-between items-center p-5 bg-white/5 border ${isSelected ? 'border-cyan-400 bg-cyan-900/30' : 'border-white/10'} rounded-3xl mb-4 hover:bg-white/10 transition cursor-pointer`}
+      >
         <div>
           <h3 className="text-xl font-bold">{distanceName}</h3>
           <p className="text-gray-400 text-sm">1 Member • ₹{price}</p>
         </div>
-        <div className="flex items-center gap-4 bg-black/40 p-2 rounded-2xl">
-          <button 
-            type="button" 
-            onClick={() => setCustomQuantities({...customQuantities, [distanceName]: Math.max(0, qty - 1)})}
-            className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
-          >
-            -
-          </button>
-          <span className="text-xl font-bold w-4 text-center">{qty}</span>
-          <button 
-            type="button"
-            onClick={() => setCustomQuantities({...customQuantities, [distanceName]: qty + 1})}
-            className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
-          >
-            +
-          </button>
+        <div className="flex items-center gap-4">
+          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-cyan-400' : 'border-gray-500'}`}>
+            {isSelected && <div className="w-3 h-3 bg-cyan-400 rounded-full" />}
+          </div>
         </div>
       </div>
     );
@@ -461,7 +450,7 @@ export default function RegisterPage({
             (() => {
               try {
                 const customPricing = typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing;
-                return customPricing.map((d: any) => renderCustomCounter(d.name, Number(d[activeSlabKey]) || 0));
+                return customPricing.map((d: any) => renderCustomRadio(d.name, Number(d[activeSlabKey]) || 0));
               } catch (e) {
                 return <p className="text-red-500">Error loading custom tickets.</p>;
               }
