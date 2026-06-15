@@ -23,7 +23,10 @@ export default function RegisterPage({
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
-    phone_number: ''
+    phone_number: '',
+    emergency_contact_name: '',
+    emergency_contact: '',
+    blood_group: ''
   });
 
   const [quantities, setQuantities] = useState({
@@ -148,6 +151,9 @@ export default function RegisterPage({
       submitData.append('full_name', formData.full_name);
       submitData.append('email', formData.email);
       submitData.append('phone_number', formData.phone_number);
+      submitData.append('emergency_contact_name', formData.emergency_contact_name);
+      submitData.append('emergency_contact', formData.emergency_contact);
+      submitData.append('blood_group', formData.blood_group);
       
       // We pass tickets array as JSON
       submitData.append('tickets', JSON.stringify(tickets));
@@ -272,6 +278,33 @@ export default function RegisterPage({
           name="phone_number"
           placeholder="Phone Number"
           value={formData.phone_number}
+          onChange={handleChange}
+          required
+          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
+        />
+        <input
+          type="text"
+          name="emergency_contact_name"
+          placeholder="Emergency Contact Name"
+          value={formData.emergency_contact_name}
+          onChange={handleChange}
+          required
+          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
+        />
+        <input
+          type="text"
+          name="emergency_contact"
+          placeholder="Emergency Contact Number"
+          value={formData.emergency_contact}
+          onChange={handleChange}
+          required
+          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
+        />
+        <input
+          type="text"
+          name="blood_group"
+          placeholder="Blood Group"
+          value={formData.blood_group}
           onChange={handleChange}
           required
           className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-8 focus:ring-2 focus:ring-violet-500 outline-none"

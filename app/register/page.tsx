@@ -14,7 +14,10 @@ export default function RegisterPage() {
     full_name: '',
     email: '',
     phone_number: '',
-    ticket_type: 'solo'
+    ticket_type: 'solo',
+    emergency_contact_name: '',
+    emergency_contact: '',
+    blood_group: ''
 
   });
 
@@ -148,6 +151,21 @@ export default function RegisterPage() {
         formData.ticket_type
       );
 
+      data.append(
+        'emergency_contact_name',
+        formData.emergency_contact_name
+      );
+
+      data.append(
+        'emergency_contact',
+        formData.emergency_contact
+      );
+
+      data.append(
+        'blood_group',
+        formData.blood_group
+      );
+
       if (paymentProof) {
 
         data.append(
@@ -187,7 +205,10 @@ export default function RegisterPage() {
         full_name: '',
         email: '',
         phone_number: '',
-        ticket_type: 'solo'
+        ticket_type: 'solo',
+        emergency_contact_name: '',
+        emergency_contact: '',
+        blood_group: ''
 
       });
 
@@ -367,6 +388,105 @@ export default function RegisterPage() {
             placeholder="Phone Number"
 
             value={formData.phone_number}
+
+            onChange={handleChange}
+
+            required
+
+            className="
+              w-full
+              p-4
+              mb-5
+              rounded-xl
+              bg-black
+              border
+              border-gray-700
+              text-white
+              placeholder-gray-400
+              focus:outline-none
+              focus:ring-2
+              focus:ring-yellow-400
+            "
+
+          />
+
+          {/* EMERGENCY CONTACT NAME */}
+
+          <input
+
+            type="text"
+
+            name="emergency_contact_name"
+
+            placeholder="Emergency Contact Name"
+
+            value={formData.emergency_contact_name}
+
+            onChange={handleChange}
+
+            required
+
+            className="
+              w-full
+              p-4
+              mb-5
+              rounded-xl
+              bg-black
+              border
+              border-gray-700
+              text-white
+              placeholder-gray-400
+              focus:outline-none
+              focus:ring-2
+              focus:ring-yellow-400
+            "
+
+          />
+
+          {/* EMERGENCY CONTACT NUMBER */}
+
+          <input
+
+            type="text"
+
+            name="emergency_contact"
+
+            placeholder="Emergency Contact Number"
+
+            value={formData.emergency_contact}
+
+            onChange={handleChange}
+
+            required
+
+            className="
+              w-full
+              p-4
+              mb-5
+              rounded-xl
+              bg-black
+              border
+              border-gray-700
+              text-white
+              placeholder-gray-400
+              focus:outline-none
+              focus:ring-2
+              focus:ring-yellow-400
+            "
+
+          />
+
+          {/* BLOOD GROUP */}
+
+          <input
+
+            type="text"
+
+            name="blood_group"
+
+            placeholder="Blood Group"
+
+            value={formData.blood_group}
 
             onChange={handleChange}
 
