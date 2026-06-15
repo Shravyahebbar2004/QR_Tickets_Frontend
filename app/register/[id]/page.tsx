@@ -27,7 +27,8 @@ export default function RegisterPage({
     phone_number: '',
     emergency_contact_name: '',
     emergency_contact: '',
-    blood_group: ''
+    blood_group: '',
+    gender: ''
   });
 
   const [quantities, setQuantities] = useState({
@@ -263,6 +264,7 @@ export default function RegisterPage({
       submitData.append('emergency_contact_name', formData.emergency_contact_name);
       submitData.append('emergency_contact', formData.emergency_contact);
       submitData.append('blood_group', formData.blood_group);
+      submitData.append('gender', formData.gender);
       
       // We pass tickets array as JSON
       submitData.append('tickets', JSON.stringify(tickets));
@@ -530,9 +532,24 @@ export default function RegisterPage({
           value={formData.blood_group}
           onChange={handleChange}
           required
-          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-8 focus:ring-2 focus:ring-violet-500 outline-none"
+          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
         />
 
+        {event.category?.toLowerCase()?.trim() === 'marathon' && (
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange as any}
+            required
+            className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-8 focus:ring-2 focus:ring-violet-500 outline-none text-gray-300"
+          >
+            <option value="" disabled>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        )}
+        
         {/* TICKET SELECTION */}
         <div className="mb-4">
           <p className="text-gray-400 mb-2">Active Pricing Tier: <span className="text-cyan-300 font-bold">{activeSlabName}</span></p>
