@@ -83,6 +83,24 @@ export default function EditEventPage() {
   const [loading, setLoading] =
     useState(false);
 
+  // NEW STATE FOR CUSTOM PRICING
+  const [customPricing, setCustomPricing] = useState<any[]>([]);
+
+  const addCustomDistance = () => {
+    setCustomPricing([...customPricing, { name: '', slab1: '', slab2: '', slab3: '' }]);
+  };
+
+  const updateCustomDistance = (index: number, field: string, value: string) => {
+    const updated = [...customPricing];
+    updated[index][field] = value;
+    setCustomPricing(updated);
+  };
+  
+  const removeCustomDistance = (index: number) => {
+    const updated = customPricing.filter((_, i) => i !== index);
+    setCustomPricing(updated);
+  };
+
   // =====================================
   // FETCH EVENT DATA
   // =====================================
@@ -133,6 +151,13 @@ export default function EditEventPage() {
           feature3_title: event.feature3_title || 'Experience',
           feature3_value: event.feature3_value || 'Live'
         });
+        try {
+          if (event.custom_pricing) {
+            setCustomPricing(typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing);
+          }
+        } catch (e) {
+          console.error(e);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -174,10 +199,11 @@ export default function EditEventPage() {
     setLoading(true);
 
     try {
+      const submitData = { ...formData, custom_pricing: JSON.stringify(customPricing) };
 
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/api/edit-event/${id}`,
-        formData,
+        submitData,
         {
           headers: { 'Content-Type': 'application/json' }
         }
@@ -702,85 +728,143 @@ Tell attendees what makes your event special...
 
             {/* SLAB PRICING */}
 
-            <div className="mb-10">
-              <h2 className="text-2xl font-bold mb-6 text-cyan-300">
-                Ticket Pricing Slabs
-              </h2>
-              <div className="grid md:grid-cols-3 gap-5">
-                {/* SLAB 1 */}
-                <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
-                  <h3 className="font-bold mb-4">Slab 1 (Early Bird)</h3>
-                  <label className="block text-gray-400 text-sm mb-2">Deadline</label>
-                  <input type="datetime-local" name="slab1_deadline" value={formData.slab1_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
-                  <input type="number" name="slab1_solo_price" value={formData.slab1_solo_price} onChange={handleChange} placeholder="299" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
-                  <input type="number" name="slab1_couple_price" value={formData.slab1_couple_price} onChange={handleChange} placeholder="499" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
-                  <input type="number" name="slab1_group_price" value={formData.slab1_group_price} onChange={handleChange} placeholder="999" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
-                </div>
-                {/* SLAB 2 */}
-                <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
-                  <h3 className="font-bold mb-4">Slab 2 (Regular)</h3>
-                  <label className="block text-gray-400 text-sm mb-2">Deadline</label>
-                  <input type="datetime-local" name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
-                  <input type="number" name="slab2_solo_price" value={formData.slab2_solo_price} onChange={handleChange} placeholder="399" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
-                  <input type="number" name="slab2_couple_price" value={formData.slab2_couple_price} onChange={handleChange} placeholder="699" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
-                  <input type="number" name="slab2_group_price" value={formData.slab2_group_price} onChange={handleChange} placeholder="1299" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
-                </div>
-                {/* SLAB 3 */}
-                <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
-                  <h3 className="font-bold mb-4">Slab 3 (Late)</h3>
-                  <label className="block text-gray-400 text-sm mb-2">Deadline</label>
-                  <input type="datetime-local" name="slab3_deadline" value={formData.slab3_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
-                  <input type="number" name="slab3_solo_price" value={formData.slab3_solo_price} onChange={handleChange} placeholder="499" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
-                  <input type="number" name="slab3_couple_price" value={formData.slab3_couple_price} onChange={handleChange} placeholder="899" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                  <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
-                  <input type="number" name="slab3_group_price" value={formData.slab3_group_price} onChange={handleChange} placeholder="1599" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
-                </div>
-              </div>
-            </div>
+            {formData.category.toLowerCase() === 'marathon' ? (
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold mb-6 text-cyan-300">
+                  Manage Marathon Distances
+                </h2>
+                <div className="bg-black/20 p-6 rounded-3xl border border-cyan-500/30">
+                  <p className="text-gray-400 mb-6">
+                    Add custom distances (e.g. 3k, 5k) and set their prices across all 3 slabs. Attendees will select from these options.
+                  </p>
+                  
+                  {/* Global Slab Deadlines */}
+                  <div className="grid md:grid-cols-3 gap-5 mb-8 bg-black/40 p-5 rounded-2xl border border-white/5">
+                    <div>
+                      <label className="block text-gray-400 text-sm mb-2">Slab 1 Deadline</label>
+                      <input type="datetime-local" name="slab1_deadline" value={formData.slab1_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
+                    </div>
+                    <div>
+                      <label className="block text-gray-400 text-sm mb-2">Slab 2 Deadline</label>
+                      <input type="datetime-local" name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
+                    </div>
+                    <div>
+                      <label className="block text-gray-400 text-sm mb-2">Slab 3 Deadline</label>
+                      <input type="datetime-local" name="slab3_deadline" value={formData.slab3_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
+                    </div>
+                  </div>
 
-            {/* BULK PASS */}
-            <div className="mb-10">
-              <h2 className="text-2xl font-bold mb-6 text-pink-300">
-                Bulk Pass Options (Optional)
-              </h2>
-              <div className="bg-black/20 p-6 rounded-3xl border border-pink-500/30">
-                <p className="text-gray-400 mb-6">
-                  Offer a custom bulk ticket that allows users to register multiple members at a flat price.
-                </p>
-                <div className="grid md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-gray-300 text-lg mb-2">Flat Price (₹)</label>
-                    <input 
-                      type="number" 
-                      name="bulk_pass_price" 
-                      value={formData.bulk_pass_price} 
-                      onChange={handleChange} 
-                      placeholder="5000" 
-                      className="w-full p-4 rounded-2xl bg-black/40 border border-white/10 text-white" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-300 text-lg mb-2">Number of Members</label>
-                    <input 
-                      type="number" 
-                      name="bulk_pass_entries" 
-                      value={formData.bulk_pass_entries} 
-                      onChange={handleChange} 
-                      placeholder="10" 
-                      className="w-full p-4 rounded-2xl bg-black/40 border border-white/10 text-white" 
-                    />
-                  </div>
+                  {customPricing.map((item, index) => (
+                    <div key={index} className="grid md:grid-cols-4 gap-4 mb-4 p-4 bg-white/5 border border-white/10 rounded-2xl relative">
+                      <button type="button" onClick={() => removeCustomDistance(index)} className="absolute -top-3 -right-3 bg-red-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white hover:scale-110 transition">✕</button>
+                      <div>
+                        <label className="block text-gray-400 text-sm mb-2">Distance Name</label>
+                        <input type="text" placeholder="e.g. 5k" value={item.name} onChange={(e) => updateCustomDistance(index, 'name', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      </div>
+                      <div>
+                        <label className="block text-gray-400 text-sm mb-2">Slab 1 Price (₹)</label>
+                        <input type="number" placeholder="299" value={item.slab1} onChange={(e) => updateCustomDistance(index, 'slab1', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      </div>
+                      <div>
+                        <label className="block text-gray-400 text-sm mb-2">Slab 2 Price (₹)</label>
+                        <input type="number" placeholder="399" value={item.slab2} onChange={(e) => updateCustomDistance(index, 'slab2', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      </div>
+                      <div>
+                        <label className="block text-gray-400 text-sm mb-2">Slab 3 Price (₹)</label>
+                        <input type="number" placeholder="499" value={item.slab3} onChange={(e) => updateCustomDistance(index, 'slab3', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <button type="button" onClick={addCustomDistance} className="w-full py-4 mt-2 border-2 border-dashed border-cyan-500/50 text-cyan-400 font-bold rounded-2xl hover:bg-cyan-500/10 transition">
+                    + Add Distance Option
+                  </button>
                 </div>
               </div>
-            </div>
+            ) : (
+              <>
+                {/* SLAB PRICING */}
+                <div className="mb-10">
+                  <h2 className="text-2xl font-bold mb-6 text-cyan-300">
+                    Ticket Pricing Slabs
+                  </h2>
+                  <div className="grid md:grid-cols-3 gap-5">
+                    {/* SLAB 1 */}
+                    <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
+                      <h3 className="font-bold mb-4">Slab 1 (Early Bird)</h3>
+                      <label className="block text-gray-400 text-sm mb-2">Deadline</label>
+                      <input type="datetime-local" name="slab1_deadline" value={formData.slab1_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
+                      <input type="number" name="slab1_solo_price" value={formData.slab1_solo_price} onChange={handleChange} placeholder="299" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
+                      <input type="number" name="slab1_couple_price" value={formData.slab1_couple_price} onChange={handleChange} placeholder="499" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
+                      <input type="number" name="slab1_group_price" value={formData.slab1_group_price} onChange={handleChange} placeholder="999" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                    </div>
+                    {/* SLAB 2 */}
+                    <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
+                      <h3 className="font-bold mb-4">Slab 2 (Regular)</h3>
+                      <label className="block text-gray-400 text-sm mb-2">Deadline</label>
+                      <input type="datetime-local" name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
+                      <input type="number" name="slab2_solo_price" value={formData.slab2_solo_price} onChange={handleChange} placeholder="399" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
+                      <input type="number" name="slab2_couple_price" value={formData.slab2_couple_price} onChange={handleChange} placeholder="699" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
+                      <input type="number" name="slab2_group_price" value={formData.slab2_group_price} onChange={handleChange} placeholder="1299" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                    </div>
+                    {/* SLAB 3 */}
+                    <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
+                      <h3 className="font-bold mb-4">Slab 3 (Late)</h3>
+                      <label className="block text-gray-400 text-sm mb-2">Deadline</label>
+                      <input type="datetime-local" name="slab3_deadline" value={formData.slab3_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
+                      <input type="number" name="slab3_solo_price" value={formData.slab3_solo_price} onChange={handleChange} placeholder="499" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
+                      <input type="number" name="slab3_couple_price" value={formData.slab3_couple_price} onChange={handleChange} placeholder="899" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
+                      <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
+                      <input type="number" name="slab3_group_price" value={formData.slab3_group_price} onChange={handleChange} placeholder="1599" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* BULK PASS */}
+                <div className="mb-10">
+                  <h2 className="text-2xl font-bold mb-6 text-pink-300">
+                    Bulk Pass Options (Optional)
+                  </h2>
+                  <div className="bg-black/20 p-6 rounded-3xl border border-pink-500/30">
+                    <p className="text-gray-400 mb-6">
+                      Offer a custom bulk ticket that allows users to register multiple members at a flat price.
+                    </p>
+                    <div className="grid md:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-gray-300 text-lg mb-2">Flat Price (₹)</label>
+                        <input 
+                          type="number" 
+                          name="bulk_pass_price" 
+                          value={formData.bulk_pass_price} 
+                          onChange={handleChange} 
+                          placeholder="5000" 
+                          className="w-full p-4 rounded-2xl bg-black/40 border border-white/10 text-white" 
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-300 text-lg mb-2">Number of Members</label>
+                        <input 
+                          type="number" 
+                          name="bulk_pass_entries" 
+                          value={formData.bulk_pass_entries} 
+                          onChange={handleChange} 
+                          placeholder="10" 
+                          className="w-full p-4 rounded-2xl bg-black/40 border border-white/10 text-white" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* EVENT HIGHLIGHTS */}
 
