@@ -31,14 +31,14 @@ export default function RegisterPage({
     gender: ''
   });
 
-  const [quantities, setQuantities] = useState({
+  const [quantities, setQuantities] = useState<Record<string, number>>({
     solo: 0,
     couple: 0,
     group: 0,
     bulk: 0
   });
 
-  const [selectedDistance, setSelectedDistance] = useState<string>('');
+  const [participants, setParticipants] = useState<any[]>([]);
 
   const [step, setStep] = useState(1);
 
@@ -60,14 +60,12 @@ export default function RegisterPage({
           ? JSON.parse(event.custom_pricing) 
           : event.custom_pricing;
           
-        if (selectedDistance) {
-          const distanceDef = customPricing.find((d: any) => d.name === selectedDistance);
-          if (distanceDef) {
-            const price = Number(distanceDef[activeSlabKey]) || 0;
-            amount += price;
-            entries += 1; // 1 entry per marathon ticket
-          }
-        }
+        customPricing.forEach((d: any) => {
+          const qty = quantities[d.name] || 0;
+          const price = Number(d[activeSlabKey]) || 0;
+          amount += price * qty;
+          entries += qty; // 1 entry per marathon ticket
+        });
       } catch (e) {
         console.error("Error parsing custom pricing", e);
       }
@@ -91,7 +89,7 @@ export default function RegisterPage({
 
     setTotalAmount(amount);
     setAllowedEntries(entries);
-  }, [quantities, selectedDistance, activeSlabKey, event]);
+  }, [quantities, activeSlabKey, event]);
 
   const [paymentProof, setPaymentProof] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -149,11 +147,17 @@ export default function RegisterPage({
   // HANDLE INPUT CHANGE
   // =====================================
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleParticipantChange = (index: number, field: string, value: string) => {
+    const updated = [...participants];
+    updated[index] = { ...updated[index], [field]: value };
+    setParticipants(updated);
   };
 
   // =====================================
@@ -193,13 +197,11 @@ export default function RegisterPage({
     try {
       setSubmitting(true);
 
-      const tickets = [];
+      const tickets: string[] = [];
       const isMarathon = event.category?.toLowerCase()?.trim() === 'marathon';
       
       if (isMarathon) {
-        if (selectedDistance) {
-          tickets.push(selectedDistance);
-        }
+        participants.forEach(p => tickets.push(p.ticket_type));
       } else {
         for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
         for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
@@ -243,13 +245,11 @@ export default function RegisterPage({
     try {
       setOtpSending(true);
 
-      const tickets = [];
+      const tickets: string[] = [];
       const isMarathon = event.category?.toLowerCase()?.trim() === 'marathon';
       
       if (isMarathon) {
-        if (selectedDistance) {
-          tickets.push(selectedDistance);
-        }
+        participants.forEach(p => tickets.push(p.ticket_type));
       } else {
         for (let i = 0; i < quantities.solo; i++) tickets.push('solo');
         for (let i = 0; i < quantities.couple; i++) tickets.push('couple');
@@ -258,16 +258,20 @@ export default function RegisterPage({
       }
 
       const submitData = new FormData();
-      submitData.append('full_name', formData.full_name);
+      submitData.append('full_name', formData.full_name || (isMarathon && participants.length > 0 ? participants[0].full_name : 'Group Purchaser'));
       submitData.append('email', formData.email);
       submitData.append('phone_number', formData.phone_number);
       submitData.append('emergency_contact_name', formData.emergency_contact_name);
       submitData.append('emergency_contact', formData.emergency_contact);
-      submitData.append('blood_group', formData.blood_group);
-      submitData.append('gender', formData.gender);
+      submitData.append('blood_group', formData.blood_group || '');
+      submitData.append('gender', formData.gender || '');
       
       // We pass tickets array as JSON
       submitData.append('tickets', JSON.stringify(tickets));
+      
+      if (isMarathon) {
+        submitData.append('participants', JSON.stringify(participants));
+      }
       
       submitData.append('total_amount', totalAmount.toString());
       submitData.append('allowed_entries', allowedEntries.toString());
@@ -301,7 +305,7 @@ export default function RegisterPage({
   // UI HELPERS
   // =====================================
 
-  const renderCounter = (type: 'solo' | 'couple' | 'group' | 'bulk', label: string, subtitle: string, price: number) => (
+  const renderCounter = (type: string, label: string, subtitle: string, price: number) => (
     <div className="flex justify-between items-center p-5 bg-white/5 border border-white/10 rounded-3xl mb-4 hover:bg-white/10 transition">
       <div>
         <h3 className="text-xl font-bold">{label}</h3>
@@ -327,26 +331,7 @@ export default function RegisterPage({
     </div>
   );
 
-  const renderCustomRadio = (distanceName: string, price: number) => {
-    const isSelected = selectedDistance === distanceName;
-    return (
-      <div 
-        key={distanceName} 
-        onClick={() => setSelectedDistance(distanceName)}
-        className={`flex justify-between items-center p-5 bg-white/5 border ${isSelected ? 'border-cyan-400 bg-cyan-900/30' : 'border-white/10'} rounded-3xl mb-4 hover:bg-white/10 transition cursor-pointer`}
-      >
-        <div>
-          <h3 className="text-xl font-bold">{distanceName}</h3>
-          <p className="text-gray-400 text-sm">1 Member • ₹{price}</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-cyan-400' : 'border-gray-500'}`}>
-            {isSelected && <div className="w-3 h-3 bg-cyan-400 rounded-full" />}
-          </div>
-        </div>
-      </div>
-    );
-  };
+
 
   // =====================================
   // RENDER BLOCKS
@@ -391,25 +376,11 @@ export default function RegisterPage({
               try {
                 const customPricing = typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing;
                 return customPricing.map((d: any) => {
-                  const isSelected = selectedDistance === d.name;
                   const price = Number(d[activeSlabKey]) || 0;
-                  
                   return (
-                    <div 
-                      key={d.name}
-                      onClick={() => setSelectedDistance(d.name)}
-                      className={`p-6 md:p-8 rounded-3xl border-2 cursor-pointer transition-all duration-300 ${isSelected ? 'border-cyan-400 bg-cyan-900/20 shadow-[0_0_30px_rgba(34,211,238,0.15)]' : 'border-white/10 bg-black/40 hover:border-white/30'}`}
-                    >
-                      <div className="flex justify-between items-start mb-6">
-                        <div>
-                          <h3 className="text-3xl font-black text-white mb-2">{d.name}</h3>
-                          <p className="text-cyan-300 font-bold text-xl">₹{price} <span className="text-gray-500 text-sm font-normal">/ member</span></p>
-                        </div>
-                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-cyan-400' : 'border-gray-500'}`}>
-                          {isSelected && <div className="w-4 h-4 bg-cyan-400 rounded-full" />}
-                        </div>
-                      </div>
-
+                    <div key={d.name} className="p-6 md:p-8 rounded-3xl border-2 border-white/10 bg-black/40 mb-4">
+                      {renderCounter(d.name, d.name, "1 Member", price)}
+                      
                       {/* EXTRA INFO GRID */}
                       <div className="grid md:grid-cols-2 gap-4 mt-6 border-t border-white/10 pt-6">
                         {d.bib_collection && (
@@ -462,11 +433,26 @@ export default function RegisterPage({
 
           <button
             onClick={() => {
-              if (!selectedDistance) return alert('Please select a distance to continue.');
+              if (totalAmount === 0 || allowedEntries === 0) return alert('Please add at least one ticket to your cart.');
+              
+              const newParticipants: any[] = [];
+              Object.entries(quantities).forEach(([type, count]) => {
+                if (count > 0) {
+                  for (let i = 0; i < count; i++) {
+                    newParticipants.push({
+                      ticket_type: type,
+                      full_name: '',
+                      blood_group: '',
+                      gender: ''
+                    });
+                  }
+                }
+              });
+              setParticipants(newParticipants);
               setStep(2);
             }}
             className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-black text-xl py-5 rounded-2xl transition shadow-[0_0_30px_rgba(34,211,238,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!selectedDistance}
+            disabled={totalAmount === 0}
           >
             Proceed to Registration
           </button>
@@ -479,16 +465,20 @@ export default function RegisterPage({
         <h1 className="text-5xl font-black mb-3">{event.title}</h1>
         <p className="text-gray-400 mb-10">Register for this event</p>
 
-        {/* DETAILS */}
-        <input
-          type="text"
-          name="full_name"
-          placeholder="Full Name"
-          value={formData.full_name}
-          onChange={handleChange}
-          required
-          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
-        />
+        {/* PRIMARY CONTACT DETAILS */}
+        <h2 className="text-2xl font-bold text-violet-300 mb-4 border-b border-white/10 pb-2">Primary Contact (Purchaser)</h2>
+        
+        {event.category?.toLowerCase()?.trim() !== 'marathon' && (
+          <input
+            type="text"
+            name="full_name"
+            placeholder="Full Name"
+            value={formData.full_name}
+            onChange={handleChange}
+            required
+            className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
+          />
+        )}
         <input
           type="email"
           name="email"
@@ -525,32 +515,74 @@ export default function RegisterPage({
           required
           className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
         />
-        <input
-          type="text"
-          name="blood_group"
-          placeholder="Blood Group"
-          value={formData.blood_group}
-          onChange={handleChange}
-          required
-          className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
-        />
+        {event.category?.toLowerCase()?.trim() !== 'marathon' && (
+          <>
+            <input
+              type="text"
+              name="blood_group"
+              placeholder="Blood Group"
+              value={formData.blood_group}
+              onChange={handleChange}
+              required
+              className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
+            />
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              required
+              className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-8 focus:ring-2 focus:ring-violet-500 outline-none text-gray-300"
+            >
+              <option value="" disabled>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </>
+        )}
 
-        {event.category?.toLowerCase()?.trim() === 'marathon' && (
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange as any}
-            required
-            className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-8 focus:ring-2 focus:ring-violet-500 outline-none text-gray-300"
-          >
-            <option value="" disabled>Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
+        {/* PARTICIPANT DETAILS (MARATHON ONLY) */}
+        {event.category?.toLowerCase()?.trim() === 'marathon' && participants.length > 0 && (
+          <div className="mt-8 mb-8 space-y-6">
+            <h2 className="text-2xl font-bold text-cyan-300 mb-4 border-b border-white/10 pb-2">Participant Details</h2>
+            {participants.map((p, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 p-5 rounded-2xl">
+                <h3 className="text-lg font-bold mb-4 text-gray-300">Participant {i + 1} • <span className="text-cyan-400">{p.ticket_type}</span></h3>
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={p.full_name}
+                  onChange={(e) => handleParticipantChange(i, 'full_name', e.target.value)}
+                  required
+                  className="w-full p-3 rounded-xl bg-black/30 border border-white/10 mb-4 focus:ring-2 focus:ring-cyan-500 outline-none"
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <select
+                    value={p.gender}
+                    onChange={(e) => handleParticipantChange(i, 'gender', e.target.value)}
+                    required
+                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-gray-300"
+                  >
+                    <option value="" disabled>Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Blood Group"
+                    value={p.blood_group}
+                    onChange={(e) => handleParticipantChange(i, 'blood_group', e.target.value)}
+                    required
+                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
         
-        {/* TICKET SELECTION */}
+        {/* TICKET SELECTION OVERVIEW */}
         <div className="mb-4">
           <p className="text-gray-400 mb-2">Active Pricing Tier: <span className="text-cyan-300 font-bold">{activeSlabName}</span></p>
         </div>
@@ -558,8 +590,10 @@ export default function RegisterPage({
           {event.category?.toLowerCase()?.trim() === 'marathon' && event.custom_pricing ? (
             <div className="bg-cyan-900/20 border border-cyan-500/30 p-5 rounded-2xl flex justify-between items-center">
               <div>
-                <p className="text-cyan-300 font-bold mb-1">Selected Distance</p>
-                <h3 className="text-2xl font-black text-white">{selectedDistance}</h3>
+                <p className="text-cyan-300 font-bold mb-1">Tickets in Cart</p>
+                <h3 className="text-2xl font-black text-white">
+                  {Object.entries(quantities).filter(([_, v]) => v > 0).map(([k, v]) => `${v}x ${k}`).join(', ')}
+                </h3>
               </div>
               <button 
                 type="button" 
