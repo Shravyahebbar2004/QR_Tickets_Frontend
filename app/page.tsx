@@ -52,13 +52,16 @@ export default function HomePage() {
   const [loading, setLoading] =
     useState(true);
 
-  // FETCH EVENTS //
+  // AUTH CHECK & FETCH EVENTS //
 
   useEffect(() => {
-
-    fetchEvents();
-
-  }, []);
+    const token = localStorage.getItem('platform_token');
+    if (!token) {
+      router.push('/login');
+    } else {
+      fetchEvents();
+    }
+  }, [router]);
 
   const fetchEvents = async () => {
 
@@ -327,25 +330,26 @@ export default function HomePage() {
 
             </Link>
 
-            <Link href="/admin-login">
-
-              <button className="
-                bg-cyan-500
-                hover:bg-cyan-600
+            <button 
+              onClick={() => {
+                localStorage.removeItem('platform_token');
+                router.push('/login');
+              }}
+              className="
+                bg-red-500
+                hover:bg-red-600
                 px-6
                 py-3
                 rounded-2xl
                 font-bold
                 transition
                 shadow-lg
-                shadow-cyan-500/30
+                shadow-red-500/30
                 hover:scale-105
-                text-black
+                text-white
               ">
-                Organizer Login
-              </button>
-
-            </Link>
+              Platform Logout
+            </button>
 
           </div>
 
@@ -386,20 +390,20 @@ export default function HomePage() {
 
             </Link>
 
-            <Link href="/admin-login">
-
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="
-                  text-4xl
-                  font-black
-                  text-violet-300
-                "
-              >
-                Organizer Login
-              </button>
-
-            </Link>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                localStorage.removeItem('platform_token');
+                router.push('/login');
+              }}
+              className="
+                text-4xl
+                font-black
+                text-red-400
+              "
+            >
+              Platform Logout
+            </button>
 
           </div>
 

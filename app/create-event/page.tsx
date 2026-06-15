@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import axios from 'axios';
 
@@ -28,6 +28,16 @@ import { motion } from 'framer-motion';
 export default function CreateEventPage() {
 
     const router = useRouter();
+
+  // =====================================
+  // AUTH CHECK
+  // =====================================
+  useEffect(() => {
+    const token = localStorage.getItem('platform_token');
+    if (!token) {
+      router.push('/login');
+    }
+  }, [router]);
 
   // =====================================
   // FORM STATE

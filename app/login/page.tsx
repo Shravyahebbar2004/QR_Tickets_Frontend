@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, Sparkles } from 'lucide-react';
+import { Lock, Mail, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
 
-export default function PlatformSignup() {
+export default function PlatformLogin() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
@@ -20,13 +21,13 @@ export default function PlatformSignup() {
     setError('');
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/platform/signup`, formData);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/platform/login`, formData);
       if (response.data.success) {
-        alert('Platform Owner Account Created Successfully ✅');
-        router.push('/login');
+        localStorage.setItem('platform_token', response.data.token);
+        router.push('/');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Signup failed');
+      setError(err.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -40,12 +41,12 @@ export default function PlatformSignup() {
 
       <div className="relative z-10 w-full max-w-md bg-white/5 border border-white/10 p-10 rounded-[40px] backdrop-blur-xl shadow-2xl">
         <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-violet-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-violet-500/30">
-            <Sparkles className="text-white" size={32} />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+            <ShieldCheck className="text-white" size={32} />
           </div>
         </div>
-        <h1 className="text-3xl font-black text-center text-white mb-2">Owner Signup</h1>
-        <p className="text-gray-400 text-center mb-8">Register the authorized owner account.</p>
+        <h1 className="text-3xl font-black text-center text-white mb-2">Platform Login</h1>
+        <p className="text-gray-400 text-center mb-8">Access the main EventFlow platform.</p>
 
         {error && (
           <div className="bg-red-500/20 border border-red-500/50 text-red-300 p-4 rounded-xl mb-6 text-center">
@@ -55,7 +56,7 @@ export default function PlatformSignup() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-gray-300 mb-2 font-medium">Authorized Email</label>
+            <label className="block text-gray-300 mb-2 font-medium">Email</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
               <input 
@@ -63,7 +64,7 @@ export default function PlatformSignup() {
                 required 
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-12 text-white outline-none focus:border-violet-500 transition focus:ring-2 focus:ring-violet-500/50" 
+                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-12 text-white outline-none focus:border-cyan-500 transition focus:ring-2 focus:ring-cyan-500/50" 
                 placeholder="shravyahebbar07@gmail.com"
               />
             </div>
@@ -77,7 +78,7 @@ export default function PlatformSignup() {
                 required 
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-12 text-white outline-none focus:border-violet-500 transition focus:ring-2 focus:ring-violet-500/50" 
+                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-12 text-white outline-none focus:border-cyan-500 transition focus:ring-2 focus:ring-cyan-500/50" 
                 placeholder="••••••••"
               />
             </div>
@@ -85,11 +86,15 @@ export default function PlatformSignup() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-violet-500 hover:bg-violet-600 text-white font-bold py-4 rounded-2xl transition shadow-lg shadow-violet-500/30 disabled:opacity-50 mt-4"
+            className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 rounded-2xl transition shadow-lg shadow-cyan-500/30 disabled:opacity-50 mt-4"
           >
-            {loading ? 'Creating Account...' : 'Create Owner Account'}
+            {loading ? 'Authenticating...' : 'Login'}
           </button>
         </form>
+
+        <p className="text-center text-gray-400 mt-6">
+          Not the owner? <Link href="/signup" className="text-cyan-400 hover:text-cyan-300 font-bold">Sign Up Here</Link>
+        </p>
       </div>
     </div>
   );
