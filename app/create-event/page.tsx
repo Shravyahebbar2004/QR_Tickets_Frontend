@@ -97,7 +97,7 @@ export default function CreateEventPage() {
   const [customPricing, setCustomPricing] = useState<any[]>([]);
 
   const addCustomDistance = () => {
-    setCustomPricing([...customPricing, { name: '', slab1: '', slab2: '', slab3: '', bib_collection: '', reporting_time: '', start_time: '', wave_allocation: '', route_map_url: '', additional_info: '' }]);
+    setCustomPricing([...customPricing, { name: '', slab1: '', slab2: '', slab3: '', bib_collection: '', start_time: '', wave_size: '100', wave_gap_mins: '15', route_map_url: '', additional_info: '' }]);
   };
 
   const updateCustomDistance = (index: number, field: string, value: string) => {
@@ -938,16 +938,16 @@ Tell attendees what makes your event special...
                             <input type="text" placeholder="e.g. Oct 10th, Expo Center" value={item.bib_collection || ''} onChange={(e) => updateCustomDistance(index, 'bib_collection', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
                           </div>
                           <div>
-                            <label className="block text-gray-400 text-xs mb-2">Reporting Time</label>
-                            <input type="text" placeholder="e.g. 5:00 AM" value={item.reporting_time || ''} onChange={(e) => updateCustomDistance(index, 'reporting_time', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                            <label className="block text-gray-400 text-xs mb-2">Base Race Start Time</label>
+                            <input type="datetime-local" value={item.start_time || ''} onChange={(e) => updateCustomDistance(index, 'start_time', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
                           </div>
                           <div>
-                            <label className="block text-gray-400 text-xs mb-2">Race Start Time</label>
-                            <input type="text" placeholder="e.g. 6:00 AM" value={item.start_time || ''} onChange={(e) => updateCustomDistance(index, 'start_time', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                            <label className="block text-gray-400 text-xs mb-2">Wave Size (Runners per Wave)</label>
+                            <input type="number" placeholder="100" value={item.wave_size || '100'} onChange={(e) => updateCustomDistance(index, 'wave_size', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
                           </div>
                           <div>
-                            <label className="block text-gray-400 text-xs mb-2">Wave Allocation</label>
-                            <input type="text" placeholder="e.g. Wave A (Sub 30m)" value={item.wave_allocation || ''} onChange={(e) => updateCustomDistance(index, 'wave_allocation', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                            <label className="block text-gray-400 text-xs mb-2">Wave Gap (Minutes)</label>
+                            <input type="number" placeholder="15" value={item.wave_gap_mins || '15'} onChange={(e) => updateCustomDistance(index, 'wave_gap_mins', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
                           </div>
                           <div className="md:col-span-2">
                             <label className="block text-gray-400 text-xs mb-2">Route Map Image URL</label>

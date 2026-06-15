@@ -416,22 +416,22 @@ export default function RegisterPage({
                             <span className="text-white font-medium">{d.bib_collection}</span>
                           </div>
                         )}
-                        {d.reporting_time && (
+                        {d.start_time && (
                           <div className="bg-black/50 p-4 rounded-2xl">
-                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Reporting Time</span>
-                            <span className="text-white font-medium">{d.reporting_time}</span>
+                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Base Start Time</span>
+                            <span className="text-white font-medium">{new Date(d.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                           </div>
                         )}
                         {d.start_time && (
                           <div className="bg-black/50 p-4 rounded-2xl">
-                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Race Start Time</span>
-                            <span className="text-white font-medium">{d.start_time}</span>
+                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Reporting Time</span>
+                            <span className="text-white font-medium">{new Date(new Date(d.start_time).getTime() - 60*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (1hr prior)</span>
                           </div>
                         )}
-                        {d.wave_allocation && (
+                        {d.wave_size && (
                           <div className="bg-black/50 p-4 rounded-2xl">
                             <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Wave Allocation</span>
-                            <span className="text-white font-medium">{d.wave_allocation}</span>
+                            <span className="text-white font-medium text-sm">Assigned dynamically based on Bib</span>
                           </div>
                         )}
                         {d.additional_info && (

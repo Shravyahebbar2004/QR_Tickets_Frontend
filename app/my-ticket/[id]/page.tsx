@@ -406,7 +406,13 @@ export default function MyTicketPage() {
                               try {
                                 const pricing = typeof ticket.custom_pricing === 'string' ? JSON.parse(ticket.custom_pricing) : ticket.custom_pricing;
                                 const details = pricing.find((p: any) => p.name === ticket.ticket_type);
-                                if (details) setSelectedRaceDetails(details);
+                                if (details) {
+                                  setSelectedRaceDetails({
+                                    ...details,
+                                    bib_number: ticket.bib_number,
+                                    ticket_type: ticket.ticket_type
+                                  });
+                                }
                               } catch (e) {
                                 console.error(e);
                               }
@@ -455,28 +461,55 @@ export default function MyTicketPage() {
             </h2>
             
             <div className="space-y-6">
+              {selectedRaceDetails.bib_number && (() => {
+                const waveSize = Number(selectedRaceDetails.wave_size || 100);
+                const gapMins = Number(selectedRaceDetails.wave_gap_mins || 15);
+                const baseNumber = parseInt(selectedRaceDetails.ticket_type.match(/\d+/)?.[0] || '1') * 1000;
+                
+                // Calculate Wave Index
+                const waveIndex = Math.max(0, Math.floor((selectedRaceDetails.bib_number - baseNumber - 1) / waveSize));
+                const waveLetter = String.fromCharCode(65 + waveIndex);
+                
+                // Calculate Times
+                const baseStart = selectedRaceDetails.start_time ? new Date(selectedRaceDetails.start_time) : null;
+                const myStart = baseStart ? new Date(baseStart.getTime() + waveIndex * gapMins * 60000) : null;
+                const myReporting = myStart ? new Date(myStart.getTime() - 60 * 60000) : null;
+
+                return (
+                  <>
+                    <div className="bg-cyan-900/30 p-6 rounded-2xl border border-cyan-500/50 flex justify-between items-center shadow-[0_0_30px_rgba(34,211,238,0.1)]">
+                      <div>
+                        <h4 className="text-cyan-400 text-sm uppercase tracking-wider mb-1">Your Bib</h4>
+                        <p className="text-5xl font-black text-white">#{selectedRaceDetails.bib_number}</p>
+                      </div>
+                      <div className="text-right">
+                        <h4 className="text-cyan-400 text-sm uppercase tracking-wider mb-1">Your Wave</h4>
+                        <p className="text-5xl font-black text-white">Wave {waveLetter}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      {myStart && (
+                        <div className="bg-black/50 p-5 rounded-2xl border border-white/10">
+                          <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-1">Your Start Time</h4>
+                          <p className="text-2xl font-bold text-white">{myStart.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        </div>
+                      )}
+                      {myReporting && (
+                        <div className="bg-black/50 p-5 rounded-2xl border border-white/10">
+                          <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-1">Your Reporting Time</h4>
+                          <p className="text-2xl font-bold text-white">{myReporting.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
+
               {selectedRaceDetails.bib_collection && (
                 <div>
                   <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Bib Collection</h4>
                   <p className="text-xl font-medium text-white">{selectedRaceDetails.bib_collection}</p>
-                </div>
-              )}
-              {selectedRaceDetails.reporting_time && (
-                <div>
-                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Reporting Time</h4>
-                  <p className="text-xl font-medium text-white">{selectedRaceDetails.reporting_time}</p>
-                </div>
-              )}
-              {selectedRaceDetails.start_time && (
-                <div>
-                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Race Start Time</h4>
-                  <p className="text-xl font-medium text-white">{selectedRaceDetails.start_time}</p>
-                </div>
-              )}
-              {selectedRaceDetails.wave_allocation && (
-                <div>
-                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-1">Wave Allocation</h4>
-                  <p className="text-xl font-medium text-white">{selectedRaceDetails.wave_allocation}</p>
                 </div>
               )}
               {selectedRaceDetails.additional_info && (
