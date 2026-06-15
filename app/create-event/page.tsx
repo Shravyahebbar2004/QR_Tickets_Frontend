@@ -97,7 +97,7 @@ export default function CreateEventPage() {
   const [customPricing, setCustomPricing] = useState<any[]>([]);
 
   const addCustomDistance = () => {
-    setCustomPricing([...customPricing, { name: '', slab1: '', slab2: '', slab3: '' }]);
+    setCustomPricing([...customPricing, { name: '', slab1: '', slab2: '', slab3: '', bib_collection: '', reporting_time: '', start_time: '', wave_allocation: '', route_map_url: '', additional_info: '' }]);
   };
 
   const updateCustomDistance = (index: number, field: string, value: string) => {
@@ -904,23 +904,60 @@ Tell attendees what makes your event special...
                   </div>
 
                   {customPricing.map((item, index) => (
-                    <div key={index} className="grid md:grid-cols-4 gap-4 mb-4 p-4 bg-white/5 border border-white/10 rounded-2xl relative">
-                      <button type="button" onClick={() => removeCustomDistance(index)} className="absolute -top-3 -right-3 bg-red-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white hover:scale-110 transition">✕</button>
-                      <div>
-                        <label className="block text-gray-400 text-sm mb-2">Distance Name</label>
-                        <input type="text" placeholder="e.g. 5k" value={item.name} onChange={(e) => updateCustomDistance(index, 'name', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                    <div key={index} className="mb-8 p-6 bg-white/5 border border-white/10 rounded-3xl relative">
+                      <button type="button" onClick={() => removeCustomDistance(index)} className="absolute -top-3 -right-3 bg-red-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white hover:scale-110 transition shadow-lg">✕</button>
+                      
+                      <div className="grid md:grid-cols-4 gap-4 mb-6">
+                        <div>
+                          <label className="block text-gray-400 text-sm mb-2">Distance Name</label>
+                          <input type="text" placeholder="e.g. 5k" value={item.name} onChange={(e) => updateCustomDistance(index, 'name', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                        </div>
+                        <div>
+                          <label className="block text-gray-400 text-sm mb-2">Slab 1 Price (₹)</label>
+                          <input type="number" placeholder="299" value={item.slab1} onChange={(e) => updateCustomDistance(index, 'slab1', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                        </div>
+                        <div>
+                          <label className="block text-gray-400 text-sm mb-2">Slab 2 Price (₹)</label>
+                          <input type="number" placeholder="399" value={item.slab2} onChange={(e) => updateCustomDistance(index, 'slab2', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                        </div>
+                        <div>
+                          <label className="block text-gray-400 text-sm mb-2">Slab 3 Price (₹)</label>
+                          <input type="number" placeholder="499" value={item.slab3} onChange={(e) => updateCustomDistance(index, 'slab3', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-gray-400 text-sm mb-2">Slab 1 Price (₹)</label>
-                        <input type="number" placeholder="299" value={item.slab1} onChange={(e) => updateCustomDistance(index, 'slab1', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
-                      </div>
-                      <div>
-                        <label className="block text-gray-400 text-sm mb-2">Slab 2 Price (₹)</label>
-                        <input type="number" placeholder="399" value={item.slab2} onChange={(e) => updateCustomDistance(index, 'slab2', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
-                      </div>
-                      <div>
-                        <label className="block text-gray-400 text-sm mb-2">Slab 3 Price (₹)</label>
-                        <input type="number" placeholder="499" value={item.slab3} onChange={(e) => updateCustomDistance(index, 'slab3', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
+
+                      {/* ADVANCED INFO */}
+                      <div className="bg-black/30 p-5 rounded-2xl border border-white/5">
+                        <h4 className="text-cyan-300 text-sm font-bold mb-4 uppercase tracking-wider flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                          Distance Details (For Pre-Registration View)
+                        </h4>
+                        <div className="grid md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-gray-400 text-xs mb-2">Bib Collection Details</label>
+                            <input type="text" placeholder="e.g. Oct 10th, Expo Center" value={item.bib_collection || ''} onChange={(e) => updateCustomDistance(index, 'bib_collection', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                          </div>
+                          <div>
+                            <label className="block text-gray-400 text-xs mb-2">Reporting Time</label>
+                            <input type="text" placeholder="e.g. 5:00 AM" value={item.reporting_time || ''} onChange={(e) => updateCustomDistance(index, 'reporting_time', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                          </div>
+                          <div>
+                            <label className="block text-gray-400 text-xs mb-2">Race Start Time</label>
+                            <input type="text" placeholder="e.g. 6:00 AM" value={item.start_time || ''} onChange={(e) => updateCustomDistance(index, 'start_time', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                          </div>
+                          <div>
+                            <label className="block text-gray-400 text-xs mb-2">Wave Allocation</label>
+                            <input type="text" placeholder="e.g. Wave A (Sub 30m)" value={item.wave_allocation || ''} onChange={(e) => updateCustomDistance(index, 'wave_allocation', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-gray-400 text-xs mb-2">Route Map Image URL</label>
+                            <input type="text" placeholder="https://example.com/route.jpg" value={item.route_map_url || ''} onChange={(e) => updateCustomDistance(index, 'route_map_url', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                          </div>
+                          <div className="md:col-span-3">
+                            <label className="block text-gray-400 text-xs mb-2">Additional Info</label>
+                            <textarea rows={2} placeholder="Any extra instructions..." value={item.additional_info || ''} onChange={(e) => updateCustomDistance(index, 'additional_info', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}

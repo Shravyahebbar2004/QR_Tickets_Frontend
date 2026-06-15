@@ -39,6 +39,8 @@ export default function RegisterPage({
 
   const [selectedDistance, setSelectedDistance] = useState<string>('');
 
+  const [step, setStep] = useState(1);
+
   const [activeSlabKey, setActiveSlabKey] = useState<string>('slab1');
   const [activeSlabName, setActiveSlabName] = useState<string>('Standard Ticket');
 
@@ -377,6 +379,97 @@ export default function RegisterPage({
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center p-10">
+      {event?.category?.toLowerCase()?.trim() === 'marathon' && step === 1 ? (
+        <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 w-full max-w-3xl shadow-2xl">
+          <h1 className="text-4xl md:text-5xl font-black mb-3 text-cyan-300">Select Your Distance</h1>
+          <p className="text-gray-400 mb-8 text-lg">Choose a category to view race details and proceed to registration.</p>
+          
+          <div className="space-y-6 mb-10">
+            {event.custom_pricing ? (() => {
+              try {
+                const customPricing = typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing;
+                return customPricing.map((d: any) => {
+                  const isSelected = selectedDistance === d.name;
+                  const price = Number(d[activeSlabKey]) || 0;
+                  
+                  return (
+                    <div 
+                      key={d.name}
+                      onClick={() => setSelectedDistance(d.name)}
+                      className={`p-6 md:p-8 rounded-3xl border-2 cursor-pointer transition-all duration-300 ${isSelected ? 'border-cyan-400 bg-cyan-900/20 shadow-[0_0_30px_rgba(34,211,238,0.15)]' : 'border-white/10 bg-black/40 hover:border-white/30'}`}
+                    >
+                      <div className="flex justify-between items-start mb-6">
+                        <div>
+                          <h3 className="text-3xl font-black text-white mb-2">{d.name}</h3>
+                          <p className="text-cyan-300 font-bold text-xl">₹{price} <span className="text-gray-500 text-sm font-normal">/ member</span></p>
+                        </div>
+                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-cyan-400' : 'border-gray-500'}`}>
+                          {isSelected && <div className="w-4 h-4 bg-cyan-400 rounded-full" />}
+                        </div>
+                      </div>
+
+                      {/* EXTRA INFO GRID */}
+                      <div className="grid md:grid-cols-2 gap-4 mt-6 border-t border-white/10 pt-6">
+                        {d.bib_collection && (
+                          <div className="bg-black/50 p-4 rounded-2xl">
+                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Bib Collection</span>
+                            <span className="text-white font-medium">{d.bib_collection}</span>
+                          </div>
+                        )}
+                        {d.reporting_time && (
+                          <div className="bg-black/50 p-4 rounded-2xl">
+                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Reporting Time</span>
+                            <span className="text-white font-medium">{d.reporting_time}</span>
+                          </div>
+                        )}
+                        {d.start_time && (
+                          <div className="bg-black/50 p-4 rounded-2xl">
+                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Race Start Time</span>
+                            <span className="text-white font-medium">{d.start_time}</span>
+                          </div>
+                        )}
+                        {d.wave_allocation && (
+                          <div className="bg-black/50 p-4 rounded-2xl">
+                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Wave Allocation</span>
+                            <span className="text-white font-medium">{d.wave_allocation}</span>
+                          </div>
+                        )}
+                        {d.additional_info && (
+                          <div className="bg-black/50 p-4 rounded-2xl md:col-span-2">
+                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Additional Info</span>
+                            <span className="text-white font-medium">{d.additional_info}</span>
+                          </div>
+                        )}
+                        {d.route_map_url && (
+                          <div className="md:col-span-2 mt-2">
+                            <span className="text-gray-400 text-xs uppercase tracking-wider block mb-2">Route Map</span>
+                            <a href={d.route_map_url} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 underline font-medium block overflow-hidden text-ellipsis whitespace-nowrap bg-black/50 p-4 rounded-2xl">
+                              View Route Map Image
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                });
+              } catch (e) {
+                return <p className="text-red-500">Error loading custom tickets.</p>;
+              }
+            })() : null}
+          </div>
+
+          <button
+            onClick={() => {
+              if (!selectedDistance) return alert('Please select a distance to continue.');
+              setStep(2);
+            }}
+            className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-black text-xl py-5 rounded-2xl transition shadow-[0_0_30px_rgba(34,211,238,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!selectedDistance}
+          >
+            Proceed to Registration
+          </button>
+        </div>
+      ) : (
       <form
         onSubmit={handleSubmit}
         className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 w-full max-w-2xl shadow-2xl"
@@ -444,26 +537,27 @@ export default function RegisterPage({
         <div className="mb-4">
           <p className="text-gray-400 mb-2">Active Pricing Tier: <span className="text-cyan-300 font-bold">{activeSlabName}</span></p>
         </div>
-
         <div className="mb-8">
           {event.category?.toLowerCase()?.trim() === 'marathon' && event.custom_pricing ? (
-            (() => {
-              try {
-                const customPricing = typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing;
-                return customPricing.map((d: any) => renderCustomRadio(d.name, Number(d[activeSlabKey]) || 0));
-              } catch (e) {
-                return <p className="text-red-500">Error loading custom tickets.</p>;
-              }
-            })()
+            <div className="bg-cyan-900/20 border border-cyan-500/30 p-5 rounded-2xl flex justify-between items-center">
+              <div>
+                <p className="text-cyan-300 font-bold mb-1">Selected Distance</p>
+                <h3 className="text-2xl font-black text-white">{selectedDistance}</h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setStep(1)}
+                className="text-cyan-400 hover:text-cyan-300 underline text-sm font-bold"
+              >
+                Change
+              </button>
+            </div>
           ) : (
             <>
               {renderCounter('solo', 'Solo Pass', '1 Member', Number(event[`${activeSlabKey}_solo_price`]) || 0)}
               {renderCounter('couple', 'Couple Pass', '2 Members', Number(event[`${activeSlabKey}_couple_price`]) || 0)}
               {renderCounter('group', 'Group Pass', '4 Members', Number(event[`${activeSlabKey}_group_price`]) || 0)}
-              
-              {event.bulk_pass_price && 
-                renderCounter('bulk', 'Bulk Pass', `${event.bulk_pass_entries} Members`, Number(event.bulk_pass_price) || 0)
-              }
+              {(Number(event.bulk_pass_price) > 0) && renderCounter('bulk', 'Bulk Pass', `${event.bulk_pass_entries || 0} Members`, Number(event.bulk_pass_price) || 0)}
             </>
           )}
         </div>
@@ -513,7 +607,7 @@ export default function RegisterPage({
           {submitting ? 'Sending Verification Code...' : 'Complete Registration'}
         </button>
       </form>
-
+      )}
       {/* OTP MODAL */}
       {showOtpModal && (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-5">
