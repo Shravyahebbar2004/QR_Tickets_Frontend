@@ -370,6 +370,28 @@ export default function MyTicketPage() {
                         </div>
                       )}
 
+                      {/* BIB AND WAVE (MARATHON ONLY) */}
+                      {ticket.category?.toLowerCase()?.trim() === 'marathon' && ticket.bib_number && (
+                        <div className="mt-6 flex flex-col items-center">
+                          <h2 className="text-4xl font-black text-cyan-400">#{ticket.bib_number}</h2>
+                          {ticket.custom_pricing && (() => {
+                            try {
+                              const pricing = typeof ticket.custom_pricing === 'string' ? JSON.parse(ticket.custom_pricing) : ticket.custom_pricing;
+                              const details = pricing.find((p: any) => p.name === ticket.ticket_type);
+                              if (details && details.wave_size) {
+                                const distMatch = ticket.ticket_type.match(/\d+/);
+                                const baseBib = distMatch ? parseInt(distMatch[0]) * 1000 : 1000;
+                                const runnerIndex = ticket.bib_number - baseBib - 1;
+                                const waveIndex = Math.floor(runnerIndex / Number(details.wave_size));
+                                const waveLetter = String.fromCharCode(65 + waveIndex);
+                                return <p className="text-xl text-violet-300 font-bold mt-2">Wave {waveLetter}</p>;
+                              }
+                            } catch (e) {}
+                            return null;
+                          })()}
+                        </div>
+                      )}
+
                       {/* FOOTER */}
                       <p className="text-gray-300 mt-8 text-lg">
                         Show this pass at the entrance
