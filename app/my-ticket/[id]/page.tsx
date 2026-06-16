@@ -4,6 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import { useParams } from 'next/navigation';
+import { MapPin } from 'lucide-react';
 
 export default function MyTicketPage() {
   const params = useParams();
@@ -549,7 +550,7 @@ export default function MyTicketPage() {
                       <iframe 
                         src={selectedRaceDetails.route_map_url} 
                         className="w-full h-64 md:h-80 border-0" 
-                        allowFullScreen="" 
+                        allowFullScreen={true}
                         loading="lazy" 
                         referrerPolicy="no-referrer-when-downgrade"
                       />
