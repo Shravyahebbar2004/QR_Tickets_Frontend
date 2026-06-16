@@ -542,22 +542,47 @@ export default function MyTicketPage() {
                 </div>
               )}
               {selectedRaceDetails.route_map_url && (
-                <div>
-                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-3">Route Map</h4>
-                  <img
-                    src={selectedRaceDetails.route_map_url}
-                    alt="Route Map"
-                    className="w-full rounded-2xl border border-white/10"
-                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                  />
-                  <a
-                    href={selectedRaceDetails.route_map_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block mt-3 text-cyan-400 hover:underline"
-                  >
-                    Open Image in New Tab
-                  </a>
+                <div className="mt-8">
+                  <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-3">Location of the event</h4>
+                  <div className="relative rounded-[24px] overflow-hidden border border-white/10 bg-zinc-900 group shadow-2xl">
+                    {selectedRaceDetails.route_map_url.includes('google.com/maps/embed') ? (
+                      <iframe 
+                        src={selectedRaceDetails.route_map_url} 
+                        className="w-full h-64 md:h-80 border-0" 
+                        allowFullScreen="" 
+                        loading="lazy" 
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                    ) : (
+                      <img 
+                        src={selectedRaceDetails.route_map_url} 
+                        alt="Event Location" 
+                        className="w-full h-64 md:h-80 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-700"
+                        onError={(e) => {
+                           e.currentTarget.src = "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000&auto=format&fit=crop";
+                           e.currentTarget.style.opacity = '0.4';
+                        }}
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 p-6 w-full flex justify-between items-end">
+                      <div>
+                        <h4 className="text-white font-black text-2xl mb-1 flex items-center gap-2">
+                          <MapPin size={24} className="text-cyan-400" />
+                          Event Location
+                        </h4>
+                        <p className="text-cyan-400 font-medium text-lg">{selectedRaceDetails.ticket_type}</p>
+                      </div>
+                      <a 
+                        href={selectedRaceDetails.route_map_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full font-bold text-sm hover:bg-white hover:text-black transition shadow-lg shadow-black/50"
+                      >
+                        Open Google Maps
+                      </a>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
