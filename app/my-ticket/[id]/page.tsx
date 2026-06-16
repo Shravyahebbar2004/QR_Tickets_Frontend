@@ -86,10 +86,10 @@ export default function MyTicketPage() {
 
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(14);
-      
+
       const startY = 60;
       const gap = 10;
-      
+
       pdf.setTextColor(196, 181, 253); // violet-300 for labels
       pdf.text('Name:', 25, startY);
       pdf.text('Phone No:', 25, startY + gap);
@@ -97,7 +97,7 @@ export default function MyTicketPage() {
       pdf.text('Ticket:', 25, startY + gap * 3);
       pdf.text('Venue:', 25, startY + gap * 4);
       pdf.text('Date:', 25, startY + gap * 5);
-      
+
       pdf.setTextColor(255, 255, 255); // white for values
       pdf.text(ticket.full_name || 'N/A', 65, startY);
       pdf.text(ticket.phone_number || 'N/A', 65, startY + gap);
@@ -143,7 +143,7 @@ export default function MyTicketPage() {
   // ====================================
 
   return (
-   <div className="
+    <div className="
       min-h-screen
       bg-gradient-to-br
       from-black
@@ -386,7 +386,7 @@ export default function MyTicketPage() {
                                 const waveLetter = String.fromCharCode(65 + waveIndex);
                                 return <p className="text-xl text-violet-300 font-bold mt-2">Wave {waveLetter}</p>;
                               }
-                            } catch (e) {}
+                            } catch (e) { }
                             return null;
                           })()}
                         </div>
@@ -472,7 +472,7 @@ export default function MyTicketPage() {
       {selectedRaceDetails && (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-5">
           <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/10 rounded-[30px] p-8 md:p-10 w-full max-w-2xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button 
+            <button
               onClick={() => setSelectedRaceDetails(null)}
               className="absolute top-6 right-6 text-gray-500 hover:text-white transition"
             >
@@ -481,18 +481,18 @@ export default function MyTicketPage() {
             <h2 className="text-3xl font-black text-cyan-300 mb-6 border-b border-white/10 pb-4">
               {selectedRaceDetails.name} Race Guide
             </h2>
-            
+
             <div className="space-y-6">
               {(() => {
                 const waveSize = Number(selectedRaceDetails.wave_size || 100);
                 const gapMins = Number(selectedRaceDetails.wave_gap_mins || 15);
                 const baseNumber = parseInt((selectedRaceDetails.ticket_type || '1').match(/\d+/)?.[0] || '1') * 1000;
-                
+
                 const hasBib = !!selectedRaceDetails.bib_number;
                 // Calculate Wave Index
                 const waveIndex = hasBib ? Math.max(0, Math.floor((selectedRaceDetails.bib_number - baseNumber - 1) / waveSize)) : 0;
                 const waveLetter = hasBib ? String.fromCharCode(65 + waveIndex) : 'TBD';
-                
+
                 // Calculate Times
                 const baseStart = selectedRaceDetails.start_time ? new Date(selectedRaceDetails.start_time) : null;
                 const myStart = baseStart ? new Date(baseStart.getTime() + (hasBib ? waveIndex * gapMins * 60000 : 0)) : null;
@@ -515,13 +515,13 @@ export default function MyTicketPage() {
                       {myStart && (
                         <div className="bg-black/50 p-5 rounded-2xl border border-white/10">
                           <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-1">{hasBib ? 'Your Start Time' : 'Base Start Time'}</h4>
-                          <p className="text-xl md:text-2xl font-bold text-white">{myStart.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                          <p className="text-xl md:text-2xl font-bold text-white">{myStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
                       )}
                       {myReporting && (
                         <div className="bg-black/50 p-5 rounded-2xl border border-white/10">
                           <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-1">{hasBib ? 'Your Reporting Time' : 'Base Reporting Time'}</h4>
-                          <p className="text-xl md:text-2xl font-bold text-white">{myReporting.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                          <p className="text-xl md:text-2xl font-bold text-white">{myReporting.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
                       )}
                     </div>
@@ -544,16 +544,16 @@ export default function MyTicketPage() {
               {selectedRaceDetails.route_map_url && (
                 <div>
                   <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-3">Route Map</h4>
-                  <img 
-                    src={selectedRaceDetails.route_map_url} 
-                    alt="Route Map" 
+                  <img
+                    src={selectedRaceDetails.route_map_url}
+                    alt="Route Map"
                     className="w-full rounded-2xl border border-white/10"
                     onError={(e) => (e.currentTarget.style.display = 'none')}
                   />
-                  <a 
-                    href={selectedRaceDetails.route_map_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                  <a
+                    href={selectedRaceDetails.route_map_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="block mt-3 text-cyan-400 hover:underline"
                   >
                     Open Image in New Tab
