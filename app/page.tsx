@@ -996,7 +996,7 @@ transition            border
       {/* FOOTER */}
       <footer className="relative z-10 border-t border-white/10 py-12 text-center text-gray-500">
         <p className="mb-4">© 2026 EventFlow Platform. All Rights Reserved.</p>
-        <p className="text-gray-400">For more details, contact <strong className="text-white">Shravya Hebbar</strong> at <a href="mailto:shravyahebbar07@gmail.com" className="text-cyan-400 hover:underline font-medium">shravyahebbar07@gmail.com</a> or call <span className="text-cyan-400 font-medium">XXXX</span></p>
+        <p className="text-gray-400">For more details, contact <strong className="text-white">Shravya Hebbar</strong> at <a href="mailto:shravyahebbar07@gmail.com" className="text-cyan-400 hover:underline font-medium">shravyahebbar07@gmail.com</a> or call <span className="text-cyan-400 font-medium">9611444945</span></p>
       </footer>
 
       {showLoginModal && (
