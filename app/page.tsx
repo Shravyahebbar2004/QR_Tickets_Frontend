@@ -52,16 +52,43 @@ export default function HomePage() {
   const [loading, setLoading] =
     useState(true);
 
-  // AUTH CHECK & FETCH EVENTS //
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  // FETCH EVENTS //
 
   useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const handleCreateEventClick = () => {
     const token = localStorage.getItem('platform_token');
-    if (!token) {
-      router.push('/login');
+    if (token) {
+      router.push('/create-event');
     } else {
-      fetchEvents();
+      setShowLoginModal(true);
     }
-  }, [router]);
+  };
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    setLoginError('');
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/platform/login`, loginForm);
+      if (response.data.success) {
+        localStorage.setItem('platform_token', response.data.token);
+        setShowLoginModal(false);
+        router.push('/create-event');
+      }
+    } catch (err: any) {
+      setLoginError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
 
   const fetchEvents = async () => {
 
@@ -306,14 +333,207 @@ export default function HomePage() {
 
           <div className="
             hidden
+          distance %
+          (1000 * 60 * 60 * 24)
+        )
+        /
+        (1000 * 60 * 60)
+      );
+
+      const minutes = Math.floor(
+        (
+          distance %
+          (1000 * 60 * 60)
+        )
+        /
+        (1000 * 60)
+      );
+
+      const seconds = Math.floor(
+        (
+          distance %
+          (1000 * 60)
+        )
+        /
+        1000
+      );
+
+      setTimeLeft({
+
+        days,
+        hours,
+        minutes,
+        seconds
+
+      });
+
+    }, 1000);
+
+    return () => clearInterval(interval);
+
+  }, []);
+
+  return (
+
+    <main className="
+      min-h-screen
+      bg-gradient-to-br
+      from-black
+      via-zinc-950
+      to-violet-950
+      text-white
+      overflow-hidden
+      relative
+    ">
+
+      {/* =====================================
+          ANIMATED BACKGROUND
+      ===================================== */}
+
+      <div className="
+        absolute
+        inset-0
+        overflow-hidden
+      ">
+
+        <div className="
+          absolute
+          top-[-200px]
+          left-[-200px]
+          w-[600px]
+          h-[600px]
+          bg-violet-500/20
+          blur-[180px]
+          rounded-full
+          animate-pulse
+        "></div>
+
+        <div className="
+          absolute
+          bottom-[-200px]
+          right-[-200px]
+          w-[600px]
+          h-[600px]
+          bg-cyan-500/20
+          blur-[180px]
+          rounded-full
+          animate-pulse
+        "></div>
+
+        <div className="
+          absolute
+          top-[35%]
+          left-[40%]
+          w-[450px]
+          h-[450px]
+          bg-fuchsia-500/10
+          blur-[180px]
+          rounded-full
+        "></div>
+
+      </div>
+
+      {/* =====================================
+          NAVBAR
+      ===================================== */}
+
+      <nav className="
+        fixed
+        top-0
+        left-0
+        right-0
+        z-50
+        border-b
+        border-white/10
+        bg-black/20
+        backdrop-blur-2xl
+      ">
+
+        <div className="
+          max-w-7xl
+          mx-auto
+          px-5
+          md:px-10
+          py-5
+          flex
+          items-center
+          justify-between
+        ">
+
+          <div className="flex items-center gap-3">
+
+            <div className="
+              w-12
+              h-12
+              rounded-2xl
+              bg-gradient-to-r
+              from-violet-500
+              to-cyan-400
+              flex
+              items-center
+              justify-center
+              shadow-lg
+              shadow-violet-500/30
+            ">
+
+              <Sparkles className="text-white" />
+
+            </div>
+
+            <div>
+
+              <h1 className="
+                text-2xl
+                md:text-3xl
+                font-black
+                bg-gradient-to-r
+                from-cyan-300
+                to-violet-400
+                text-transparent
+                bg-clip-text
+              ">
+                EventFlow
+              </h1>
+
+              <p className="
+                text-xs
+                text-gray-400
+              ">
+                Smart Event Platform
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* MOBILE BUTTON */}
+
+          <button
+            onClick={() =>
+              setMenuOpen(!menuOpen)
+            }
+            className="
+              md:hidden
+              text-white
+            "
+          >
+            {
+              menuOpen
+                ? <X size={32} />
+                : <Menu size={32} />
+            }
+          </button>
+
+          {/* DESKTOP MENU */}
+
+          <div className="
+            hidden
             md:flex
             items-center
             gap-4
           ">
 
-            <Link href="/create-event">
-
-              <button className="
+            <button onClick={handleCreateEventClick} className="
                 bg-violet-500
                 hover:bg-violet-600
                 px-6
@@ -327,8 +547,6 @@ export default function HomePage() {
               ">
                 Create Your Event (Organizers)
               </button>
-
-            </Link>
 
             <button 
               onClick={() => {
@@ -375,10 +593,8 @@ export default function HomePage() {
             gap-10
           ">
 
-            <Link href="/create-event">
-
               <button
-                onClick={() => setMenuOpen(false)}
+                onClick={() => { setMenuOpen(false); handleCreateEventClick(); }}
                 className="
                   text-4xl
                   font-black
@@ -387,8 +603,6 @@ export default function HomePage() {
               >
                 Create Your Event (Organizers)
               </button>
-
-            </Link>
 
             <button
               onClick={() => {
@@ -518,9 +732,7 @@ transition            border
             mb-20
           ">
 
-            <Link href="/create-event">
-
-              <button className="
+              <button onClick={handleCreateEventClick} className="
                 bg-violet-500
                 hover:bg-violet-600
                 px-10
@@ -538,8 +750,6 @@ transition            border
               ">
                 Create Your Event
               </button>
-
-            </Link>
 
             <button
               onClick={() => {
@@ -785,9 +995,7 @@ transition            border
             professionally with EventFlow.
           </p>
 
-          <Link href="/create-event">
-
-            <button className="
+            <button onClick={handleCreateEventClick} className="
               bg-violet-500
               hover:bg-violet-600
               px-12
@@ -802,8 +1010,6 @@ transition            border
             ">
               Get Started
             </button>
-
-          </Link>
 
         </div>
 
@@ -983,27 +1189,38 @@ transition            border
       </section>
 
       {/* FOOTER */}
-
-      <footer className="
-        relative
-        z-10
-        border-t
-        border-white/10
-        py-10
-        text-center
-        text-gray-500
-      ">
-
-        © 2026 EventFlow Platform.
-        All Rights Reserved.
-
+      <footer className="relative z-10 border-t border-white/10 py-12 text-center text-gray-500">
+        <p className="mb-4">© 2026 EventFlow Platform. All Rights Reserved.</p>
+        <p className="text-gray-400">For more details, contact <strong className="text-white">Shravya Hebbar</strong> at <a href="mailto:shravyahebbar07@gmail.com" className="text-cyan-400 hover:underline font-medium">shravyahebbar07@gmail.com</a></p>
       </footer>
 
+      {showLoginModal && (
+        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-5">
+          <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/10 rounded-[40px] p-10 w-full max-w-md shadow-2xl relative">
+            <button onClick={() => setShowLoginModal(false)} className="absolute top-5 right-5 text-gray-400 hover:text-white transition">
+              <X size={24} />
+            </button>
+            <h2 className="text-3xl font-black text-white mb-2 text-center">Organizer Login</h2>
+            <p className="text-gray-400 text-center mb-8">Access your event dashboard.</p>
+            {loginError && <div className="bg-red-500/20 text-red-300 p-3 rounded-xl mb-6 text-center text-sm">{loginError}</div>}
+            <form onSubmit={handleLoginSubmit} className="space-y-6">
+              <div>
+                <label className="block text-gray-300 mb-2 font-medium">Email</label>
+                <input type="email" required value={loginForm.email} onChange={(e) => setLoginForm({...loginForm, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-cyan-500 transition focus:ring-2 focus:ring-cyan-500/50" placeholder="Admin Email" />
+              </div>
+              <div>
+                <label className="block text-gray-300 mb-2 font-medium">Password</label>
+                <input type="password" required value={loginForm.password} onChange={(e) => setLoginForm({...loginForm, password: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-cyan-500 transition focus:ring-2 focus:ring-cyan-500/50" placeholder="••••••••" />
+              </div>
+              <button type="submit" disabled={loginLoading} className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 rounded-2xl transition shadow-lg shadow-cyan-500/30 disabled:opacity-50">
+                {loginLoading ? 'Authenticating...' : 'Login to Dashboard'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
 
   );
 
 }
-
-
-
