@@ -56,6 +56,7 @@ export default function CreateEventPage() {
     scanner_password: '',
     description: '',
     category: '',
+    whatsapp_link: '',
 
     slab1_solo_price: '',
     slab1_couple_price: '',
@@ -219,6 +220,11 @@ export default function CreateEventPage() {
       data.append(
         'category',
         formData.category
+      );
+
+      data.append(
+        'whatsapp_link',
+        formData.whatsapp_link
       );
 
       data.append('slab1_solo_price', formData.slab1_solo_price);

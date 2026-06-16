@@ -398,6 +398,21 @@ export default function MyTicketPage() {
                         Show this pass at the entrance
                       </p>
 
+                      {/* WHATSAPP LINK */}
+                      {ticket.whatsapp_link && (
+                        <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center gap-3">
+                          <p className="text-white text-md">Join the official WhatsApp group for updates</p>
+                          <a 
+                            href={ticket.whatsapp_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="bg-[#25D366] hover:bg-[#20b858] text-white px-6 py-3 rounded-full font-bold transition flex items-center gap-2 shadow-lg shadow-[#25D366]/20"
+                          >
+                            Join WhatsApp Group
+                          </a>
+                        </div>
+                      )}
+
                       {/* DOWNLOAD & DETAILS BUTTONS */}
                       <div className="flex flex-col md:flex-row justify-center gap-4 mt-8">
                         {ticket.qr_code && (

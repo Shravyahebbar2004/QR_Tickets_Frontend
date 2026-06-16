@@ -46,6 +46,7 @@ export default function EditEventPage() {
     organizer_password: '',
     description: '',
     category: '',
+    whatsapp_link: '',
 
     slab1_solo_price: '',
     slab1_couple_price: '',
@@ -127,6 +128,7 @@ export default function EditEventPage() {
           organizer_password: '',
           description: event.description || '',
           category: event.category || '',
+          whatsapp_link: event.whatsapp_link || '',
 
           slab1_solo_price: event.slab1_solo_price || '',
           slab1_couple_price: event.slab1_couple_price || '',
@@ -555,6 +557,45 @@ Ex: Marathon, Tech Fest, Startup Meetup
                 <option value="Gaming Tournament" />
 
               </datalist>
+
+            </div>
+
+            {/* WHATSAPP LINK */}
+
+            <div className="mb-6">
+
+              <label className="
+                text-gray-300
+                mb-3
+                block
+                text-lg
+              ">
+                WhatsApp Group Link (Optional)
+              </label>
+
+              <input
+
+                type="url"
+
+                name="whatsapp_link"
+
+                placeholder="https://chat.whatsapp.com/..."
+
+                value={formData.whatsapp_link}
+
+                onChange={handleChange}
+
+                className="
+                  w-full
+                  p-5
+                  rounded-2xl
+                  bg-black/40
+                  border
+                  border-white/10
+                  text-white
+                "
+
+              />
 
             </div>
 
