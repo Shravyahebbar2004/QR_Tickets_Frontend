@@ -44,7 +44,8 @@ export default function RegisterPage({
   const [step, setStep] = useState(1);
 
   const [activeSlabKey, setActiveSlabKey] = useState<string>('slab1');
-  const [activeSlabName, setActiveSlabName] = useState<string>('Standard Ticket');
+  const [activeSlabName, setActiveSlabName] = useState<string>('Early Bird Offer');
+  const [isClosed, setIsClosed] = useState<boolean>(false);
 
   // Dynamic price calculator
   useEffect(() => {
@@ -116,10 +117,26 @@ export default function RegisterPage({
       const evt = response.data.event;
       setEvent(evt);
 
-      // Determine Slab
+      // Determine Slab and Registration Status
       const now = new Date().getTime();
       let slabKey = 'slab1';
       let slabName = "Early Bird Offer";
+      let registrationClosed = false;
+
+      // Check if all registration slab deadlines have passed
+      const deadlines = [
+        evt.slab3_deadline,
+        evt.slab2_deadline,
+        evt.slab1_deadline,
+        evt.registration_deadline
+      ].filter(Boolean).map((d: string) => new Date(d).getTime());
+
+      if (deadlines.length > 0) {
+        const latestDeadline = Math.max(...deadlines);
+        if (now > latestDeadline) {
+          registrationClosed = true;
+        }
+      }
 
       if (evt.slab1_deadline && now <= new Date(evt.slab1_deadline).getTime()) {
         slabKey = 'slab1';
@@ -137,6 +154,7 @@ export default function RegisterPage({
 
       setActiveSlabKey(slabKey);
       setActiveSlabName(slabName);
+      setIsClosed(registrationClosed);
     } catch (error) {
       console.log(error);
     } finally {
@@ -366,6 +384,40 @@ export default function RegisterPage({
             <p className="font-bold text-white text-lg">Shravya Hebbar</p>
             <p className="text-cyan-400 font-medium mt-1">📧 <a href="mailto:rotaractyelahanka.events@gmail.com" className="hover:underline">rotaractyelahanka.events@gmail.com</a></p>
             <p className="text-cyan-400 font-medium mt-1">📞 <a href="tel:9611444945" className="hover:underline">9611444945</a></p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isClosed) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center text-white text-center p-6">
+        <div className="bg-white/5 border border-white/10 backdrop-blur-2xl rounded-[40px] p-8 md:p-14 max-w-xl shadow-2xl relative overflow-hidden">
+          <div className="w-20 h-20 bg-red-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-red-500/30">
+            <span className="text-4xl">🔒</span>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent">
+            Online Registration Closed
+          </h1>
+          <p className="text-gray-300 text-lg mb-8 leading-relaxed">
+            Online registration for <strong className="text-white">{event.title}</strong> is now closed as the registration slab dates have ended.
+          </p>
+
+          <div className="bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-500/20 border border-yellow-500/40 rounded-3xl p-6 mb-8 text-yellow-200 shadow-lg">
+            <h3 className="text-2xl font-black mb-2 flex items-center justify-center gap-2 text-yellow-300">
+              <span>⚡</span> ON-SPOT REGISTRATION IS OPEN! <span>⚡</span>
+            </h3>
+            <p className="text-base text-gray-200">
+              Don't worry! You can still register on-spot directly at the event venue.
+            </p>
+          </div>
+
+          <div className="border-t border-white/10 pt-6 text-gray-400 text-sm">
+            <p className="mb-2">For on-spot registration queries, contact:</p>
+            <p className="font-bold text-white text-base">Shravya Hebbar</p>
+            <p className="text-cyan-400 font-medium mt-1">📧 <a href="mailto:rotaractyelahanka.events@gmail.com" className="hover:underline">rotaractyelahanka.events@gmail.com</a> | 📞 <a href="tel:9611444945" className="hover:underline">9611444945</a></p>
           </div>
         </div>
       </div>
