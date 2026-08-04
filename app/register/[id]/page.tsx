@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from 'react';
 import axios from 'axios';
+import Link from 'next/link';
 import { ShieldCheck } from 'lucide-react';
 
 export default function RegisterPage({
