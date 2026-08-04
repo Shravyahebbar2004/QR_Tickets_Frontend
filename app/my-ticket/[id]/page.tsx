@@ -402,10 +402,10 @@ export default function MyTicketPage() {
                       {ticket.whatsapp_link && (
                         <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center gap-3">
                           <p className="text-white text-md">Join the official WhatsApp group for updates</p>
-                          <a 
-                            href={ticket.whatsapp_link} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                          <a
+                            href={ticket.whatsapp_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="bg-[#25D366] hover:bg-[#20b858] text-white px-6 py-3 rounded-full font-bold transition flex items-center gap-2 shadow-lg shadow-[#25D366]/20"
                           >
                             Join WhatsApp Group
@@ -562,21 +562,21 @@ export default function MyTicketPage() {
                   <h4 className="text-gray-400 text-sm uppercase tracking-wider mb-3">Location of the event</h4>
                   <div className="relative rounded-[24px] overflow-hidden border border-white/10 bg-zinc-900 group shadow-2xl">
                     {selectedRaceDetails.route_map_url.includes('google.com/maps/embed') ? (
-                      <iframe 
-                        src={selectedRaceDetails.route_map_url} 
-                        className="w-full h-64 md:h-80 border-0" 
+                      <iframe
+                        src={selectedRaceDetails.route_map_url}
+                        className="w-full h-64 md:h-80 border-0"
                         allowFullScreen={true}
-                        loading="lazy" 
+                        loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                       />
                     ) : (
-                      <img 
-                        src={selectedRaceDetails.route_map_url} 
-                        alt="Event Location" 
+                      <img
+                        src={selectedRaceDetails.route_map_url}
+                        alt="Event Location"
                         className="w-full h-64 md:h-80 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition duration-700"
                         onError={(e) => {
-                           e.currentTarget.src = "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000&auto=format&fit=crop";
-                           e.currentTarget.style.opacity = '0.4';
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000&auto=format&fit=crop";
+                          e.currentTarget.style.opacity = '0.4';
                         }}
                       />
                     )}
@@ -589,10 +589,10 @@ export default function MyTicketPage() {
                         </h4>
                         <p className="text-cyan-400 font-medium text-lg">{selectedRaceDetails.ticket_type}</p>
                       </div>
-                      <a 
-                        href={selectedRaceDetails.route_map_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
+                      <a
+                        href={selectedRaceDetails.route_map_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full font-bold text-sm hover:bg-white hover:text-black transition shadow-lg shadow-black/50"
                       >
                         Open Google Maps

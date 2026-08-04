@@ -356,9 +356,15 @@ export default function RegisterPage({
   if (submitted) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center text-white text-center p-10">
-        <div>
-          <h1 className="text-5xl font-black mb-5">Registration Submitted ✅</h1>
-          <p className="text-gray-400 text-xl">Wait for admin approval.</p>
+        <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 max-w-lg shadow-2xl">
+          <h1 className="text-4xl md:text-5xl font-black mb-5">Registration Submitted ✅</h1>
+          <p className="text-gray-300 text-xl mb-6">Wait for admin approval.</p>
+          <div className="border-t border-white/10 pt-6 mt-6 text-gray-400">
+            <p className="text-sm mb-2">For more information or queries, contact:</p>
+            <p className="font-bold text-white text-lg">Shravya Hebbar</p>
+            <p className="text-cyan-400 font-medium mt-1">📧 <a href="mailto:rotaractyelahanka.events@gmail.com" className="hover:underline">rotaractyelahanka.events@gmail.com</a></p>
+            <p className="text-cyan-400 font-medium mt-1">📞 <a href="tel:9611444945" className="hover:underline">9611444945</a></p>
+          </div>
         </div>
       </div>
     );
