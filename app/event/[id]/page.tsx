@@ -250,133 +250,36 @@ export default function EventPage({
 
 
 
-      {/* HERO */}
-
-      <div className="
-        relative
-        h-[70vh]
-        overflow-hidden
-      ">
-
-        {
-
-          event.banner_url ? (
-
+      {/* BANNER */}
+      <div className="w-full max-w-6xl mx-auto pt-8 px-5">
+        {event.banner_url ? (
+          <div className="rounded-[32px] overflow-hidden border border-white/10 shadow-2xl bg-zinc-950">
             <img
-
               src={event.banner_url?.startsWith('http') ? event.banner_url : `${process.env.NEXT_PUBLIC_API_URL}/${event.banner_url?.replace(/\\/g, '/')}`}
-
-              alt="Banner"
-
-              className="
-                w-full
-                h-full
-                object-cover
-              "
-
+              alt={event.title}
+              className="w-full h-auto max-h-[80vh] object-contain mx-auto block"
             />
-
-          ) : (
-
-            <div className="
-              w-full
-              h-full
-              bg-gradient-to-br
-              from-violet-600
-              via-fuchsia-500
-              to-cyan-500
-            "></div>
-
-          )
-
-        }
-
-        {/* OVERLAY */}
-
-        <div className="
-          absolute
-          inset-0
-          bg-black/60
-        "></div>
-
-        {/* CONTENT */}
-
-        <div className="
-          absolute
-          inset-0
-          flex
-          items-center
-          justify-center
-          text-center
-          px-5
-        ">
-
-          <div>
-
-            <div className="
-              inline-flex
-              items-center
-              gap-2
-              bg-white/5
-border-white/10
-backdrop-blur-xl
-hover:scale-105
-transition              border
-              border-white/10
-              px-5
-              py-2
-              rounded-full
-              backdrop-blur-xl
-              mb-8
-            ">
-
-              <p className="
-                text-sm
-                text-gray-300
-              ">
-
-                {
-
-                  event.category ||
-
-                  'Event'
-
-                }
-
-              </p>
-
-            </div>
-
-            <h1 className="
-              text-6xl
-              md:text-8xl
-              font-black
-              mb-6
-            ">
-
-              {
-
-                event.title
-
-              }
-
-            </h1>
-
-            <p className="text-2xl text-gray-300 max-w-3xl mx-auto">
-              {event.tagline}
-            </p>
           </div>
-        </div>
+        ) : (
+          <div className="w-full h-64 md:h-96 rounded-[32px] bg-gradient-to-br from-violet-600 via-fuchsia-500 to-cyan-500 flex items-center justify-center">
+            <h1 className="text-4xl font-black text-white">{event.title}</h1>
+          </div>
+        )}
       </div>
 
-      {/* DETAILS */}
-
-      <div className="
-        max-w-7xl
-        mx-auto
-        px-5
-        py-16
-      ">
+      {/* DETAILS & CTA */}
+      <div className="max-w-7xl mx-auto px-5 pt-10 pb-16">
+        {/* TITLE & TAGLINE BELOW BANNER */}
+        <div className="text-center mb-10">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black mb-4 bg-gradient-to-r from-cyan-300 via-white to-violet-300 text-transparent bg-clip-text">
+            {event.title}
+          </h1>
+          {event.tagline && (
+            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              {event.tagline}
+            </p>
+          )}
+        </div>
 
         {/* MAIN CTA */}
         <div className="flex flex-wrap justify-center gap-6 mb-16">
