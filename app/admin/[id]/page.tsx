@@ -27,6 +27,7 @@ interface User {
   emergency_contact_name: string;
   emergency_contact: string;
   blood_group: string;
+  tshirt_size?: string;
 }
 
 interface Analytics {
@@ -58,7 +59,8 @@ export default function AdminPage({
     'Entries',
     'Emergency Contact Name',
     'Emergency Contact No',
-    'Blood Group'
+    'Blood Group',
+    'T-Shirt Size'
   ];
 
   const rows = users.map((user) => [
@@ -70,7 +72,8 @@ export default function AdminPage({
     `${user.used_entries}/${user.allowed_entries}`,
     user.emergency_contact_name || '-',
     user.emergency_contact || '-',
-    user.blood_group || '-'
+    user.blood_group || '-',
+    user.tshirt_size || '-'
   ]);
 
   const csvContent =
@@ -668,6 +671,8 @@ transition          border
               <th className="p-5">Emg. Contact</th>
 
               <th className="p-5">Blood Group</th>
+
+              <th className="p-5">T-Shirt Size</th>
             </tr>
           </thead>
 
@@ -808,6 +813,10 @@ transition          border
 
                 <td className="p-5 text-red-400 font-bold">
                   {user.blood_group || '-'}
+                </td>
+
+                <td className="p-5 text-cyan-300 font-bold">
+                  {user.tshirt_size || '-'}
                 </td>
               </tr>
             ))}

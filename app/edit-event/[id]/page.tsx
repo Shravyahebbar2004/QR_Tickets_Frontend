@@ -779,21 +779,21 @@ Tell attendees what makes your event special...
                 </h2>
                 <div className="bg-black/20 p-6 rounded-3xl border border-cyan-500/30">
                   <p className="text-gray-400 mb-6">
-                    Add custom distances (e.g. 3k, 5k) and set their prices across all 3 slabs. Attendees will select from these options.
+                    Add custom distances (e.g. 3k, 5k) and set their prices across Early Bird Offer, Slab 1, and Slab 2. Attendees will select from these options.
                   </p>
                   
                   {/* Global Slab Deadlines */}
                   <div className="grid md:grid-cols-3 gap-5 mb-8 bg-black/40 p-5 rounded-2xl border border-white/5">
                     <div>
-                      <label className="block text-gray-400 text-sm mb-2">Slab 1 Deadline</label>
+                      <label className="block text-gray-400 text-sm mb-2">Early Bird Offer Deadline</label>
                       <input type="datetime-local" name="slab1_deadline" value={formData.slab1_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
                     </div>
                     <div>
-                      <label className="block text-gray-400 text-sm mb-2">Slab 2 Deadline</label>
+                      <label className="block text-gray-400 text-sm mb-2">Slab 1 Deadline</label>
                       <input type="datetime-local" name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
                     </div>
                     <div>
-                      <label className="block text-gray-400 text-sm mb-2">Slab 3 Deadline</label>
+                      <label className="block text-gray-400 text-sm mb-2">Slab 2 Deadline</label>
                       <input type="datetime-local" name="slab3_deadline" value={formData.slab3_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
                     </div>
                   </div>
@@ -808,15 +808,15 @@ Tell attendees what makes your event special...
                           <input type="text" placeholder="e.g. 5k" value={item.name} onChange={(e) => updateCustomDistance(index, 'name', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
                         </div>
                         <div>
-                          <label className="block text-gray-400 text-sm mb-2">Slab 1 Price (₹)</label>
+                          <label className="block text-gray-400 text-sm mb-2">Early Bird Offer Price (₹)</label>
                           <input type="number" placeholder="299" value={item.slab1} onChange={(e) => updateCustomDistance(index, 'slab1', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
                         </div>
                         <div>
-                          <label className="block text-gray-400 text-sm mb-2">Slab 2 Price (₹)</label>
+                          <label className="block text-gray-400 text-sm mb-2">Slab 1 Price (₹)</label>
                           <input type="number" placeholder="399" value={item.slab2} onChange={(e) => updateCustomDistance(index, 'slab2', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
                         </div>
                         <div>
-                          <label className="block text-gray-400 text-sm mb-2">Slab 3 Price (₹)</label>
+                          <label className="block text-gray-400 text-sm mb-2">Slab 2 Price (₹)</label>
                           <input type="number" placeholder="499" value={item.slab3} onChange={(e) => updateCustomDistance(index, 'slab3', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
                         </div>
                       </div>
@@ -837,8 +837,8 @@ Tell attendees what makes your event special...
                             <input type="datetime-local" value={item.start_time || ''} onChange={(e) => updateCustomDistance(index, 'start_time', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
                           </div>
                           <div>
-                            <label className="block text-gray-400 text-xs mb-2">Wave Size (Runners per Wave)</label>
-                            <input type="number" placeholder="100" value={item.wave_size || '100'} onChange={(e) => updateCustomDistance(index, 'wave_size', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                            <label className="block text-gray-400 text-xs mb-2">Wave Capacity (Max Runners per Wave)</label>
+                            <input type="number" placeholder="65" value={item.wave_size || '65'} onChange={(e) => updateCustomDistance(index, 'wave_size', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
                           </div>
                           <div>
                             <label className="block text-gray-400 text-xs mb-2">Wave Gap (Minutes)</label>

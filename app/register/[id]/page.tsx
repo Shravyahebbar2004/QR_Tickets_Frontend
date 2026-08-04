@@ -28,7 +28,8 @@ export default function RegisterPage({
     emergency_contact_name: '',
     emergency_contact: '',
     blood_group: '',
-    gender: ''
+    gender: '',
+    tshirt_size: ''
   });
 
   const [quantities, setQuantities] = useState<Record<string, number>>({
@@ -118,20 +119,20 @@ export default function RegisterPage({
       // Determine Slab
       const now = new Date().getTime();
       let slabKey = 'slab1';
-      let slabName = "Standard Ticket";
+      let slabName = "Early Bird Offer";
 
       if (evt.slab1_deadline && now <= new Date(evt.slab1_deadline).getTime()) {
         slabKey = 'slab1';
-        slabName = "Early Bird (Slab 1)";
+        slabName = "Early Bird Offer";
       } else if (evt.slab2_deadline && now <= new Date(evt.slab2_deadline).getTime()) {
         slabKey = 'slab2';
-        slabName = "Regular (Slab 2)";
+        slabName = "Slab 1";
       } else if (evt.slab3_deadline && now <= new Date(evt.slab3_deadline).getTime()) {
         slabKey = 'slab3';
-        slabName = "Late (Slab 3)";
+        slabName = "Slab 2";
       } else if (evt.slab3_solo_price) {
         slabKey = 'slab3';
-        slabName = "Last Minute";
+        slabName = "Slab 2";
       }
 
       setActiveSlabKey(slabKey);
@@ -265,6 +266,7 @@ export default function RegisterPage({
       submitData.append('emergency_contact', formData.emergency_contact);
       submitData.append('blood_group', formData.blood_group || '');
       submitData.append('gender', formData.gender || '');
+      submitData.append('tshirt_size', formData.tshirt_size || '');
       
       // We pass tickets array as JSON
       submitData.append('tickets', JSON.stringify(tickets));
@@ -407,7 +409,8 @@ export default function RegisterPage({
                       ticket_type: type,
                       full_name: '',
                       blood_group: '',
-                      gender: ''
+                      gender: '',
+                      tshirt_size: ''
                     });
                   }
                 }
@@ -490,18 +493,35 @@ export default function RegisterPage({
               required
               className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
             />
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              required
-              className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-8 focus:ring-2 focus:ring-violet-500 outline-none text-gray-300"
-            >
-              <option value="" disabled>Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                required
+                className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-violet-500 outline-none text-gray-300"
+              >
+                <option value="" disabled>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              <select
+                name="tshirt_size"
+                value={formData.tshirt_size}
+                onChange={handleChange}
+                required
+                className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-violet-500 outline-none text-gray-300"
+              >
+                <option value="" disabled>T-Shirt Size</option>
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+              </select>
+            </div>
           </>
         )}
 
@@ -520,12 +540,12 @@ export default function RegisterPage({
                   required
                   className="w-full p-3 rounded-xl bg-black/30 border border-white/10 mb-4 focus:ring-2 focus:ring-cyan-500 outline-none"
                 />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   <select
                     value={p.gender}
                     onChange={(e) => handleParticipantChange(i, 'gender', e.target.value)}
                     required
-                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-gray-300"
+                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-gray-300 text-sm"
                   >
                     <option value="" disabled>Gender</option>
                     <option value="Male">Male</option>
@@ -538,8 +558,22 @@ export default function RegisterPage({
                     value={p.blood_group}
                     onChange={(e) => handleParticipantChange(i, 'blood_group', e.target.value)}
                     required
-                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none"
+                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-sm"
                   />
+                  <select
+                    value={p.tshirt_size}
+                    onChange={(e) => handleParticipantChange(i, 'tshirt_size', e.target.value)}
+                    required
+                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-gray-300 text-sm"
+                  >
+                    <option value="" disabled>T-Shirt Size</option>
+                    <option value="XS">XS</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                  </select>
                 </div>
               </div>
             ))}
