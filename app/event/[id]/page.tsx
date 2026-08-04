@@ -320,7 +320,7 @@ export default function EventPage({
           <div className="bg-white/5 border border-white/10 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50">
             <CalendarDays size={32} className="text-violet-300" />
             <p className="text-xl md:text-2xl font-bold text-yellow-300">
-              {new Date(event.event_date).toLocaleString()}
+              {new Date(event.event_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(event.event_date).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}
             </p>
           </div>
         </div>
