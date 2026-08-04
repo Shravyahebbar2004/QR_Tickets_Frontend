@@ -28,6 +28,7 @@ interface User {
   emergency_contact: string;
   blood_group: string;
   tshirt_size?: string;
+  coupon_code?: string;
 }
 
 interface Analytics {
@@ -56,6 +57,7 @@ export default function AdminPage({
     'Phone',
     'Ticket',
     'Payment Status',
+    'Coupon Used',
     'Entries',
     'Emergency Contact Name',
     'Emergency Contact No',
@@ -69,6 +71,7 @@ export default function AdminPage({
     user.phone_number,
     user.ticket_type,
     user.payment_status,
+    user.coupon_code || '-',
     `${user.used_entries}/${user.allowed_entries}`,
     user.emergency_contact_name || '-',
     user.emergency_contact || '-',
@@ -660,6 +663,8 @@ transition          border
 
               <th className="p-5">Ticket</th>
 
+              <th className="p-5">Coupon Code</th>
+
               <th className="p-5">Payment</th>
 
               <th className="p-5">Approval</th>
@@ -721,6 +726,17 @@ transition          border
                   >
                     {user.ticket_type}
                   </span>
+                </td>
+
+                {/* COUPON CODE */}
+                <td className="p-5">
+                  {user.coupon_code ? (
+                    <span className="bg-violet-500/20 text-violet-300 border border-violet-500/40 px-3 py-1.5 rounded-xl font-bold uppercase text-xs tracking-wider">
+                      🏷️ {user.coupon_code}
+                    </span>
+                  ) : (
+                    <span className="text-gray-500 text-xs font-semibold">-</span>
+                  )}
                 </td>
 
                 {/* PAYMENT IMAGE */}

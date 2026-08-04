@@ -84,7 +84,7 @@ export default function RegisterPage({
 
     if (maxUses > 0 && currentUses >= maxUses) {
       setAppliedCoupon(null);
-      setCouponMessage({ type: 'error', text: `Coupon code '${match.code}' usage limit reached for the first ${maxUses} members.` });
+      setCouponMessage({ type: 'error', text: `Offer is over for coupon '${match.code}' (limit of ${maxUses} members reached). Continuing with actual prices.` });
       return;
     }
 
