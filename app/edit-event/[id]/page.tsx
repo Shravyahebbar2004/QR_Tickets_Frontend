@@ -807,45 +807,31 @@ Tell attendees what makes your event special...
                 </h2>
                 <div className="bg-black/20 p-6 rounded-3xl border border-cyan-500/30">
                   <p className="text-gray-400 mb-6">
-                    Add custom distances (e.g. 3k, 5k) and set their prices across Early Bird Offer, Slab 1, and Slab 2. Attendees will select from these options.
+                    Add custom distances (e.g. 3k, 5k) and set their prices for <strong className="text-cyan-300">Early Bird Offer</strong> (first 150 registrations) and <strong className="text-cyan-300">Normal Slab</strong> (next 150 registrations).
                   </p>
                   
-                  {/* Global Slab Deadlines */}
-                  <div className="grid md:grid-cols-3 gap-5 mb-8 bg-black/40 p-5 rounded-2xl border border-white/5">
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-2">Early Bird Offer Deadline</label>
-                      <input type="datetime-local" name="slab1_deadline" value={formData.slab1_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
-                    </div>
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-2">Slab 1 Deadline</label>
-                      <input type="datetime-local" name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
-                    </div>
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-2">Slab 2 Deadline</label>
-                      <input type="datetime-local" name="slab3_deadline" value={formData.slab3_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
-                    </div>
+                  {/* Registration Closing Deadline */}
+                  <div className="mb-8 bg-black/40 p-5 rounded-2xl border border-white/5">
+                    <label className="block text-gray-300 text-sm font-bold mb-2">Registration Closing Date & Time (Final Closing Date)</label>
+                    <input type="datetime-local" name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 rounded-xl bg-black/60 border border-white/10 text-white" />
                   </div>
 
                   {customPricing.map((item, index) => (
                     <div key={index} className="mb-8 p-6 bg-white/5 border border-white/10 rounded-3xl relative">
                       <button type="button" onClick={() => removeCustomDistance(index)} className="absolute -top-3 -right-3 bg-red-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white hover:scale-110 transition shadow-lg">✕</button>
                       
-                      <div className="grid md:grid-cols-4 gap-4 mb-6">
+                      <div className="grid md:grid-cols-3 gap-4 mb-6">
                         <div>
                           <label className="block text-gray-400 text-sm mb-2">Distance Name</label>
                           <input type="text" placeholder="e.g. 5k" value={item.name} onChange={(e) => updateCustomDistance(index, 'name', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
                         </div>
                         <div>
-                          <label className="block text-gray-400 text-sm mb-2">Early Bird Offer Price (₹)</label>
+                          <label className="block text-gray-400 text-sm mb-2">Early Bird Price (₹) [First 150 Registrations]</label>
                           <input type="number" placeholder="299" value={item.slab1} onChange={(e) => updateCustomDistance(index, 'slab1', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
                         </div>
                         <div>
-                          <label className="block text-gray-400 text-sm mb-2">Slab 1 Price (₹)</label>
+                          <label className="block text-gray-400 text-sm mb-2">Normal Slab Price (₹) [Next 150 Registrations]</label>
                           <input type="number" placeholder="399" value={item.slab2} onChange={(e) => updateCustomDistance(index, 'slab2', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
-                        </div>
-                        <div>
-                          <label className="block text-gray-400 text-sm mb-2">Slab 2 Price (₹)</label>
-                          <input type="number" placeholder="499" value={item.slab3} onChange={(e) => updateCustomDistance(index, 'slab3', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
                         </div>
                       </div>
 

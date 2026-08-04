@@ -188,7 +188,7 @@ export default function RegisterPage({
 
       if (!registrationClosed) {
         // 2. Early Bird threshold: 150 registrations. After 150, auto-transition to Normal Slab (Slab 2).
-        if (totalRegs >= 150 || (evt.slab1_deadline && now > new Date(evt.slab1_deadline).getTime())) {
+        if (totalRegs >= 150) {
           slabKey = 'slab2';
           slabName = "Normal Slab";
         } else {
