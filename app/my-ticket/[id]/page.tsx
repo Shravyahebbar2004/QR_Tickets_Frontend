@@ -153,8 +153,8 @@ export default function MyTicketPage() {
       flex
       items-center
       justify-center
-      px-5
-      py-10
+      px-4 sm:px-6
+      py-6 sm:py-10
     ">
       <div className="w-full max-w-2xl">
 
@@ -165,10 +165,10 @@ export default function MyTicketPage() {
           border-white/10
           backdrop-blur-xl
           rounded-[35px]
-          p-10
+          p-5 sm:p-10
         ">
           {/* HEADING */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 sm:mb-10">
             <h1 className="
               text-3xl md:text-5xl
               font-bold
@@ -184,7 +184,7 @@ export default function MyTicketPage() {
             </h1>
             <p className="
               text-gray-300
-              text-lg
+              text-base sm:text-lg
             ">
               View Your Event Passes
             </p>
@@ -271,21 +271,21 @@ export default function MyTicketPage() {
                     backdrop-blur-xl
                     border
                     rounded-3xl
-                    p-10
+                    p-5 sm:p-10
                     text-center
                   ">
                     <h2 className="
-                      text-3xl
+                      text-2xl sm:text-3xl
                       text-violet-300
                       font-bold
-                      mb-5
+                      mb-4 sm:mb-5
                     ">
                       Waiting For Approval ⏳
                     </h2>
-                    <p className="text-white text-lg font-bold mb-2">
+                    <p className="text-white text-base sm:text-lg font-bold mb-2">
                       Pass: {ticket.ticket_type}
                     </p>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 text-sm sm:text-base">
                       Your payment is under admin verification.
                     </p>
                   </div>
@@ -303,18 +303,19 @@ export default function MyTicketPage() {
                       bg-violet-500
                       text-white
                       text-center
-                      py-5
+                      py-4 sm:py-5
+                      px-4
                     ">
-                      <h2 className="text-4xl font-bold">
+                      <h2 className="text-2xl sm:text-4xl font-bold">
                         {ticket.title}
                       </h2>
-                      <p className="text-lg mt-2 font-semibold">
+                      <p className="text-sm sm:text-lg mt-1 sm:mt-2 font-semibold">
                         PASS FOR {ticket.title.toUpperCase()}
                       </p>
                     </div>
 
                     {/* BODY */}
-                    <div className="p-10 text-center">
+                    <div className="p-5 sm:p-10 text-center">
                       <h3 className="
                         text-3xl
                         text-violet-300

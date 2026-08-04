@@ -271,28 +271,28 @@ export default function EventPage({
       <div className="max-w-7xl mx-auto px-5 pt-10 pb-16">
         {/* TITLE & TAGLINE BELOW BANNER */}
         <div className="text-center mb-10">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black mb-4 bg-gradient-to-r from-cyan-300 via-white to-violet-300 text-transparent bg-clip-text">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black mb-4 bg-gradient-to-r from-cyan-300 via-white to-violet-300 text-transparent bg-clip-text">
             {event.title}
           </h1>
           {event.tagline && (
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {event.tagline}
             </p>
           )}
         </div>
 
         {/* MAIN CTA */}
-        <div className="flex flex-wrap justify-center gap-6 mb-16">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 mb-12 sm:mb-16 w-full">
           {!isExpired && (
-            <Link href={`/register/${event.event_id}`}>
-              <button className="bg-violet-500 hover:bg-violet-600 px-10 py-4 rounded-3xl text-2xl font-black shadow-2xl shadow-violet-500/40 transition hover:-translate-y-1">
+            <Link href={`/register/${event.event_id}`} className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-violet-500 hover:bg-violet-600 px-8 sm:px-10 py-4 rounded-2xl sm:rounded-3xl text-xl sm:text-2xl font-black shadow-2xl shadow-violet-500/40 transition hover:-translate-y-1">
                 Register Now
               </button>
             </Link>
           )}
           {!isExpired && (
-            <Link href={`/my-ticket/${event.event_id}`}>
-              <button className="bg-cyan-500 hover:bg-cyan-600 px-10 py-4 rounded-3xl text-2xl font-black shadow-2xl shadow-cyan-500/40 transition hover:-translate-y-1">
+            <Link href={`/my-ticket/${event.event_id}`} className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 px-8 sm:px-10 py-4 rounded-2xl sm:rounded-3xl text-xl sm:text-2xl font-black shadow-2xl shadow-cyan-500/40 transition hover:-translate-y-1">
                 View My Ticket
               </button>
             </Link>
@@ -300,16 +300,16 @@ export default function EventPage({
         </div>
 
         {/* INFO */}
-        <div className="flex flex-wrap justify-center gap-6 mb-12">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 mb-12">
           <a
             href={event.venue_map_url || "https://maps.app.goo.gl/V38WwSw8WjvyPFfU9?g_st=ac"}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white/5 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-400 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50 cursor-pointer group"
+            className="bg-white/5 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-400 px-5 sm:px-8 py-4 sm:py-5 rounded-2xl sm:rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50 cursor-pointer group w-full sm:w-auto"
           >
-            <MapPin size={32} className="text-cyan-300 group-hover:scale-110 transition" />
+            <MapPin size={28} className="text-cyan-300 group-hover:scale-110 transition flex-shrink-0" />
             <div>
-              <p className="text-xl md:text-2xl font-bold text-white group-hover:text-cyan-300 transition">
+              <p className="text-lg sm:text-2xl font-bold text-white group-hover:text-cyan-300 transition">
                 {event.venue}
               </p>
               <p className="text-xs text-cyan-400 font-semibold uppercase tracking-wider flex items-center gap-1 mt-0.5">
@@ -317,49 +317,13 @@ export default function EventPage({
               </p>
             </div>
           </a>
-          <div className="bg-white/5 border border-white/10 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50">
-            <CalendarDays size={32} className="text-violet-300" />
-            <p className="text-xl md:text-2xl font-bold text-yellow-300">
+          <div className="bg-white/5 border border-white/10 px-5 sm:px-8 py-4 sm:py-5 rounded-2xl sm:rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50 w-full sm:w-auto">
+            <CalendarDays size={28} className="text-violet-300 flex-shrink-0" />
+            <p className="text-lg sm:text-2xl font-bold text-yellow-300">
               {new Date(event.event_date).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(event.event_date).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: true })}
             </p>
           </div>
         </div>
-{/* COUNTDOWN */}
-
-{!isExpired ? (
-  <div className="mt-16 mb-20 max-w-4xl mx-auto bg-black/40 border border-white/10 p-8 md:p-12 rounded-[40px] backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center text-center">
-    <h3 className="text-xl text-cyan-300 font-bold mb-6 tracking-widest uppercase">Event Starts In</h3>
-    
-    <div className="flex items-center justify-center gap-2 md:gap-6 font-black text-5xl md:text-7xl lg:text-8xl tracking-tight font-mono text-white">
-      <div className="flex flex-col items-center">
-        <span>{String(timeLeft.days).padStart(2, '0')}</span>
-        <span className="text-sm md:text-lg text-gray-500 font-sans tracking-normal mt-2">DAYS</span>
-      </div>
-      <span className="text-gray-600 pb-8 md:pb-12">:</span>
-      
-      <div className="flex flex-col items-center">
-        <span>{String(timeLeft.hours).padStart(2, '0')}</span>
-        <span className="text-sm md:text-lg text-gray-500 font-sans tracking-normal mt-2">HOURS</span>
-      </div>
-      <span className="text-gray-600 pb-8 md:pb-12">:</span>
-      
-      <div className="flex flex-col items-center">
-        <span>{String(timeLeft.minutes).padStart(2, '0')}</span>
-        <span className="text-sm md:text-lg text-gray-500 font-sans tracking-normal mt-2">MINS</span>
-      </div>
-      <span className="text-gray-600 pb-8 md:pb-12">:</span>
-      
-      <div className="flex flex-col items-center">
-        <span className="text-violet-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
-        <span className="text-sm md:text-lg text-gray-500 font-sans tracking-normal mt-2">SECS</span>
-      </div>
-    </div>
-  </div>
-) : (
-  <div className="mt-16 mb-20 max-w-5xl mx-auto bg-red-500/10 border border-red-500/30 p-10 rounded-3xl text-center">
-    <h2 className="text-4xl font-black text-red-400 mb-2">Event Concluded</h2>
-    <p className="text-xl text-gray-300">This event has already taken place and registrations are closed.</p>
-  </div>
 )}
 
 {/* ABOUT EVENT */}

@@ -327,24 +327,24 @@ export default function RegisterPage({
   // =====================================
 
   const renderCounter = (type: string, label: string, subtitle: string, price: number) => (
-    <div className="flex justify-between items-center p-5 bg-white/5 border border-white/10 rounded-3xl mb-4 hover:bg-white/10 transition">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-4 sm:p-5 bg-white/5 border border-white/10 rounded-3xl mb-4 hover:bg-white/10 transition">
       <div>
-        <h3 className="text-xl font-bold">{label}</h3>
-        <p className="text-gray-400 text-sm">{subtitle} • ₹{price}</p>
+        <h3 className="text-lg sm:text-xl font-bold">{label}</h3>
+        <p className="text-gray-400 text-xs sm:text-sm">{subtitle} • ₹{price}</p>
       </div>
-      <div className="flex items-center gap-4 bg-black/40 p-2 rounded-2xl">
+      <div className="flex items-center gap-3 sm:gap-4 bg-black/40 p-2 rounded-2xl self-end sm:self-auto">
         <button 
           type="button" 
           onClick={() => setQuantities({...quantities, [type]: Math.max(0, (quantities[type] || 0) - 1)})}
-          className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-lg sm:text-xl font-bold transition"
         >
           -
         </button>
-        <span className="text-xl font-bold w-4 text-center">{quantities[type] || 0}</span>
+        <span className="text-lg sm:text-xl font-bold w-4 text-center">{quantities[type] || 0}</span>
         <button 
           type="button"
           onClick={() => setQuantities({...quantities, [type]: (quantities[type] || 0) + 1})}
-          className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-lg sm:text-xl font-bold transition"
         >
           +
         </button>
@@ -521,13 +521,13 @@ export default function RegisterPage({
       ) : (
       <form
         onSubmit={handleSubmit}
-        className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 w-full max-w-2xl shadow-2xl"
+        className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-5 sm:p-10 w-full max-w-2xl shadow-2xl"
       >
-        <h1 className="text-5xl font-black mb-3">{event.title}</h1>
-        <p className="text-gray-400 mb-10">Register for this event</p>
+        <h1 className="text-3xl sm:text-5xl font-black mb-3">{event.title}</h1>
+        <p className="text-gray-400 mb-8 sm:mb-10 text-sm sm:text-base">Register for this event</p>
 
         {/* PRIMARY CONTACT DETAILS */}
-        <h2 className="text-2xl font-bold text-violet-300 mb-4 border-b border-white/10 pb-2">Primary Contact (Purchaser)</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-violet-300 mb-4 border-b border-white/10 pb-2">Primary Contact (Purchaser)</h2>
         
         {event.category?.toLowerCase()?.trim() !== 'marathon' && (
           <input
@@ -587,7 +587,7 @@ export default function RegisterPage({
               required
               className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
             />
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
               <select
                 name="gender"
                 value={formData.gender}
@@ -622,19 +622,19 @@ export default function RegisterPage({
         {/* PARTICIPANT DETAILS (MARATHON ONLY) */}
         {event.category?.toLowerCase()?.trim() === 'marathon' && participants.length > 0 && (
           <div className="mt-8 mb-8 space-y-6">
-            <h2 className="text-2xl font-bold text-cyan-300 mb-4 border-b border-white/10 pb-2">Participant Details</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-cyan-300 mb-4 border-b border-white/10 pb-2">Participant Details</h2>
             {participants.map((p, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 p-5 rounded-2xl">
-                <h3 className="text-lg font-bold mb-4 text-gray-300">Participant {i + 1} • <span className="text-cyan-400">{p.ticket_type}</span></h3>
+              <div key={i} className="bg-white/5 border border-white/10 p-4 sm:p-5 rounded-2xl">
+                <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-300">Participant {i + 1} • <span className="text-cyan-400">{p.ticket_type}</span></h3>
                 <input
                   type="text"
                   placeholder="Full Name"
                   value={p.full_name}
                   onChange={(e) => handleParticipantChange(i, 'full_name', e.target.value)}
                   required
-                  className="w-full p-3 rounded-xl bg-black/30 border border-white/10 mb-4 focus:ring-2 focus:ring-cyan-500 outline-none"
+                  className="w-full p-3 rounded-xl bg-black/30 border border-white/10 mb-4 focus:ring-2 focus:ring-cyan-500 outline-none text-sm"
                 />
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <select
                     value={p.gender}
                     onChange={(e) => handleParticipantChange(i, 'gender', e.target.value)}
