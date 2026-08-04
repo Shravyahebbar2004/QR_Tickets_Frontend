@@ -170,39 +170,32 @@ export default function RegisterPage({
       const evt = response.data.event;
       setEvent(evt);
 
-      // Determine Slab and Registration Status
+      // Determine Slab and Registration Status (2 Slabs with 150 Registration Thresholds)
       const now = new Date().getTime();
+      const totalRegs = Number(evt.total_registrations) || 0;
+
       let slabKey = 'slab1';
       let slabName = "Early Bird Offer";
       let registrationClosed = false;
 
-      // Check if all registration slab deadlines have passed
-      const deadlines = [
-        evt.slab3_deadline,
-        evt.slab2_deadline,
-        evt.slab1_deadline,
-        evt.registration_deadline
-      ].filter(Boolean).map((d: string) => new Date(d).getTime());
-
-      if (deadlines.length > 0) {
-        const latestDeadline = Math.max(...deadlines);
-        if (now > latestDeadline) {
-          registrationClosed = true;
-        }
+      // 1. Total Capacity limit: 300 registrations max (150 Early Bird + 150 Normal Slab)
+      if (totalRegs >= 300) {
+        registrationClosed = true;
+      } else if (evt.slab2_deadline && now > new Date(evt.slab2_deadline).getTime()) {
+        registrationClosed = true;
+      } else if (evt.registration_deadline && now > new Date(evt.registration_deadline).getTime()) {
+        registrationClosed = true;
       }
 
-      if (evt.slab1_deadline && now <= new Date(evt.slab1_deadline).getTime()) {
-        slabKey = 'slab1';
-        slabName = "Early Bird Offer";
-      } else if (evt.slab2_deadline && now <= new Date(evt.slab2_deadline).getTime()) {
-        slabKey = 'slab2';
-        slabName = "Slab 1";
-      } else if (evt.slab3_deadline && now <= new Date(evt.slab3_deadline).getTime()) {
-        slabKey = 'slab3';
-        slabName = "Slab 2";
-      } else if (evt.slab3_solo_price) {
-        slabKey = 'slab3';
-        slabName = "Slab 2";
+      if (!registrationClosed) {
+        // 2. Early Bird threshold: 150 registrations. After 150, auto-transition to Normal Slab (Slab 2).
+        if (totalRegs >= 150 || (evt.slab1_deadline && now > new Date(evt.slab1_deadline).getTime())) {
+          slabKey = 'slab2';
+          slabName = "Normal Slab";
+        } else {
+          slabKey = 'slab1';
+          slabName = "Early Bird Offer";
+        }
       }
 
       setActiveSlabKey(slabKey);
@@ -548,40 +541,56 @@ export default function RegisterPage({
             })() : null}
           </div>
 
-          {/* PARTNER / COUPON CODE BOX */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8">
-            <label className="block text-sm font-bold text-cyan-300 mb-2">Have a Partner / Coupon Code?</label>
-            <div className="flex gap-3">
-              <input 
-                type="text" 
-                placeholder="Enter the code" 
-                value={couponInput}
-                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                className="flex-1 p-3.5 rounded-xl bg-black/40 border border-white/10 text-white uppercase tracking-wider font-bold text-sm focus:border-cyan-500 outline-none"
-              />
-              <button 
-                type="button"
-                onClick={handleApplyCoupon}
-                className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-6 py-3.5 rounded-xl transition shadow-md"
-              >
-                Apply
-              </button>
-            </div>
-            {couponMessage && (
-              <div className={`mt-3 p-3 rounded-xl text-sm font-bold flex items-center justify-between ${couponMessage.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'}`}>
-                <span>{couponMessage.text}</span>
-                {appliedCoupon && (
+          {/* PARTNER / COUPON CODE BOX (ONLY IF EVENT HAS COUPONS) */}
+          {(() => {
+            const hasCoupons = (() => {
+              if (!event || !event.coupons) return false;
+              try {
+                const parsed = typeof event.coupons === 'string' ? JSON.parse(event.coupons) : event.coupons;
+                return Array.isArray(parsed) && parsed.length > 0;
+              } catch (e) {
+                return false;
+              }
+            })();
+
+            if (!hasCoupons) return null;
+
+            return (
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8">
+                <label className="block text-sm font-bold text-cyan-300 mb-2">Have a Partner / Coupon Code?</label>
+                <div className="flex gap-3">
+                  <input 
+                    type="text" 
+                    placeholder="Enter the code" 
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                    className="flex-1 p-3.5 rounded-xl bg-black/40 border border-white/10 text-white uppercase tracking-wider font-bold text-sm focus:border-cyan-500 outline-none"
+                  />
                   <button 
-                    type="button" 
-                    onClick={handleRemoveCoupon} 
-                    className="text-xs underline hover:text-white ml-2"
+                    type="button"
+                    onClick={handleApplyCoupon}
+                    className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-6 py-3.5 rounded-xl transition shadow-md"
                   >
-                    Remove
+                    Apply
                   </button>
+                </div>
+                {couponMessage && (
+                  <div className={`mt-3 p-3 rounded-xl text-sm font-bold flex items-center justify-between ${couponMessage.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'}`}>
+                    <span>{couponMessage.text}</span>
+                    {appliedCoupon && (
+                      <button 
+                        type="button" 
+                        onClick={handleRemoveCoupon} 
+                        className="text-xs underline hover:text-white ml-2"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
+            );
+          })()}
 
           <button
             onClick={() => {
@@ -679,7 +688,7 @@ export default function RegisterPage({
               required
               className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="mb-8">
               <select
                 name="gender"
                 value={formData.gender}
@@ -691,21 +700,6 @@ export default function RegisterPage({
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
-              </select>
-              <select
-                name="tshirt_size"
-                value={formData.tshirt_size}
-                onChange={handleChange}
-                required
-                className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-violet-500 outline-none text-gray-300"
-              >
-                <option value="" disabled>T-Shirt Size</option>
-                <option value="XS">XS</option>
-                <option value="S">S</option>
-                <option value="M">M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-                <option value="XXL">XXL</option>
               </select>
             </div>
           </>
@@ -744,7 +738,7 @@ export default function RegisterPage({
                     value={p.blood_group}
                     onChange={(e) => handleParticipantChange(i, 'blood_group', e.target.value)}
                     required
-                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-sm"
+                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 text-sm"
                   />
                   <select
                     value={p.tshirt_size}
@@ -797,40 +791,56 @@ export default function RegisterPage({
           )}
         </div>
 
-        {/* PARTNER / COUPON CODE BOX */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8">
-          <label className="block text-sm font-bold text-violet-300 mb-2">Have a Partner / Coupon Code?</label>
-          <div className="flex gap-3">
-            <input 
-              type="text" 
-              placeholder="Enter the code" 
-              value={couponInput}
-              onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-              className="flex-1 p-3.5 rounded-xl bg-black/40 border border-white/10 text-white uppercase tracking-wider font-bold text-sm focus:border-violet-500 outline-none"
-            />
-            <button 
-              type="button"
-              onClick={handleApplyCoupon}
-              className="bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-600 hover:to-cyan-600 text-white font-bold px-6 py-3.5 rounded-xl transition shadow-md"
-            >
-              Apply
-            </button>
-          </div>
-          {couponMessage && (
-            <div className={`mt-3 p-3 rounded-xl text-sm font-bold flex items-center justify-between ${couponMessage.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'}`}>
-              <span>{couponMessage.text}</span>
-              {appliedCoupon && (
+        {/* PARTNER / COUPON CODE BOX (ONLY IF EVENT HAS COUPONS) */}
+        {(() => {
+          const hasCoupons = (() => {
+            if (!event || !event.coupons) return false;
+            try {
+              const parsed = typeof event.coupons === 'string' ? JSON.parse(event.coupons) : event.coupons;
+              return Array.isArray(parsed) && parsed.length > 0;
+            } catch (e) {
+              return false;
+            }
+          })();
+
+          if (!hasCoupons) return null;
+
+          return (
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8">
+              <label className="block text-sm font-bold text-violet-300 mb-2">Have a Partner / Coupon Code?</label>
+              <div className="flex gap-3">
+                <input 
+                  type="text" 
+                  placeholder="Enter the code" 
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                  className="flex-1 p-3.5 rounded-xl bg-black/40 border border-white/10 text-white uppercase tracking-wider font-bold text-sm focus:border-violet-500 outline-none"
+                />
                 <button 
-                  type="button" 
-                  onClick={handleRemoveCoupon} 
-                  className="text-xs underline hover:text-white ml-2"
+                  type="button"
+                  onClick={handleApplyCoupon}
+                  className="bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-600 hover:to-cyan-600 text-white font-bold px-6 py-3.5 rounded-xl transition shadow-md"
                 >
-                  Remove
+                  Apply
                 </button>
+              </div>
+              {couponMessage && (
+                <div className={`mt-3 p-3 rounded-xl text-sm font-bold flex items-center justify-between ${couponMessage.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'}`}>
+                  <span>{couponMessage.text}</span>
+                  {appliedCoupon && (
+                    <button 
+                      type="button" 
+                      onClick={handleRemoveCoupon} 
+                      className="text-xs underline hover:text-white ml-2"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
+          );
+        })()}
 
         {/* PAYMENT BOX */}
         <div className="bg-gradient-to-br from-violet-500/20 to-pink-500/20 border border-white/10 rounded-3xl p-8 mb-8">

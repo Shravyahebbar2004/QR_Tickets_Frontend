@@ -928,14 +928,17 @@ Tell attendees what makes your event special...
               <>
                 {/* SLAB PRICING */}
                 <div className="mb-10">
-                  <h2 className="text-2xl font-bold mb-6 text-cyan-300">
-                    Ticket Pricing Slabs
+                  <h2 className="text-2xl font-bold mb-2 text-cyan-300">
+                    Ticket Pricing Slabs (2 Slabs - 150 Registration Limit Each)
                   </h2>
-                  <div className="grid md:grid-cols-3 gap-5">
+                  <p className="text-gray-400 text-sm mb-6">
+                    Registration starts in <strong className="text-cyan-300">Early Bird Offer</strong> (first 150 registrations), then automatically switches to <strong className="text-cyan-300">Normal Slab</strong> for the next 150 registrations (Total capacity limit: 300).
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-5">
                     {/* SLAB 1 */}
                     <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
-                      <h3 className="font-bold mb-4">Slab 1 (Early Bird)</h3>
-                      <label className="block text-gray-400 text-sm mb-2">Deadline</label>
+                      <h3 className="font-bold mb-4 text-cyan-300">Slab 1 (Early Bird Offer - Max 150 Members)</h3>
+                      <label className="block text-gray-400 text-sm mb-2">Deadline (Optional)</label>
                       <input type="datetime-local" name="slab1_deadline" value={formData.slab1_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                       <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
                       <input type="number" name="slab1_solo_price" value={formData.slab1_solo_price} onChange={handleChange} placeholder="299" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
@@ -946,8 +949,8 @@ Tell attendees what makes your event special...
                     </div>
                     {/* SLAB 2 */}
                     <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
-                      <h3 className="font-bold mb-4">Slab 2 (Regular)</h3>
-                      <label className="block text-gray-400 text-sm mb-2">Deadline</label>
+                      <h3 className="font-bold mb-4 text-cyan-300">Slab 2 (Normal Slab - Max 150 Members)</h3>
+                      <label className="block text-gray-400 text-sm mb-2">Deadline (Optional)</label>
                       <input type="datetime-local" name="slab2_deadline" value={formData.slab2_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                       <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
                       <input type="number" name="slab2_solo_price" value={formData.slab2_solo_price} onChange={handleChange} placeholder="399" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
@@ -955,18 +958,6 @@ Tell attendees what makes your event special...
                       <input type="number" name="slab2_couple_price" value={formData.slab2_couple_price} onChange={handleChange} placeholder="699" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
                       <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
                       <input type="number" name="slab2_group_price" value={formData.slab2_group_price} onChange={handleChange} placeholder="1299" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
-                    </div>
-                    {/* SLAB 3 */}
-                    <div className="bg-black/20 p-5 rounded-2xl border border-white/10">
-                      <h3 className="font-bold mb-4">Slab 3 (Late)</h3>
-                      <label className="block text-gray-400 text-sm mb-2">Deadline</label>
-                      <input type="datetime-local" name="slab3_deadline" value={formData.slab3_deadline} onChange={handleChange} className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                      <label className="block text-gray-400 text-sm mb-2">Solo Price (₹)</label>
-                      <input type="number" name="slab3_solo_price" value={formData.slab3_solo_price} onChange={handleChange} placeholder="499" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                      <label className="block text-gray-400 text-sm mb-2">Couple Price (₹)</label>
-                      <input type="number" name="slab3_couple_price" value={formData.slab3_couple_price} onChange={handleChange} placeholder="899" className="w-full p-3 mb-4 rounded-xl bg-black/40 border border-white/10 text-white" />
-                      <label className="block text-gray-400 text-sm mb-2">Group Price (₹)</label>
-                      <input type="number" name="slab3_group_price" value={formData.slab3_group_price} onChange={handleChange} placeholder="1599" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white" />
                     </div>
                   </div>
                 </div>
