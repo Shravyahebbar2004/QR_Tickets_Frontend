@@ -375,15 +375,56 @@ export default function RegisterPage({
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center text-white text-center p-10">
-        <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 max-w-lg shadow-2xl">
-          <h1 className="text-4xl md:text-5xl font-black mb-5">Registration Submitted ✅</h1>
-          <p className="text-gray-300 text-xl mb-6">Wait for admin approval.</p>
-          <div className="border-t border-white/10 pt-6 mt-6 text-gray-400">
-            <p className="text-sm mb-2">For more information or queries, contact:</p>
-            <p className="font-bold text-white text-lg">Shravya Hebbar</p>
-            <p className="text-cyan-400 font-medium mt-1">📧 <a href="mailto:rotaractyelahanka.events@gmail.com" className="hover:underline">rotaractyelahanka.events@gmail.com</a></p>
-            <p className="text-cyan-400 font-medium mt-1">📞 <a href="tel:9611444945" className="hover:underline">9611444945</a></p>
+      <div className="min-h-screen bg-black flex items-center justify-center text-white text-center p-6">
+        <div className="bg-white/5 border border-white/10 backdrop-blur-2xl rounded-[40px] p-8 md:p-12 max-w-xl shadow-2xl relative overflow-hidden">
+          <div className="w-20 h-20 bg-green-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-green-500/30 text-green-400 font-black text-4xl">
+            ✓
+          </div>
+          
+          <h1 className="text-3xl md:text-4xl font-black mb-4 bg-gradient-to-r from-green-300 via-white to-cyan-300 bg-clip-text text-transparent">
+            Registration Submitted Successfully! 🎉
+          </h1>
+          
+          <p className="text-gray-300 text-base md:text-lg mb-6 leading-relaxed">
+            Your registration is currently pending admin payment verification.
+          </p>
+
+          <div className="bg-gradient-to-r from-cyan-500/10 via-violet-500/10 to-pink-500/10 border border-white/10 rounded-3xl p-6 mb-8 text-left space-y-4">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">📩</span>
+              <div>
+                <h4 className="font-bold text-white text-base">Confirmation Email</h4>
+                <p className="text-sm text-gray-300 leading-snug">
+                  Once approved by the admin, your official QR Pass ticket will be sent directly to your registered email ID.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3 pt-3 border-t border-white/10">
+              <span className="text-2xl">🎟️</span>
+              <div>
+                <h4 className="font-bold text-white text-base">Check In "View My Ticket" Section</h4>
+                <p className="text-sm text-gray-300 leading-snug">
+                  You can also check your ticket status anytime in the <strong className="text-cyan-300">View My Ticket</strong> section using your registered email or phone number.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <Link href={`/my-ticket/${event?.event_id || id}`}>
+              <button className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 px-8 py-3.5 rounded-2xl font-bold text-lg text-white shadow-xl transition hover:scale-105">
+                Go to Ticket Section 🎟️
+              </button>
+            </Link>
+          </div>
+
+          <div className="border-t border-white/10 pt-6 text-gray-400 text-xs md:text-sm">
+            <p className="mb-1 text-gray-400">For more information or urgent queries, contact:</p>
+            <p className="font-bold text-white text-base">Shravya Hebbar</p>
+            <p className="text-cyan-400 font-medium mt-1">
+              📧 <a href="mailto:rotaractyelahanka.events@gmail.com" className="hover:underline">rotaractyelahanka.events@gmail.com</a> | 📞 <a href="tel:9611444945" className="hover:underline">9611444945</a>
+            </p>
           </div>
         </div>
       </div>
