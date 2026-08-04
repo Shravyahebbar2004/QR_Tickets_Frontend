@@ -301,12 +301,22 @@ export default function EventPage({
 
         {/* INFO */}
         <div className="flex flex-wrap justify-center gap-6 mb-12">
-          <div className="bg-white/5 border border-white/10 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50">
-            <MapPin size={32} className="text-cyan-300" />
-            <p className="text-xl md:text-2xl font-bold">
-              {event.venue}
-            </p>
-          </div>
+          <a
+            href={event.venue_map_url || "https://maps.app.goo.gl/V38WwSw8WjvyPFfU9?g_st=ac"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white/5 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-400 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50 cursor-pointer group"
+          >
+            <MapPin size={32} className="text-cyan-300 group-hover:scale-110 transition" />
+            <div>
+              <p className="text-xl md:text-2xl font-bold text-white group-hover:text-cyan-300 transition">
+                {event.venue}
+              </p>
+              <p className="text-xs text-cyan-400 font-semibold uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                <span>📍 View Location on Google Maps</span> ↗
+              </p>
+            </div>
+          </a>
           <div className="bg-white/5 border border-white/10 px-8 py-5 rounded-3xl flex items-center gap-4 backdrop-blur-xl hover:scale-105 transition shadow-lg shadow-black/50">
             <CalendarDays size={32} className="text-violet-300" />
             <p className="text-xl md:text-2xl font-bold text-yellow-300">
