@@ -554,7 +554,7 @@ export default function RegisterPage({
             <div className="flex gap-3">
               <input 
                 type="text" 
-                placeholder="Enter code (e.g. YRCRCY)" 
+                placeholder="Enter the code" 
                 value={couponInput}
                 onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                 className="flex-1 p-3.5 rounded-xl bg-black/40 border border-white/10 text-white uppercase tracking-wider font-bold text-sm focus:border-cyan-500 outline-none"
@@ -803,7 +803,7 @@ export default function RegisterPage({
           <div className="flex gap-3">
             <input 
               type="text" 
-              placeholder="Enter code (e.g. YRCRCY)" 
+              placeholder="Enter the code" 
               value={couponInput}
               onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
               className="flex-1 p-3.5 rounded-xl bg-black/40 border border-white/10 text-white uppercase tracking-wider font-bold text-sm focus:border-violet-500 outline-none"
