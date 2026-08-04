@@ -324,9 +324,8 @@ export default function EventPage({
             </p>
           </div>
         </div>
-)}
 
-{/* ABOUT EVENT */}
+        {/* ABOUT EVENT */}
 
 <div className="
   bg-white/5
