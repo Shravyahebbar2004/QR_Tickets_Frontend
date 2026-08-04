@@ -325,6 +325,43 @@ export default function EventPage({
           </div>
         </div>
 
+        {/* COUNTDOWN TIMER */}
+        {!isExpired ? (
+          <div className="mt-10 sm:mt-12 mb-12 sm:mb-16 max-w-4xl mx-auto bg-black/40 border border-white/10 p-5 sm:p-10 rounded-3xl sm:rounded-[40px] backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center text-center">
+            <h3 className="text-xs sm:text-lg text-cyan-300 font-bold mb-4 sm:mb-6 tracking-widest uppercase">Event Starts In</h3>
+            
+            <div className="flex items-center justify-center gap-1.5 sm:gap-6 font-black text-3xl sm:text-6xl md:text-8xl tracking-tight font-mono text-white">
+              <div className="flex flex-col items-center">
+                <span>{String(timeLeft.days).padStart(2, '0')}</span>
+                <span className="text-xs sm:text-lg text-gray-500 font-sans tracking-normal mt-1 sm:mt-2">DAYS</span>
+              </div>
+              <span className="text-gray-600 pb-5 sm:pb-12">:</span>
+              
+              <div className="flex flex-col items-center">
+                <span>{String(timeLeft.hours).padStart(2, '0')}</span>
+                <span className="text-xs sm:text-lg text-gray-500 font-sans tracking-normal mt-1 sm:mt-2">HOURS</span>
+              </div>
+              <span className="text-gray-600 pb-5 sm:pb-12">:</span>
+              
+              <div className="flex flex-col items-center">
+                <span>{String(timeLeft.minutes).padStart(2, '0')}</span>
+                <span className="text-xs sm:text-lg text-gray-500 font-sans tracking-normal mt-1 sm:mt-2">MINS</span>
+              </div>
+              <span className="text-gray-600 pb-5 sm:pb-12">:</span>
+              
+              <div className="flex flex-col items-center">
+                <span className="text-violet-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                <span className="text-xs sm:text-lg text-gray-500 font-sans tracking-normal mt-1 sm:mt-2">SECS</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-10 sm:mt-12 mb-12 sm:mb-16 max-w-4xl mx-auto bg-red-500/10 border border-red-500/30 p-8 rounded-3xl text-center">
+            <h2 className="text-2xl sm:text-4xl font-black text-red-400 mb-2">Event Concluded</h2>
+            <p className="text-base sm:text-xl text-gray-300">This event has already taken place and registrations are closed.</p>
+          </div>
+        )}
+
         {/* ABOUT EVENT */}
 
 <div className="
