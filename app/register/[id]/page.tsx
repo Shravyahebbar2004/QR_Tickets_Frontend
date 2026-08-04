@@ -628,13 +628,20 @@ export default function RegisterPage({
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 mb-8 text-center">
-          <img
-            src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay"
-            alt="UPI QR"
-            className="mx-auto rounded-2xl"
-          />
-          <p className="text-black mt-5 font-bold text-lg">Scan & Pay Using UPI</p>
+        <div className="bg-white text-black rounded-3xl p-6 mb-8 text-center shadow-xl">
+          <h3 className="text-xl font-black text-blue-900 mb-3 uppercase tracking-wider">Canara Bank Official Payment QR</h3>
+          <div className="max-w-xs mx-auto bg-white p-2 rounded-2xl border border-gray-200">
+            <img
+              src="/payment-qr.jpg"
+              alt="Canara Bank UPI Payment QR"
+              className="mx-auto rounded-xl max-h-96 w-auto object-contain"
+            />
+          </div>
+          <p className="text-gray-800 mt-4 font-bold text-lg">Scan & Pay Using Any UPI App</p>
+          <div className="mt-3 pt-3 border-t border-gray-200 text-sm">
+            <p className="text-gray-600 font-medium">UPI ID: <span className="font-bold text-gray-900 select-all">anirudha26hindupur@cnrb</span></p>
+            <p className="text-gray-600 font-medium mt-1">Account Name: <span className="font-bold text-gray-900">H GIRISH PRASAD</span></p>
+          </div>
         </div>
 
         {/* PAYMENT PROOF */}
