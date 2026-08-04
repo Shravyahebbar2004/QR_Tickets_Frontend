@@ -29,8 +29,7 @@ export default function RegisterPage({
     emergency_contact_name: '',
     emergency_contact: '',
     blood_group: '',
-    gender: '',
-    tshirt_size: ''
+    gender: ''
   });
 
   const [quantities, setQuantities] = useState<Record<string, number>>({
@@ -330,7 +329,6 @@ export default function RegisterPage({
       submitData.append('emergency_contact', formData.emergency_contact);
       submitData.append('blood_group', formData.blood_group || '');
       submitData.append('gender', formData.gender || '');
-      submitData.append('tshirt_size', formData.tshirt_size || '');
       
       // We pass tickets array as JSON
       submitData.append('tickets', JSON.stringify(tickets));
@@ -604,8 +602,7 @@ export default function RegisterPage({
                       ticket_type: type,
                       full_name: '',
                       blood_group: '',
-                      gender: '',
-                      tshirt_size: ''
+                      gender: ''
                     });
                   }
                 }
@@ -720,7 +717,7 @@ export default function RegisterPage({
                   required
                   className="w-full p-3 rounded-xl bg-black/30 border border-white/10 mb-4 focus:ring-2 focus:ring-cyan-500 outline-none text-sm"
                 />
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <select
                     value={p.gender}
                     onChange={(e) => handleParticipantChange(i, 'gender', e.target.value)}
@@ -740,20 +737,6 @@ export default function RegisterPage({
                     required
                     className="w-full p-3 rounded-xl bg-black/30 border border-white/10 text-sm"
                   />
-                  <select
-                    value={p.tshirt_size}
-                    onChange={(e) => handleParticipantChange(i, 'tshirt_size', e.target.value)}
-                    required
-                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-gray-300 text-sm"
-                  >
-                    <option value="" disabled>T-Shirt Size</option>
-                    <option value="XS">XS</option>
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="XXL">XXL</option>
-                  </select>
                 </div>
               </div>
             ))}
