@@ -112,6 +112,24 @@ export default function CreateEventPage() {
     setCustomPricing(updated);
   };
 
+  // NEW STATE FOR PARTNER COUPON CODES
+  const [partnerCoupons, setPartnerCoupons] = useState<any[]>([]);
+
+  const addPartnerCoupon = () => {
+    setPartnerCoupons([...partnerCoupons, { code: '', price: '', max_uses: '100', used_count: 0 }]);
+  };
+
+  const updatePartnerCoupon = (index: number, field: string, value: string) => {
+    const updated = [...partnerCoupons];
+    updated[index][field] = value;
+    setPartnerCoupons(updated);
+  };
+
+  const removePartnerCoupon = (index: number) => {
+    const updated = partnerCoupons.filter((_, i) => i !== index);
+    setPartnerCoupons(updated);
+  };
+
   // =====================================
   // DATE HELPER
   // =====================================
@@ -281,6 +299,7 @@ export default function CreateEventPage() {
       );
 
       data.append('custom_pricing', JSON.stringify(customPricing));
+      data.append('coupons', JSON.stringify(partnerCoupons));
 
       if (bannerFile) {
 
@@ -970,6 +989,40 @@ Tell attendees what makes your event special...
                   
                   <button type="button" onClick={addCustomDistance} className="w-full py-4 mt-2 border-2 border-dashed border-cyan-500/50 text-cyan-400 font-bold rounded-2xl hover:bg-cyan-500/10 transition">
                     + Add Distance Option
+                  </button>
+                </div>
+
+                {/* PARTNER / COUPON CODES SECTION */}
+                <div className="mt-8 bg-black/20 p-6 rounded-3xl border border-violet-500/30">
+                  <h3 className="text-xl font-bold mb-3 text-violet-300">
+                    Partner & Coupon Codes (Special Pricing)
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-6">
+                    Set special codes (e.g. <strong className="text-white">YRCRCY</strong>) with custom lower prices for specific partners or limited members (e.g., first 100 members).
+                  </p>
+
+                  {partnerCoupons.map((c, index) => (
+                    <div key={index} className="mb-4 p-5 bg-white/5 border border-white/10 rounded-2xl relative">
+                      <button type="button" onClick={() => removePartnerCoupon(index)} className="absolute -top-3 -right-3 bg-red-500 w-7 h-7 rounded-full flex items-center justify-center font-bold text-white hover:scale-110 transition shadow-lg text-xs">✕</button>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-gray-400 text-xs mb-1">Coupon Code</label>
+                          <input type="text" placeholder="e.g. YRCRCY" value={c.code} onChange={(e) => updatePartnerCoupon(index, 'code', e.target.value.toUpperCase())} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white uppercase font-bold tracking-wider text-sm" />
+                        </div>
+                        <div>
+                          <label className="block text-gray-400 text-xs mb-1">Special Ticket Price (₹)</label>
+                          <input type="number" placeholder="199" value={c.price} onChange={(e) => updatePartnerCoupon(index, 'price', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                        </div>
+                        <div>
+                          <label className="block text-gray-400 text-xs mb-1">Usage Limit (First N Members)</label>
+                          <input type="number" placeholder="100" value={c.max_uses} onChange={(e) => updatePartnerCoupon(index, 'max_uses', e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  <button type="button" onClick={addPartnerCoupon} className="w-full py-3.5 mt-2 border-2 border-dashed border-violet-500/50 text-violet-300 font-bold rounded-2xl hover:bg-violet-500/10 transition text-sm">
+                    + Add Partner Coupon Code
                   </button>
                 </div>
               </div>

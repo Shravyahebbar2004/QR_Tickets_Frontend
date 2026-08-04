@@ -48,6 +48,56 @@ export default function RegisterPage({
   const [activeSlabName, setActiveSlabName] = useState<string>('Early Bird Offer');
   const [isClosed, setIsClosed] = useState<boolean>(false);
 
+  // COUPON CODE STATES
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<any | null>(null);
+  const [couponMessage, setCouponMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const handleApplyCoupon = () => {
+    if (!couponInput.trim()) {
+      setCouponMessage({ type: 'error', text: 'Please enter a coupon code.' });
+      return;
+    }
+
+    if (!event || !event.coupons) {
+      setCouponMessage({ type: 'error', text: 'Invalid coupon code.' });
+      return;
+    }
+
+    let coupons = [];
+    try {
+      coupons = typeof event.coupons === 'string' ? JSON.parse(event.coupons) : (event.coupons || []);
+    } catch(e) {
+      coupons = [];
+    }
+
+    const match = coupons.find((c: any) => c.code && c.code.trim().toUpperCase() === couponInput.trim().toUpperCase());
+
+    if (!match) {
+      setAppliedCoupon(null);
+      setCouponMessage({ type: 'error', text: `Invalid coupon code '${couponInput}'.` });
+      return;
+    }
+
+    const maxUses = Number(match.max_uses) || 0;
+    const currentUses = Number(match.used_count) || 0;
+
+    if (maxUses > 0 && currentUses >= maxUses) {
+      setAppliedCoupon(null);
+      setCouponMessage({ type: 'error', text: `Coupon code '${match.code}' usage limit reached for the first ${maxUses} members.` });
+      return;
+    }
+
+    setAppliedCoupon(match);
+    setCouponMessage({ type: 'success', text: `Coupon '${match.code}' applied! Special price ₹${match.price} per ticket.` });
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput('');
+    setCouponMessage(null);
+  };
+
   // Dynamic price calculator
   useEffect(() => {
     if (!event) return;
@@ -65,7 +115,9 @@ export default function RegisterPage({
           
         customPricing.forEach((d: any) => {
           const qty = quantities[d.name] || 0;
-          const price = Number(d[activeSlabKey]) || 0;
+          const price = appliedCoupon && Number(appliedCoupon.price) >= 0
+            ? Number(appliedCoupon.price)
+            : (Number(d[activeSlabKey]) || 0);
           amount += price * qty;
           entries += qty; // 1 entry per marathon ticket
         });
@@ -73,7 +125,7 @@ export default function RegisterPage({
         console.error("Error parsing custom pricing", e);
       }
     } else {
-      const soloPrice = Number(event[`${activeSlabKey}_solo_price`]) || 0;
+      const soloPrice = appliedCoupon && Number(appliedCoupon.price) >= 0 ? Number(appliedCoupon.price) : (Number(event[`${activeSlabKey}_solo_price`]) || 0);
       amount += quantities.solo * soloPrice;
       entries += quantities.solo * 1;
 
@@ -92,7 +144,7 @@ export default function RegisterPage({
 
     setTotalAmount(amount);
     setAllowedEntries(entries);
-  }, [quantities, activeSlabKey, event]);
+  }, [quantities, activeSlabKey, event, appliedCoupon]);
 
   const [paymentProof, setPaymentProof] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -298,6 +350,9 @@ export default function RegisterPage({
       submitData.append('allowed_entries', allowedEntries.toString());
       submitData.append('event_id', id);
       submitData.append('otp', otp);
+      if (appliedCoupon) {
+        submitData.append('coupon_code', appliedCoupon.code);
+      }
 
       if (paymentProof) {
         submitData.append('payment_proof', paymentProof);
@@ -473,12 +528,14 @@ export default function RegisterPage({
           <h1 className="text-4xl md:text-5xl font-black mb-3 text-cyan-300">Select Your Distance</h1>
           <p className="text-gray-400 mb-8 text-lg">Choose a category to view race details and proceed to registration.</p>
           
-          <div className="space-y-6 mb-10">
+          <div className="space-y-6 mb-8">
             {event.custom_pricing ? (() => {
               try {
                 const customPricing = typeof event.custom_pricing === 'string' ? JSON.parse(event.custom_pricing) : event.custom_pricing;
                 return customPricing.map((d: any) => {
-                  const price = Number(d[activeSlabKey]) || 0;
+                  const price = appliedCoupon && Number(appliedCoupon.price) >= 0
+                    ? Number(appliedCoupon.price)
+                    : (Number(d[activeSlabKey]) || 0);
                   return (
                     <div key={d.name} className="p-6 md:p-8 rounded-3xl border-2 border-white/10 bg-black/40 mb-4">
                       {renderCounter(d.name, d.name, "1 Member", price)}
@@ -489,6 +546,41 @@ export default function RegisterPage({
                 return <p className="text-red-500">Error loading custom tickets.</p>;
               }
             })() : null}
+          </div>
+
+          {/* PARTNER / COUPON CODE BOX */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8">
+            <label className="block text-sm font-bold text-cyan-300 mb-2">Have a Partner / Coupon Code?</label>
+            <div className="flex gap-3">
+              <input 
+                type="text" 
+                placeholder="Enter code (e.g. YRCRCY)" 
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                className="flex-1 p-3.5 rounded-xl bg-black/40 border border-white/10 text-white uppercase tracking-wider font-bold text-sm focus:border-cyan-500 outline-none"
+              />
+              <button 
+                type="button"
+                onClick={handleApplyCoupon}
+                className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-6 py-3.5 rounded-xl transition shadow-md"
+              >
+                Apply
+              </button>
+            </div>
+            {couponMessage && (
+              <div className={`mt-3 p-3 rounded-xl text-sm font-bold flex items-center justify-between ${couponMessage.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'}`}>
+                <span>{couponMessage.text}</span>
+                {appliedCoupon && (
+                  <button 
+                    type="button" 
+                    onClick={handleRemoveCoupon} 
+                    className="text-xs underline hover:text-white ml-2"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           <button
@@ -702,6 +794,41 @@ export default function RegisterPage({
               {renderCounter('group', 'Group Pass', '4 Members', Number(event[`${activeSlabKey}_group_price`]) || 0)}
               {(Number(event.bulk_pass_price) > 0) && renderCounter('bulk', 'Bulk Pass', `${event.bulk_pass_entries || 0} Members`, Number(event.bulk_pass_price) || 0)}
             </>
+          )}
+        </div>
+
+        {/* PARTNER / COUPON CODE BOX */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8">
+          <label className="block text-sm font-bold text-violet-300 mb-2">Have a Partner / Coupon Code?</label>
+          <div className="flex gap-3">
+            <input 
+              type="text" 
+              placeholder="Enter code (e.g. YRCRCY)" 
+              value={couponInput}
+              onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+              className="flex-1 p-3.5 rounded-xl bg-black/40 border border-white/10 text-white uppercase tracking-wider font-bold text-sm focus:border-violet-500 outline-none"
+            />
+            <button 
+              type="button"
+              onClick={handleApplyCoupon}
+              className="bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-600 hover:to-cyan-600 text-white font-bold px-6 py-3.5 rounded-xl transition shadow-md"
+            >
+              Apply
+            </button>
+          </div>
+          {couponMessage && (
+            <div className={`mt-3 p-3 rounded-xl text-sm font-bold flex items-center justify-between ${couponMessage.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'}`}>
+              <span>{couponMessage.text}</span>
+              {appliedCoupon && (
+                <button 
+                  type="button" 
+                  onClick={handleRemoveCoupon} 
+                  className="text-xs underline hover:text-white ml-2"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
           )}
         </div>
 
