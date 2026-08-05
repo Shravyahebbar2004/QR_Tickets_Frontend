@@ -332,7 +332,7 @@ export default function RegisterPage({
       submitData.append('blood_group', formData.blood_group || '');
       submitData.append('gender', formData.gender || '');
       
-      let finalClubAffiliation = formData.club_affiliation || 'General Public / Other';
+      let finalClubAffiliation = formData.club_affiliation || '';
       if ((formData.club_affiliation === 'Rotaract Club' || formData.club_affiliation === 'Run Club') && formData.custom_club_name?.trim()) {
         finalClubAffiliation = `${formData.club_affiliation} (${formData.custom_club_name.trim()})`;
       }

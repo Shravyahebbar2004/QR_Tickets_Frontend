@@ -70,7 +70,7 @@ export default function AdminPage({
     user.email,
     user.phone_number,
     user.ticket_type,
-    user.club_affiliation || 'General Public / Other',
+    user.club_affiliation || 'None',
     user.payment_status,
     user.coupon_code || '-',
     `${user.used_entries}/${user.allowed_entries}`,
@@ -731,7 +731,7 @@ transition          border
                 {/* CLUB / CATEGORY */}
                 <td className="p-5">
                   <span className="bg-cyan-400/10 text-cyan-300 border border-cyan-400/30 px-3 py-1.5 rounded-xl font-bold text-xs">
-                    {user.club_affiliation || 'General Public / Other'}
+                    {user.club_affiliation || 'None'}
                   </span>
                 </td>
 
