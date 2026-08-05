@@ -29,7 +29,8 @@ export default function RegisterPage({
     emergency_contact_name: '',
     emergency_contact: '',
     blood_group: '',
-    gender: ''
+    gender: '',
+    club_affiliation: ''
   });
 
   const [quantities, setQuantities] = useState<Record<string, number>>({
@@ -329,6 +330,7 @@ export default function RegisterPage({
       submitData.append('emergency_contact', formData.emergency_contact);
       submitData.append('blood_group', formData.blood_group || '');
       submitData.append('gender', formData.gender || '');
+      submitData.append('club_affiliation', formData.club_affiliation || 'General Public / Other');
       
       // We pass tickets array as JSON
       submitData.append('tickets', JSON.stringify(tickets));
@@ -685,7 +687,7 @@ export default function RegisterPage({
               required
               className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
             />
-            <div className="mb-8">
+            <div className="mb-5">
               <select
                 name="gender"
                 value={formData.gender}
@@ -701,6 +703,23 @@ export default function RegisterPage({
             </div>
           </>
         )}
+
+        {/* CLUB / GROUP AFFILIATION */}
+        <div className="mb-8">
+          <label className="block text-sm font-bold text-violet-300 mb-2">Club / Category Affiliation</label>
+          <select
+            name="club_affiliation"
+            value={formData.club_affiliation}
+            onChange={handleChange}
+            required
+            className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-violet-500 outline-none text-gray-200"
+          >
+            <option value="" disabled>Select Club / Category</option>
+            <option value="Rotaract Club">Rotaract Club</option>
+            <option value="Run Club">Run Club</option>
+            <option value="General Public / Other">General Public / Other</option>
+          </select>
+        </div>
 
         {/* PARTICIPANT DETAILS (MARATHON ONLY) */}
         {event.category?.toLowerCase()?.trim() === 'marathon' && participants.length > 0 && (

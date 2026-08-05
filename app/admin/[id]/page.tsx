@@ -28,6 +28,7 @@ interface User {
   emergency_contact: string;
   blood_group: string;
   coupon_code?: string;
+  club_affiliation?: string;
 }
 
 interface Analytics {
@@ -55,6 +56,7 @@ export default function AdminPage({
     'Email',
     'Phone',
     'Ticket',
+    'Club / Category',
     'Payment Status',
     'Coupon Used',
     'Entries',
@@ -68,6 +70,7 @@ export default function AdminPage({
     user.email,
     user.phone_number,
     user.ticket_type,
+    user.club_affiliation || 'General Public / Other',
     user.payment_status,
     user.coupon_code || '-',
     `${user.used_entries}/${user.allowed_entries}`,
@@ -660,6 +663,8 @@ transition          border
 
               <th className="p-5">Ticket</th>
 
+              <th className="p-5">Club / Category</th>
+
               <th className="p-5">Coupon Code</th>
 
               <th className="p-5">Payment</th>
@@ -720,6 +725,13 @@ transition          border
                     "
                   >
                     {user.ticket_type}
+                  </span>
+                </td>
+
+                {/* CLUB / CATEGORY */}
+                <td className="p-5">
+                  <span className="bg-cyan-400/10 text-cyan-300 border border-cyan-400/30 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    {user.club_affiliation || 'General Public / Other'}
                   </span>
                 </td>
 
