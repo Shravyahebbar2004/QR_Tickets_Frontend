@@ -30,7 +30,8 @@ export default function RegisterPage({
     emergency_contact: '',
     blood_group: '',
     gender: '',
-    club_affiliation: ''
+    club_affiliation: '',
+    custom_club_name: ''
   });
 
   const [quantities, setQuantities] = useState<Record<string, number>>({
@@ -330,7 +331,12 @@ export default function RegisterPage({
       submitData.append('emergency_contact', formData.emergency_contact);
       submitData.append('blood_group', formData.blood_group || '');
       submitData.append('gender', formData.gender || '');
-      submitData.append('club_affiliation', formData.club_affiliation || 'General Public / Other');
+      
+      let finalClubAffiliation = formData.club_affiliation || 'General Public / Other';
+      if ((formData.club_affiliation === 'Rotaract Club' || formData.club_affiliation === 'Run Club') && formData.custom_club_name?.trim()) {
+        finalClubAffiliation = `${formData.club_affiliation} (${formData.custom_club_name.trim()})`;
+      }
+      submitData.append('club_affiliation', finalClubAffiliation);
       
       // We pass tickets array as JSON
       submitData.append('tickets', JSON.stringify(tickets));
@@ -705,7 +711,7 @@ export default function RegisterPage({
         )}
 
         {/* CLUB / GROUP AFFILIATION */}
-        <div className="mb-8">
+        <div className="mb-5">
           <label className="block text-sm font-bold text-violet-300 mb-2">Club / Category Affiliation</label>
           <select
             name="club_affiliation"
@@ -720,6 +726,37 @@ export default function RegisterPage({
             <option value="General Public / Other">General Public / Other</option>
           </select>
         </div>
+
+        {/* SPECIFY CLUB NAME IF ROTARACT OR RUN CLUB IS SELECTED */}
+        {formData.club_affiliation === 'Rotaract Club' && (
+          <div className="mb-8">
+            <label className="block text-sm font-bold text-cyan-300 mb-2">Rotaract Club Name</label>
+            <input
+              type="text"
+              name="custom_club_name"
+              placeholder="e.g. Rotaract Club of Yelahanka"
+              value={formData.custom_club_name}
+              onChange={handleChange}
+              required
+              className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-white"
+            />
+          </div>
+        )}
+
+        {formData.club_affiliation === 'Run Club' && (
+          <div className="mb-8">
+            <label className="block text-sm font-bold text-cyan-300 mb-2">Run Club Name</label>
+            <input
+              type="text"
+              name="custom_club_name"
+              placeholder="e.g. Bangalore Runners"
+              value={formData.custom_club_name}
+              onChange={handleChange}
+              required
+              className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-white"
+            />
+          </div>
+        )}
 
         {/* PARTICIPANT DETAILS (MARATHON ONLY) */}
         {event.category?.toLowerCase()?.trim() === 'marathon' && participants.length > 0 && (
