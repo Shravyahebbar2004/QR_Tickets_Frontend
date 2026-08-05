@@ -233,9 +233,67 @@ export default function RegisterPage({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validations
+    // EXPLICIT MANDATORY FIELD VALIDATION & NOTIFICATIONS
+    const isMarathon = event.category?.toLowerCase()?.trim() === 'marathon';
+
+    if (isMarathon) {
+      for (let i = 0; i < participants.length; i++) {
+        const p = participants[i];
+        if (!p.full_name?.trim()) {
+          alert(`Please enter Full Name for Runner #${i + 1}!`);
+          return;
+        }
+        if (!p.gender) {
+          alert(`Please select Gender for Runner #${i + 1}!`);
+          return;
+        }
+        if (!p.blood_group) {
+          alert(`Please select Blood Group for Runner #${i + 1}!`);
+          return;
+        }
+      }
+    } else {
+      if (!formData.full_name?.trim()) {
+        alert("Please enter your Full Name!");
+        return;
+      }
+      if (!formData.blood_group) {
+        alert("Please select your Blood Group!");
+        return;
+      }
+      if (!formData.gender) {
+        alert("Please select your Gender!");
+        return;
+      }
+    }
+
+    if (!formData.email?.trim()) {
+      alert("Please enter your Email Address!");
+      return;
+    }
+    if (!formData.phone_number?.trim()) {
+      alert("Please enter your Phone Number!");
+      return;
+    }
+    if (!formData.emergency_contact_name?.trim()) {
+      alert("Please enter Emergency Contact Name!");
+      return;
+    }
+    if (!formData.emergency_contact?.trim()) {
+      alert("Please enter Emergency Contact Number!");
+      return;
+    }
+    if (!formData.club_affiliation) {
+      alert("Please select your Club / Category Affiliation!");
+      return;
+    }
+    if ((formData.club_affiliation === 'Rotaract Club' || formData.club_affiliation === 'Run Club') && !formData.custom_club_name?.trim()) {
+      alert(`Please enter your ${formData.club_affiliation} Name!`);
+      return;
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!emailRegex.test(formData.email.trim())) {
       alert("Please enter a valid email address!");
       return;
     }
@@ -257,8 +315,8 @@ export default function RegisterPage({
       return;
     }
 
-    if (formData.emergency_contact && !phoneRegex.test(parsePhone(formData.emergency_contact))) {
-      alert("Please enter a valid 10-digit Indian phone number for emergency contact!");
+    if (!phoneRegex.test(parsePhone(formData.emergency_contact))) {
+      alert("Please enter a valid 10-digit Indian phone number for Emergency Contact!");
       return;
     }
 
@@ -715,15 +773,25 @@ export default function RegisterPage({
         />
         {event.category?.toLowerCase()?.trim() !== 'marathon' && (
           <>
-            <input
-              type="text"
-              name="blood_group"
-              placeholder="Blood Group"
-              value={formData.blood_group}
-              onChange={handleChange}
-              required
-              className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 mb-5 focus:ring-2 focus:ring-violet-500 outline-none"
-            />
+            <div className="mb-5">
+              <select
+                name="blood_group"
+                value={formData.blood_group}
+                onChange={handleChange}
+                required
+                className="w-full p-4 rounded-2xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-violet-500 outline-none text-gray-200"
+              >
+                <option value="" disabled>Select Blood Group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+            </div>
             <div className="mb-5">
               <select
                 name="gender"
@@ -816,14 +884,22 @@ export default function RegisterPage({
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
-                  <input
-                    type="text"
-                    placeholder="Blood Group"
+                  <select
                     value={p.blood_group}
                     onChange={(e) => handleParticipantChange(i, 'blood_group', e.target.value)}
                     required
-                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 text-sm"
-                  />
+                    className="w-full p-3 rounded-xl bg-black/30 border border-white/10 focus:ring-2 focus:ring-cyan-500 outline-none text-gray-200 text-sm"
+                  >
+                    <option value="" disabled>Blood Group</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                  </select>
                 </div>
               </div>
             ))}
