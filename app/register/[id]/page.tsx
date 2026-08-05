@@ -734,7 +734,7 @@ export default function RegisterPage({
             <input
               type="text"
               name="custom_club_name"
-              placeholder="e.g. Rotaract Club of Yelahanka"
+              placeholder="Rotaract Club Name"
               value={formData.custom_club_name}
               onChange={handleChange}
               required
@@ -749,7 +749,7 @@ export default function RegisterPage({
             <input
               type="text"
               name="custom_club_name"
-              placeholder="e.g. Bangalore Runners"
+              placeholder="Run Club Name"
               value={formData.custom_club_name}
               onChange={handleChange}
               required
