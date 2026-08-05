@@ -117,7 +117,7 @@ export default function AdminPage({
 
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'draft'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'draft' | '5k' | '3k'>('all');
   const [mounted, setMounted] = useState(false);
   const [approvingId, setApprovingId] = useState<number | null>(null);
 
@@ -222,23 +222,44 @@ export default function AdminPage({
     (user) => user.payment_status === 'draft'
   ).length;
 
+  const count5k = users.filter(
+    (user) => user.ticket_type?.toUpperCase().includes('5K')
+  ).length;
+
+  const count3k = users.filter(
+    (user) => user.ticket_type?.toUpperCase().includes('3K')
+  ).length;
+
   // ====================================
-  // SEARCH FILTER
+  // SEARCH & CATEGORY FILTER WITH BIB SORT
   // ====================================
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      user.email?.toLowerCase().includes(search.toLowerCase()) ||
-      user.phone_number?.includes(search);
+  const filteredUsers = users
+    .filter((user) => {
+      const matchesSearch =
+        user.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+        user.email?.toLowerCase().includes(search.toLowerCase()) ||
+        user.phone_number?.includes(search) ||
+        (user.bib_number && String(user.bib_number).includes(search));
 
-    if (!matchesSearch) return false;
+      if (!matchesSearch) return false;
 
-    if (statusFilter === 'pending') return user.payment_status === 'pending';
-    if (statusFilter === 'approved') return user.payment_status === 'approved';
-    if (statusFilter === 'draft') return user.payment_status === 'draft';
-    return true;
-  });
+      if (statusFilter === 'pending') return user.payment_status === 'pending';
+      if (statusFilter === 'approved') return user.payment_status === 'approved';
+      if (statusFilter === 'draft') return user.payment_status === 'draft';
+      if (statusFilter === '5k') return user.ticket_type?.toUpperCase().includes('5K');
+      if (statusFilter === '3k') return user.ticket_type?.toUpperCase().includes('3K');
+      return true;
+    })
+    .sort((a, b) => {
+      const bibA = a.bib_number ? Number(a.bib_number) : Infinity;
+      const bibB = b.bib_number ? Number(b.bib_number) : Infinity;
+
+      if (bibA !== bibB) {
+        return bibA - bibB;
+      }
+      return a.registration_id - b.registration_id;
+    });
 
   // ====================================
   // HYDRATION FIX
@@ -668,6 +689,20 @@ transition            border
           className={`px-5 py-2.5 rounded-xl font-bold text-sm transition ${statusFilter === 'draft' ? 'bg-orange-500 text-black shadow-lg' : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'}`}
         >
           ⚠️ Incomplete / Drafts ({draftUsers})
+        </button>
+        <button
+          type="button"
+          onClick={() => setStatusFilter('5k')}
+          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition ${statusFilter === '5k' ? 'bg-cyan-400 text-black shadow-lg' : 'bg-white/5 border border-cyan-500/30 text-cyan-300 hover:bg-white/10'}`}
+        >
+          🏃‍♂️ 5K Category ({count5k})
+        </button>
+        <button
+          type="button"
+          onClick={() => setStatusFilter('3k')}
+          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition ${statusFilter === '3k' ? 'bg-purple-500 text-white shadow-lg' : 'bg-white/5 border border-purple-500/30 text-purple-300 hover:bg-white/10'}`}
+        >
+          🏃‍♀️ 3K Category ({count3k})
         </button>
       </div>
 
