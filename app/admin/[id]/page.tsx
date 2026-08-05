@@ -51,6 +51,118 @@ export default function AdminPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = use(params);
+  const exportExcel = () => {
+    const headers = [
+      'BIB Number',
+      'Name',
+      'Email',
+      'Phone',
+      'Ticket',
+      'Club / Category',
+      'Payment Status',
+      'Coupon Used',
+      'Entries',
+      'Emergency Contact Name',
+      'Emergency Contact No',
+      'Blood Group'
+    ];
+
+    const escapeXml = (str: any) => {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    };
+
+    const sortUsersByBib = (userList: User[]) => {
+      return [...userList].sort((a, b) => {
+        const bibA = a.bib_number ? Number(a.bib_number) : Infinity;
+        const bibB = b.bib_number ? Number(b.bib_number) : Infinity;
+        if (bibA !== bibB) return bibA - bibB;
+        return a.registration_id - b.registration_id;
+      });
+    };
+
+    const buildWorksheetXml = (sheetName: string, userList: User[]) => {
+      const sorted = sortUsersByBib(userList);
+      let xml = `<Worksheet ss:Name="${escapeXml(sheetName)}"><Table>`;
+
+      // Header Row
+      xml += '<Row>';
+      headers.forEach((h) => {
+        xml += `<Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">${escapeXml(h)}</Data></Cell>`;
+      });
+      xml += '</Row>';
+
+      // Data Rows
+      sorted.forEach((u) => {
+        xml += '<Row>';
+        const rowData = [
+          u.bib_number ? `#${u.bib_number}` : '-',
+          u.full_name,
+          u.email,
+          u.phone_number,
+          u.ticket_type,
+          u.club_affiliation || 'None',
+          u.payment_status,
+          u.coupon_code || '-',
+          `${u.used_entries}/${u.allowed_entries}`,
+          u.emergency_contact_name || '-',
+          u.emergency_contact || '-',
+          u.blood_group || '-'
+        ];
+        rowData.forEach((val) => {
+          xml += `<Cell><Data ss:Type="String">${escapeXml(val)}</Data></Cell>`;
+        });
+        xml += '</Row>';
+      });
+
+      xml += '</Table></Worksheet>';
+      return xml;
+    };
+
+    const sheetsData = [
+      { name: 'Sheet 1 - All Registrations', data: users },
+      { name: 'Sheet 2 - Pending Approval', data: users.filter((u) => u.payment_status === 'pending') },
+      { name: 'Sheet 3 - Approved', data: users.filter((u) => u.payment_status === 'approved') },
+      { name: 'Sheet 4 - Incomplete Drafts', data: users.filter((u) => u.payment_status === 'draft') },
+      { name: 'Sheet 5 - 5K Category', data: users.filter((u) => u.ticket_type?.toUpperCase().includes('5K')) },
+      { name: 'Sheet 6 - 3K Category', data: users.filter((u) => u.ticket_type?.toUpperCase().includes('3K')) }
+    ];
+
+    let workbookXml = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="HeaderStyle">
+   <Font ss:Bold="1" ss:Color="#000000"/>
+   <Interior ss:Color="#FFD700" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>`;
+
+    sheetsData.forEach((s) => {
+      workbookXml += buildWorksheetXml(s.name, s.data);
+    });
+
+    workbookXml += '</Workbook>';
+
+    const blob = new Blob([workbookXml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Event_Registrations_MultiSheet.xls`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const exportCSV = () => {
     const headers = [
       'BIB Number',
@@ -67,7 +179,7 @@ export default function AdminPage({
       'Blood Group'
     ];
 
-    const rows = users.map((user) => [
+    const rows = filteredUsers.map((user) => [
       user.bib_number ? `#${user.bib_number}` : '-',
       user.full_name,
       user.email,
@@ -75,40 +187,27 @@ export default function AdminPage({
       user.ticket_type,
       user.club_affiliation || 'None',
       user.payment_status,
-    user.coupon_code || '-',
-    `${user.used_entries}/${user.allowed_entries}`,
-    user.emergency_contact_name || '-',
-    user.emergency_contact || '-',
-    user.blood_group || '-'
-  ]);
+      user.coupon_code || '-',
+      `${user.used_entries}/${user.allowed_entries}`,
+      user.emergency_contact_name || '-',
+      user.emergency_contact || '-',
+      user.blood_group || '-'
+    ]);
 
-  const csvContent =
-    [headers, ...rows]
-      .map((e) => e.join(','))
-      .join('\n');
+    const csvContent =
+      [headers, ...rows]
+        .map((e) => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
 
-  const blob = new Blob(
-    [csvContent],
-    { type: 'text/csv;charset=utf-8;' }
-  );
-
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-
-  link.href = url;
-
-  link.setAttribute(
-    'download',
-    'attendees.csv'
-  );
-
-  document.body.appendChild(link);
-
-  link.click();
-
-  document.body.removeChild(link);
-};
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `attendees_${statusFilter}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   const router = useRouter();
 
   // ====================================
@@ -313,23 +412,22 @@ export default function AdminPage({
   EventFlow Admin Console
 </h1>
 
-        <div className="flex gap-4">
-          {/* EXPORT CSV */}
-
+        <div className="flex flex-wrap gap-4">
+          {/* EXPORT MULTI-SHEET EXCEL */}
           <button
-           onClick={exportCSV}
-           className="
-           bg-green-500
-           hover:bg-green-600
-           px-6
-           py-3
-           rounded-xl
-           font-bold
-           transition
-           "
-        >
-          Export CSV
-      </button>
+            onClick={exportExcel}
+            className="bg-emerald-500 hover:bg-emerald-600 px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg"
+          >
+            📊 Export Multi-Sheet Excel (.xls)
+          </button>
+
+          {/* EXPORT CSV */}
+          <button
+            onClick={exportCSV}
+            className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg"
+          >
+            📄 Export Current View CSV
+          </button>
 
           {/* EDIT EVENT */}
 
