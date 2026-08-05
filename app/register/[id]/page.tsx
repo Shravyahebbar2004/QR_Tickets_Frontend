@@ -244,6 +244,8 @@ export default function RegisterPage({
       let cleaned = phone.replace(/\D/g, '');
       if (cleaned.length === 12 && cleaned.startsWith('91')) {
         cleaned = cleaned.substring(2);
+      } else if (cleaned.length === 11 && cleaned.startsWith('0')) {
+        cleaned = cleaned.substring(1);
       }
       return cleaned;
     };
