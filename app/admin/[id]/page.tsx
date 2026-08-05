@@ -114,6 +114,7 @@ export default function AdminPage({
 
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'draft'>('all');
   const [mounted, setMounted] = useState(false);
   const [approvingId, setApprovingId] = useState<number | null>(null);
 
@@ -204,28 +205,36 @@ export default function AdminPage({
   // ANALYTICS
   // ====================================
 
-  const totalUsers = users.length;
+  const totalUsers = users.filter((user) => user.payment_status !== 'draft').length;
 
   const approvedUsers = users.filter(
     (user) => user.payment_status === 'approved'
   ).length;
 
-  const pendingUsers = totalUsers - approvedUsers;
+  const pendingUsers = users.filter(
+    (user) => user.payment_status === 'pending'
+  ).length;
+
+  const draftUsers = users.filter(
+    (user) => user.payment_status === 'draft'
+  ).length;
 
   // ====================================
   // SEARCH FILTER
   // ====================================
 
   const filteredUsers = users.filter((user) => {
-    return (
-      user.full_name
-        ?.toLowerCase()
-        .includes(search.toLowerCase()) ||
+    const matchesSearch =
+      user.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+      user.email?.toLowerCase().includes(search.toLowerCase()) ||
+      user.phone_number?.includes(search);
 
-      user.email
-        ?.toLowerCase()
-        .includes(search.toLowerCase())
-    );
+    if (!matchesSearch) return false;
+
+    if (statusFilter === 'pending') return user.payment_status === 'pending';
+    if (statusFilter === 'approved') return user.payment_status === 'approved';
+    if (statusFilter === 'draft') return user.payment_status === 'draft';
+    return true;
   });
 
   // ====================================
@@ -627,6 +636,38 @@ transition            border
         </div>
       )}
 
+      {/* STATUS TABS FILTER */}
+      <div className="flex flex-wrap gap-3 mb-6">
+        <button
+          type="button"
+          onClick={() => setStatusFilter('all')}
+          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition ${statusFilter === 'all' ? 'bg-yellow-400 text-black shadow-lg' : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'}`}
+        >
+          All ({users.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setStatusFilter('pending')}
+          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition ${statusFilter === 'pending' ? 'bg-yellow-400 text-black shadow-lg' : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'}`}
+        >
+          Pending Approval ({pendingUsers})
+        </button>
+        <button
+          type="button"
+          onClick={() => setStatusFilter('approved')}
+          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition ${statusFilter === 'approved' ? 'bg-green-500 text-black shadow-lg' : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'}`}
+        >
+          Approved ({approvedUsers})
+        </button>
+        <button
+          type="button"
+          onClick={() => setStatusFilter('draft')}
+          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition ${statusFilter === 'draft' ? 'bg-orange-500 text-black shadow-lg' : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'}`}
+        >
+          ⚠️ Incomplete / Drafts ({draftUsers})
+        </button>
+      </div>
+
       {/* TABLE */}
 
       <div
@@ -773,15 +814,11 @@ transition          border
                 {/* APPROVAL */}
 
                 <td className="p-5">
-                  {user.payment_status ===
-                  'approved' ? (
-                    <span
-                      className="
-                        text-green-400
-                        font-bold
-                      "
-                    >
-                      Approved ✅
+                  {user.payment_status === 'approved' ? (
+                    <span className="text-green-400 font-bold">Approved ✅</span>
+                  ) : user.payment_status === 'draft' ? (
+                    <span className="bg-orange-500/20 text-orange-300 border border-orange-500/40 px-3 py-1.5 rounded-2xl font-bold text-xs">
+                      ⚠️ Incomplete (OTP Sent)
                     </span>
                   ) : (
                     <button

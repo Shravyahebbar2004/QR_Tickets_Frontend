@@ -287,10 +287,39 @@ export default function RegisterPage({
         return;
       }
 
-      // SEND OTP FIRST
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/send-otp`, {
-        email: formData.email
-      });
+      // PREPARE DRAFT REGISTRATION DATA
+      const draftData = new FormData();
+      draftData.append('full_name', formData.full_name || (isMarathon && participants.length > 0 ? participants[0].full_name : 'Group Purchaser'));
+      draftData.append('email', formData.email);
+      draftData.append('phone_number', formData.phone_number);
+      draftData.append('emergency_contact_name', formData.emergency_contact_name);
+      draftData.append('emergency_contact', formData.emergency_contact);
+      draftData.append('blood_group', formData.blood_group || '');
+      draftData.append('gender', formData.gender || '');
+
+      let finalClubAffiliation = formData.club_affiliation || '';
+      if ((formData.club_affiliation === 'Rotaract Club' || formData.club_affiliation === 'Run Club') && formData.custom_club_name?.trim()) {
+        finalClubAffiliation = `${formData.club_affiliation} (${formData.custom_club_name.trim()})`;
+      }
+      draftData.append('club_affiliation', finalClubAffiliation);
+      draftData.append('tickets', JSON.stringify(tickets));
+      if (isMarathon) {
+        draftData.append('participants', JSON.stringify(participants));
+      }
+      draftData.append('total_amount', totalAmount.toString());
+      draftData.append('allowed_entries', allowedEntries.toString());
+      draftData.append('event_id', id);
+
+      if (paymentProof) {
+        draftData.append('payment_proof', paymentProof);
+      }
+
+      // SEND OTP FIRST & SAVE DRAFT IMMEDIATELY
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/send-otp`,
+        draftData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
 
       if (response.data.success) {
         setShowOtpModal(true);
