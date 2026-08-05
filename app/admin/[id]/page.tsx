@@ -29,6 +29,7 @@ interface User {
   blood_group: string;
   coupon_code?: string;
   club_affiliation?: string;
+  bib_number?: number | string | null;
 }
 
 interface Analytics {
@@ -51,27 +52,29 @@ export default function AdminPage({
 }) {
   const { id } = use(params);
   const exportCSV = () => {
-  const headers = [
-    'Name',
-    'Email',
-    'Phone',
-    'Ticket',
-    'Club / Category',
-    'Payment Status',
-    'Coupon Used',
-    'Entries',
-    'Emergency Contact Name',
-    'Emergency Contact No',
-    'Blood Group'
-  ];
+    const headers = [
+      'BIB Number',
+      'Name',
+      'Email',
+      'Phone',
+      'Ticket',
+      'Club / Category',
+      'Payment Status',
+      'Coupon Used',
+      'Entries',
+      'Emergency Contact Name',
+      'Emergency Contact No',
+      'Blood Group'
+    ];
 
-  const rows = users.map((user) => [
-    user.full_name,
-    user.email,
-    user.phone_number,
-    user.ticket_type,
-    user.club_affiliation || 'None',
-    user.payment_status,
+    const rows = users.map((user) => [
+      user.bib_number ? `#${user.bib_number}` : '-',
+      user.full_name,
+      user.email,
+      user.phone_number,
+      user.ticket_type,
+      user.club_affiliation || 'None',
+      user.payment_status,
     user.coupon_code || '-',
     `${user.used_entries}/${user.allowed_entries}`,
     user.emergency_contact_name || '-',
@@ -696,6 +699,8 @@ transition          border
                 text-black
               "
             >
+              <th className="p-5">BIB #</th>
+
               <th className="p-5">Name</th>
 
               <th className="p-5">Email</th>
@@ -734,6 +739,17 @@ transition          border
                   transition
                 "
               >
+                {/* BIB NUMBER */}
+                <td className="p-5">
+                  {user.bib_number ? (
+                    <span className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-1.5 rounded-xl font-black text-sm tracking-wider">
+                      #{user.bib_number}
+                    </span>
+                  ) : (
+                    <span className="text-gray-500 text-xs font-semibold">-</span>
+                  )}
+                </td>
+
                 {/* NAME */}
 
                 <td className="p-5">
