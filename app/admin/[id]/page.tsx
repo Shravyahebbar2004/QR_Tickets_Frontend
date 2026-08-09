@@ -79,10 +79,12 @@ export default function AdminPage({
 
     const sortUsersByBib = (userList: User[]) => {
       return [...userList].sort((a, b) => {
-        const bibA = a.bib_number ? Number(a.bib_number) : Infinity;
-        const bibB = b.bib_number ? Number(b.bib_number) : Infinity;
-        if (bibA !== bibB) return bibA - bibB;
-        return a.registration_id - b.registration_id;
+        const bibA = a.bib_number ? Number(a.bib_number) : null;
+        const bibB = b.bib_number ? Number(b.bib_number) : null;
+        if (bibA !== null && bibB !== null && bibA !== bibB) {
+          return bibB - bibA;
+        }
+        return b.registration_id - a.registration_id;
       });
     };
 
@@ -351,13 +353,13 @@ export default function AdminPage({
       return true;
     })
     .sort((a, b) => {
-      const bibA = a.bib_number ? Number(a.bib_number) : Infinity;
-      const bibB = b.bib_number ? Number(b.bib_number) : Infinity;
+      const bibA = a.bib_number ? Number(a.bib_number) : null;
+      const bibB = b.bib_number ? Number(b.bib_number) : null;
 
-      if (bibA !== bibB) {
-        return bibA - bibB;
+      if (bibA !== null && bibB !== null && bibA !== bibB) {
+        return bibB - bibA;
       }
-      return a.registration_id - b.registration_id;
+      return b.registration_id - a.registration_id;
     });
 
   // ====================================
