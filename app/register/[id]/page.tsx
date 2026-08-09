@@ -171,15 +171,16 @@ export default function RegisterPage({
       const evt = response.data.event;
       setEvent(evt);
 
-      // Determine Slab and Registration Status (2 Slabs with 150 Registration Thresholds)
+      // Determine Slab and Registration Status (2 Slabs with 150 Registration Thresholds or 12:00 AM IST Cutoff)
       const now = new Date().getTime();
+      const earlyBirdCutoff = evt.slab1_deadline ? new Date(evt.slab1_deadline).getTime() : new Date('2026-08-10T00:00:00+05:30').getTime();
       const totalRegs = Number(evt.total_registrations) || 0;
 
       let slabKey = 'slab1';
       let slabName = "Early Bird Offer";
       let registrationClosed = false;
 
-      // 1. Total Capacity limit: 300 registrations max (150 Early Bird + 150 Normal Slab)
+      // 1. Total Capacity limit: 300 registrations max
       if (totalRegs >= 300) {
         registrationClosed = true;
       } else if (evt.slab2_deadline && now > new Date(evt.slab2_deadline).getTime()) {
@@ -189,8 +190,8 @@ export default function RegisterPage({
       }
 
       if (!registrationClosed) {
-        // 2. Early Bird threshold: 150 registrations. After 150, auto-transition to Normal Slab (Slab 2).
-        if (totalRegs >= 150) {
+        // Transition to Normal Slab after 12:00 AM IST or after 150 registrations
+        if (now >= earlyBirdCutoff || totalRegs >= 150) {
           slabKey = 'slab2';
           slabName = "Normal Slab";
         } else {
