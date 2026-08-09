@@ -968,9 +968,18 @@ transition          border
                   {user.payment_status === 'approved' ? (
                     <span className="text-green-400 font-bold">Approved ✅</span>
                   ) : user.payment_status === 'draft' ? (
-                    <span className="bg-orange-500/20 text-orange-300 border border-orange-500/40 px-3 py-1.5 rounded-2xl font-bold text-xs">
-                      ⚠️ Incomplete (OTP Sent)
-                    </span>
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="bg-orange-500/20 text-orange-300 border border-orange-500/40 px-3 py-1 rounded-2xl font-bold text-xs mb-1">
+                        ⚠️ Incomplete (OTP Sent)
+                      </span>
+                      <button
+                        onClick={() => approvePayment(user.registration_id)}
+                        disabled={approvingId === user.registration_id}
+                        className={`bg-green-500 hover:bg-green-600 px-4 py-2 rounded-xl font-bold text-sm transition ${approvingId === user.registration_id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        {approvingId === user.registration_id ? 'Approving...' : 'Approve'}
+                      </button>
+                    </div>
                   ) : (
                     <button
                       onClick={() =>
