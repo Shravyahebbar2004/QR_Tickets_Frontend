@@ -131,8 +131,8 @@ export default function AdminPage({
       { name: 'Sheet 2 - Pending Approval', data: users.filter((u) => u.payment_status === 'pending') },
       { name: 'Sheet 3 - Approved', data: users.filter((u) => u.payment_status === 'approved') },
       { name: 'Sheet 4 - Incomplete Drafts', data: users.filter((u) => u.payment_status === 'draft') },
-      { name: 'Sheet 5 - 5K Category', data: users.filter((u) => u.ticket_type?.toUpperCase().includes('5K')) },
-      { name: 'Sheet 6 - 3K Category', data: users.filter((u) => u.ticket_type?.toUpperCase().includes('3K')) }
+      { name: 'Sheet 5 - 5K Category (Approved)', data: users.filter((u) => u.ticket_type?.toUpperCase().includes('5K') && u.payment_status === 'approved') },
+      { name: 'Sheet 6 - 3K Category (Approved)', data: users.filter((u) => u.ticket_type?.toUpperCase().includes('3K') && u.payment_status === 'approved') }
     ];
 
     let workbookXml = `<?xml version="1.0"?>
@@ -324,11 +324,11 @@ export default function AdminPage({
   ).length;
 
   const count5k = users.filter(
-    (user) => user.ticket_type?.toUpperCase().includes('5K')
+    (user) => user.ticket_type?.toUpperCase().includes('5K') && user.payment_status === 'approved'
   ).length;
 
   const count3k = users.filter(
-    (user) => user.ticket_type?.toUpperCase().includes('3K')
+    (user) => user.ticket_type?.toUpperCase().includes('3K') && user.payment_status === 'approved'
   ).length;
 
   // ====================================
@@ -348,8 +348,8 @@ export default function AdminPage({
       if (statusFilter === 'pending') return user.payment_status === 'pending';
       if (statusFilter === 'approved') return user.payment_status === 'approved';
       if (statusFilter === 'draft') return user.payment_status === 'draft';
-      if (statusFilter === '5k') return user.ticket_type?.toUpperCase().includes('5K');
-      if (statusFilter === '3k') return user.ticket_type?.toUpperCase().includes('3K');
+      if (statusFilter === '5k') return user.ticket_type?.toUpperCase().includes('5K') && user.payment_status === 'approved';
+      if (statusFilter === '3k') return user.ticket_type?.toUpperCase().includes('3K') && user.payment_status === 'approved';
       return true;
     })
     .sort((a, b) => {
