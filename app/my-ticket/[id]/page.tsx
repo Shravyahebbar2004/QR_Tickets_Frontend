@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { useParams } from 'next/navigation';
 import { MapPin } from 'lucide-react';
 
@@ -17,6 +18,7 @@ export default function MyTicketPage() {
   const [phone, setPhone] = useState('');
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const [selectedRaceDetails, setSelectedRaceDetails] = useState<any>(null);
 
   // ====================================
@@ -59,96 +61,53 @@ export default function MyTicketPage() {
   };
 
   // ====================================
-  // DOWNLOAD PDF
+  // DOWNLOAD PDF (EXACT DESIGN CAPTURE)
   // ====================================
 
   const downloadPDF = async (ticket: any) => {
     try {
-      const pdf = new jsPDF();
+      setDownloadingId(ticket.registration_id);
 
-      // BACKGROUND (Dark Violet Theme)
-      pdf.setFillColor(15, 23, 42); // slate-900 equivalent
-      pdf.rect(0, 0, 210, 297, 'F');
+      const element = document.getElementById(`ticket-card-${ticket.registration_id}`);
+      if (!element) {
+        alert('Ticket element not found');
+        return;
+      }
 
-      // HEADER
-      pdf.setFillColor(139, 92, 246); // violet-500
-      pdf.rect(0, 0, 210, 40, 'F');
+      // Capture exact card design with html2canvas
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#09090b',
+        logging: false
+      });
 
-      // TITLE
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(26);
-      pdf.text(
-        ticket.title.toUpperCase(),
-        105,
-        20,
-        { align: 'center' }
-      );
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.setFontSize(12);
-      pdf.setTextColor(233, 213, 255); // violet-200
-      pdf.text(
-        `PASS FOR ${ticket.title.toUpperCase()}`,
-        105,
-        32,
-        { align: 'center' }
-      );
+      const margin = 10;
+      const availableWidth = pdfWidth - margin * 2;
+      const imgHeight = (canvas.height * availableWidth) / canvas.width;
 
-      // BODY SECTION (Bordered Box style)
-      pdf.setDrawColor(139, 92, 246); // violet-500 border
-      pdf.setLineWidth(0.5);
-      pdf.rect(20, 50, 170, 80);
+      // Dark background for PDF matching exact app theme
+      pdf.setFillColor(9, 9, 11);
+      pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
 
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(14);
+      let yPos = margin;
+      if (imgHeight < pdfHeight - margin * 2) {
+        yPos = (pdfHeight - imgHeight) / 2; // Center ticket on PDF page
+      }
 
-      const startY = 60;
-      const gap = 10;
-
-      pdf.setTextColor(196, 181, 253); // violet-300 for labels
-      pdf.text('Name:', 25, startY);
-      pdf.text('Phone No:', 25, startY + gap);
-      pdf.text('Amount Paid:', 25, startY + gap * 2);
-      pdf.text('Ticket:', 25, startY + gap * 3);
-      pdf.text('Venue:', 25, startY + gap * 4);
-      pdf.text('Date:', 25, startY + gap * 5);
-
-      pdf.setTextColor(255, 255, 255); // white for values
-      pdf.text(ticket.full_name || 'N/A', 65, startY);
-      pdf.text(ticket.phone_number || 'N/A', 65, startY + gap);
-      pdf.text(`Rs ${ticket.total_amount || 0}`, 65, startY + gap * 2);
-      pdf.text(`${ticket.ticket_type} (${ticket.allowed_entries} members)`, 65, startY + gap * 3);
-      pdf.text(ticket.venue || 'N/A', 65, startY + gap * 4);
-      pdf.text(new Date(ticket.event_date).toLocaleDateString(), 65, startY + gap * 5);
-
-      // QR CODE BACKGROUND
-      pdf.setFillColor(255, 255, 255);
-      pdf.rect(50, 145, 110, 110, 'F');
-
-      // QR CODE
-      pdf.addImage(
-        ticket.qr_code,
-        'PNG',
-        55,
-        150,
-        100,
-        100
-      );
-
-      // FOOTER
-      pdf.setTextColor(233, 213, 255); // violet-200
-      pdf.setFontSize(14);
-      pdf.text(
-        'Show this pass at the entrance',
-        105,
-        275,
-        { align: 'center' }
-      );
-
-      // SAVE
-      pdf.save(`${ticket.title.replace(/\s+/g, '-')}-Pass.pdf`);
+      pdf.addImage(imgData, 'PNG', margin, yPos, availableWidth, Math.min(imgHeight, pdfHeight - margin * 2));
+      pdf.save(`${(ticket.title || 'Event').replace(/\s+/g, '-')}-Pass.pdf`);
     } catch (error) {
-      console.log(error);
-      alert('PDF generation failed');
+      console.error('PDF Generation Error:', error);
+      alert('PDF generation failed. Please try again.');
+    } finally {
+      setDownloadingId(null);
     }
   };
 
@@ -303,17 +262,21 @@ export default function MyTicketPage() {
                     </p>
                   </div>
                 ) : (
-                  <div className="
-                    bg-white/5
-                    border-white/10
-                    backdrop-blur-xl
-                    border
-                    rounded-3xl
-                    overflow-hidden
-                  ">
+                  <div
+                    id={`ticket-card-${ticket.registration_id}`}
+                    className="
+                      bg-zinc-950
+                      border-violet-500/30
+                      backdrop-blur-xl
+                      border
+                      rounded-3xl
+                      overflow-hidden
+                      shadow-2xl
+                    "
+                  >
                     {/* HEADER */}
                     <div className="
-                      bg-violet-500
+                      bg-gradient-to-r from-violet-600 to-indigo-600
                       text-white
                       text-center
                       py-4 sm:py-5
@@ -322,8 +285,8 @@ export default function MyTicketPage() {
                       <h2 className="text-2xl sm:text-4xl font-bold">
                         {ticket.title}
                       </h2>
-                      <p className="text-sm sm:text-lg mt-1 sm:mt-2 font-semibold">
-                        PASS FOR {ticket.title.toUpperCase()}
+                      <p className="text-sm sm:text-lg mt-1 sm:mt-2 font-semibold text-violet-200">
+                        PASS FOR {ticket.title?.toUpperCase()}
                       </p>
                     </div>
 
@@ -428,15 +391,17 @@ export default function MyTicketPage() {
                       )}
 
                       {/* DOWNLOAD & DETAILS BUTTONS */}
-                      <div className="flex flex-col md:flex-row justify-center gap-4 mt-8">
+                      <div data-html2canvas-ignore="true" className="flex flex-col md:flex-row justify-center gap-4 mt-8">
                         {ticket.qr_code && (
                           <button
                             onClick={() => downloadPDF(ticket)}
+                            disabled={downloadingId === ticket.registration_id}
                             className="
                                w-full
                                md:w-auto
                                bg-violet-500
                                hover:bg-violet-600
+                               disabled:bg-violet-800
                                text-white
                                font-bold
                                px-8
@@ -448,7 +413,7 @@ export default function MyTicketPage() {
                                shadow-violet-500/30
                             "
                           >
-                            Download PDF Pass
+                            {downloadingId === ticket.registration_id ? 'Generating PDF...' : 'Download PDF Pass'}
                           </button>
                         )}
 
