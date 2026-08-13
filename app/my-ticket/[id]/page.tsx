@@ -61,7 +61,7 @@ export default function MyTicketPage() {
   };
 
   // ====================================
-  // DOWNLOAD PDF (EXACT DESIGN CAPTURE)
+  // DOWNLOAD PDF (EXACT DESIGN CAPTURE + FALLBACK)
   // ====================================
 
   const downloadPDF = async (ticket: any) => {
@@ -74,35 +74,103 @@ export default function MyTicketPage() {
         return;
       }
 
-      // Capture exact card design with html2canvas
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#09090b',
-        logging: false
-      });
+      let imgData = '';
+      let canvas: HTMLCanvasElement | null = null;
 
-      const imgData = canvas.toDataURL('image/png');
+      try {
+        // Primary Attempt: High Quality HTML2Canvas Capture
+        canvas = await html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#09090b',
+          logging: false,
+          ignoreElements: (el) => el.getAttribute('data-html2canvas-ignore') === 'true',
+          onclone: (clonedDoc) => {
+            const clonedEl = clonedDoc.getElementById(`ticket-card-${ticket.registration_id}`);
+            if (clonedEl) {
+              clonedEl.style.transform = 'none';
+              clonedEl.style.backdropFilter = 'none';
+              (clonedEl.style as any).webkitBackdropFilter = 'none';
+              clonedEl.style.backgroundColor = '#09090b';
+            }
+          }
+        });
+        imgData = canvas.toDataURL('image/png');
+      } catch (canvasErr) {
+        console.warn('html2canvas capture warning, attempting fallback:', canvasErr);
+      }
+
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      const margin = 10;
-      const availableWidth = pdfWidth - margin * 2;
-      const imgHeight = (canvas.height * availableWidth) / canvas.width;
+      if (imgData && canvas) {
+        const margin = 10;
+        const availableWidth = pdfWidth - margin * 2;
+        const imgHeight = (canvas.height * availableWidth) / canvas.width;
 
-      // Dark background for PDF matching exact app theme
-      pdf.setFillColor(9, 9, 11);
-      pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
+        pdf.setFillColor(9, 9, 11);
+        pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
 
-      let yPos = margin;
-      if (imgHeight < pdfHeight - margin * 2) {
-        yPos = (pdfHeight - imgHeight) / 2; // Center ticket on PDF page
+        let yPos = margin;
+        if (imgHeight < pdfHeight - margin * 2) {
+          yPos = (pdfHeight - imgHeight) / 2; // Center ticket on PDF page
+        }
+
+        pdf.addImage(imgData, 'PNG', margin, yPos, availableWidth, Math.min(imgHeight, pdfHeight - margin * 2));
+      } else {
+        // Fallback PDF layout if html2canvas is restricted on mobile browser
+        pdf.setFillColor(15, 23, 42);
+        pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
+
+        pdf.setFillColor(139, 92, 246);
+        pdf.rect(0, 0, pdfWidth, 40, 'F');
+
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(22);
+        pdf.text(ticket.title || 'EVENT PASS', 105, 22, { align: 'center' });
+
+        pdf.setFontSize(12);
+        pdf.setTextColor(233, 213, 255);
+        pdf.text('ENTRY PASS CONFIRMATION', 105, 32, { align: 'center' });
+
+        pdf.setDrawColor(139, 92, 246);
+        pdf.setLineWidth(0.5);
+        pdf.rect(20, 50, 170, 95);
+
+        pdf.setFontSize(13);
+        const fields = [
+          ['Name:', ticket.full_name || 'N/A'],
+          ['Phone No:', ticket.phone_number || 'N/A'],
+          ['Amount Paid:', `Rs ${ticket.total_amount || 0}`],
+          ['Ticket:', `${ticket.ticket_type} (${ticket.allowed_entries} members)`],
+          ['Venue:', ticket.venue || 'N/A'],
+          ['Date:', new Date(ticket.event_date).toLocaleDateString()],
+          ['Bib Number:', ticket.bib_number ? `#${ticket.bib_number}` : 'N/A']
+        ];
+
+        let startY = 62;
+        fields.forEach(([label, val]) => {
+          pdf.setTextColor(196, 181, 253);
+          pdf.text(label, 25, startY);
+          pdf.setTextColor(255, 255, 255);
+          pdf.text(String(val), 65, startY);
+          startY += 10;
+        });
+
+        if (ticket.qr_code) {
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(60, 155, 90, 90, 'F');
+          pdf.addImage(ticket.qr_code, 'PNG', 65, 160, 80, 80);
+        }
+
+        pdf.setTextColor(233, 213, 255);
+        pdf.setFontSize(14);
+        pdf.text('Show this pass at the entrance', 105, 270, { align: 'center' });
       }
 
-      pdf.addImage(imgData, 'PNG', margin, yPos, availableWidth, Math.min(imgHeight, pdfHeight - margin * 2));
-      pdf.save(`${(ticket.title || 'Event').replace(/\s+/g, '-')}-Pass.pdf`);
+      const safeTitle = (ticket.title || 'Event').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+      pdf.save(`${safeTitle || 'Event'}-Pass.pdf`);
     } catch (error) {
       console.error('PDF Generation Error:', error);
       alert('PDF generation failed. Please try again.');
