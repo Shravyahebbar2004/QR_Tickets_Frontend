@@ -24,22 +24,35 @@ export default function MyTicketPage() {
   // ====================================
 
   const getTicket = async () => {
+    const cleanEmail = email.trim();
+    const cleanPhone = phone.trim();
+
+    if (!cleanEmail && !cleanPhone) {
+      alert('Please enter your Email Address or Phone Number to view your tickets.');
+      return;
+    }
+
     try {
       setLoading(true);
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/my-ticket`,
         {
-          email,
-          phone_number: phone,
+          email: cleanEmail,
+          phone_number: cleanPhone,
           event_id: params.id
         }
       );
 
-      setTickets(response.data.data);
-    } catch (error) {
+      if (response.data.data && response.data.data.length > 0) {
+        setTickets(response.data.data);
+      } else {
+        alert('No tickets found for the entered details.');
+      }
+    } catch (error: any) {
       console.log(error);
-      alert('Tickets not found');
+      const serverMsg = error?.response?.data?.message || 'Tickets not found. Please verify your Email or Phone Number.';
+      alert(serverMsg);
     } finally {
       setLoading(false);
     }
