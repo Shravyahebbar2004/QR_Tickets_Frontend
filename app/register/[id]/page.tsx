@@ -591,17 +591,8 @@ export default function RegisterPage({
             Online registration for <strong className="text-white">{event.title}</strong> is now closed as the registration slab dates have ended.
           </p>
 
-          <div className="bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-500/20 border border-yellow-500/40 rounded-3xl p-6 mb-8 text-yellow-200 shadow-lg">
-            <h3 className="text-2xl font-black mb-2 flex items-center justify-center gap-2 text-yellow-300">
-              <span>⚡</span> ON-SPOT REGISTRATION IS OPEN! <span>⚡</span>
-            </h3>
-            <p className="text-base text-gray-200">
-              Don't worry! You can still register on-spot directly at the event venue.
-            </p>
-          </div>
-
           <div className="border-t border-white/10 pt-6 text-gray-400 text-sm">
-            <p className="mb-2">For on-spot registration queries, contact:</p>
+            <p className="mb-2">For any event queries, contact:</p>
             <p className="font-bold text-white text-base">Shravya Hebbar</p>
             <p className="text-cyan-400 font-medium mt-1">📧 <a href="mailto:rotaractyelahanka.events@gmail.com" className="hover:underline">rotaractyelahanka.events@gmail.com</a> | 📞 <a href="tel:9611444945" className="hover:underline">9611444945</a></p>
           </div>
