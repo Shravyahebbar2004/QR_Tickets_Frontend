@@ -212,7 +212,7 @@ export default function AdminPage({
   };
 
   // ====================================
-  // EXPORT REGISTERED EMAILS DIRECTORY CSV
+  // EXPORT REGISTERED EMAILS DIRECTORY CSV (BLOB UTF-8 + EXACT ALIGNMENT)
   // ====================================
 
   const exportEmailCSV = () => {
@@ -226,7 +226,9 @@ export default function AdminPage({
       'Phone Numbers',
       'Ticket Categories',
       'BIB Numbers',
-      'Payment Statuses'
+      'Payment Statuses',
+      'Clubs / Affiliations',
+      'Coupons Used'
     ];
 
     const emailKeys = Object.keys(emailDirectoryMap).sort();
@@ -238,11 +240,13 @@ export default function AdminPage({
       const pending = regList.filter((u) => u.payment_status === 'pending').length;
       const draft = regList.filter((u) => u.payment_status === 'draft').length;
 
-      const names = regList.map((u) => u.full_name).join(' | ');
+      const names = regList.map((u) => u.full_name || 'N/A').join(' | ');
       const phones = Array.from(new Set(regList.map((u) => u.phone_number).filter(Boolean))).join(' | ');
-      const tickets = regList.map((u) => u.ticket_type).join(' | ');
+      const tickets = regList.map((u) => u.ticket_type || 'N/A').join(' | ');
       const bibs = regList.map((u) => (u.bib_number ? `#${u.bib_number}` : '-')).join(' | ');
-      const statuses = regList.map((u) => u.payment_status).join(' | ');
+      const statuses = regList.map((u) => u.payment_status || 'pending').join(' | ');
+      const clubs = Array.from(new Set(regList.map((u) => u.club_affiliation).filter(Boolean))).join(' | ') || 'None';
+      const coupons = Array.from(new Set(regList.map((u) => u.coupon_code).filter(Boolean))).join(' | ') || 'None';
 
       return [
         emailKey,
@@ -254,23 +258,77 @@ export default function AdminPage({
         phones,
         tickets,
         bibs,
-        statuses
+        statuses,
+        clubs,
+        coupons
       ];
     });
 
     const csvContent =
-      'data:text/csv;charset=utf-8,\uFEFF' +
+      '\uFEFF' +
       [headers, ...rows]
-        .map((e) => e.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(','))
-        .join('\n');
+        .map((e) => e.map((val) => `"${String(val || '').replace(/"/g, '""')}"`).join(','))
+        .join('\r\n');
 
-    const encodedUri = encodeURI(csvContent);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.href = url;
     link.setAttribute('download', `Registered_Emails_Directory_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportEmailDetailedCSV = () => {
+    const headers = [
+      'Email Address',
+      'Participant Name',
+      'Phone Number',
+      'Ticket Type',
+      'BIB Number',
+      'Payment Status',
+      'Club / Affiliation',
+      'Coupon Code',
+      'Entries Used/Allowed',
+      'Emergency Contact Name',
+      'Emergency Contact Phone',
+      'Blood Group'
+    ];
+
+    const sortedUsers = [...users].sort((a, b) => (a.email || '').localeCompare(b.email || ''));
+
+    const rows = sortedUsers.map((u) => [
+      u.email || 'N/A',
+      u.full_name || 'N/A',
+      u.phone_number || 'N/A',
+      u.ticket_type || 'N/A',
+      u.bib_number ? `#${u.bib_number}` : '-',
+      u.payment_status || 'pending',
+      u.club_affiliation || 'None',
+      u.coupon_code || '-',
+      `${u.used_entries}/${u.allowed_entries}`,
+      u.emergency_contact_name || '-',
+      u.emergency_contact || '-',
+      u.blood_group || '-'
+    ]);
+
+    const csvContent =
+      '\uFEFF' +
+      [headers, ...rows]
+        .map((e) => e.map((val) => `"${String(val || '').replace(/"/g, '""')}"`).join(','))
+        .join('\r\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Registered_Emails_Detailed_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const router = useRouter();
@@ -929,12 +987,20 @@ transition            border
                 Real-time auto-updating list of all unique registered email addresses and their participants.
               </p>
             </div>
-            <button
-              onClick={exportEmailCSV}
-              className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg"
-            >
-              📥 Download Email Directory CSV (.csv)
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={exportEmailCSV}
+                className="bg-yellow-400 hover:bg-yellow-500 text-black px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 shadow-lg"
+              >
+                📥 Download Grouped Email Directory CSV
+              </button>
+              <button
+                onClick={exportEmailDetailedCSV}
+                className="bg-amber-500 hover:bg-amber-600 text-black px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 shadow-lg"
+              >
+                📄 Download Detailed Participants CSV
+              </button>
+            </div>
           </div>
 
           <table className="w-full min-w-[900px] text-left">
