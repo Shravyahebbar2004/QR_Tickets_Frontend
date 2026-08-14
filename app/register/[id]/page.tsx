@@ -191,8 +191,8 @@ export default function RegisterPage({
       let slabName = "Early Bird Offer";
       let registrationClosed = false;
 
-      // 1. Total Capacity limit: 300 registrations max
-      if (totalRegs >= 300) {
+      // 1. Explicit Database Closed Status or Total Capacity limit (300) or Deadlines
+      if (evt.event_status === 'CLOSED' || evt.is_closed || totalRegs >= 300) {
         registrationClosed = true;
       } else if (evt.slab2_deadline && now > new Date(evt.slab2_deadline).getTime()) {
         registrationClosed = true;
