@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState, use, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
@@ -210,6 +210,69 @@ export default function AdminPage({
     link.click();
     document.body.removeChild(link);
   };
+
+  // ====================================
+  // EXPORT REGISTERED EMAILS DIRECTORY CSV
+  // ====================================
+
+  const exportEmailCSV = () => {
+    const headers = [
+      'Email Address',
+      'Total Registered',
+      'Approved Count',
+      'Pending Count',
+      'Draft Count',
+      'Participant Names',
+      'Phone Numbers',
+      'Ticket Categories',
+      'BIB Numbers',
+      'Payment Statuses'
+    ];
+
+    const emailKeys = Object.keys(emailDirectoryMap).sort();
+
+    const rows = emailKeys.map((emailKey) => {
+      const regList = emailDirectoryMap[emailKey];
+      const total = regList.length;
+      const approved = regList.filter((u) => u.payment_status === 'approved').length;
+      const pending = regList.filter((u) => u.payment_status === 'pending').length;
+      const draft = regList.filter((u) => u.payment_status === 'draft').length;
+
+      const names = regList.map((u) => u.full_name).join(' | ');
+      const phones = Array.from(new Set(regList.map((u) => u.phone_number).filter(Boolean))).join(' | ');
+      const tickets = regList.map((u) => u.ticket_type).join(' | ');
+      const bibs = regList.map((u) => (u.bib_number ? `#${u.bib_number}` : '-')).join(' | ');
+      const statuses = regList.map((u) => u.payment_status).join(' | ');
+
+      return [
+        emailKey,
+        total,
+        approved,
+        pending,
+        draft,
+        names,
+        phones,
+        tickets,
+        bibs,
+        statuses
+      ];
+    });
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,\uFEFF' +
+      [headers, ...rows]
+        .map((e) => e.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `Registered_Emails_Directory_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const router = useRouter();
 
   // ====================================
@@ -218,7 +281,7 @@ export default function AdminPage({
 
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'draft' | '5k' | '3k'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'draft' | '5k' | '3k' | 'emails'>('all');
   const [mounted, setMounted] = useState(false);
   const [approvingId, setApprovingId] = useState<number | null>(null);
 
@@ -332,6 +395,41 @@ export default function AdminPage({
   ).length;
 
   // ====================================
+  // REGISTERED EMAIL DIRECTORY GROUPING
+  // ====================================
+
+  const emailDirectoryMap = useMemo(() => {
+    const map: { [email: string]: User[] } = {};
+    users.forEach((user) => {
+      const emailKey = (user.email || 'N/A').toLowerCase().trim();
+      if (!map[emailKey]) {
+        map[emailKey] = [];
+      }
+      map[emailKey].push(user);
+    });
+    return map;
+  }, [users]);
+
+  const uniqueEmailCount = Object.keys(emailDirectoryMap).length;
+
+  const filteredEmailKeys = useMemo(() => {
+    const emailKeys = Object.keys(emailDirectoryMap).sort();
+    if (!search.trim()) return emailKeys;
+
+    const query = search.toLowerCase().trim();
+    return emailKeys.filter((email) => {
+      if (email.includes(query)) return true;
+      const regList = emailDirectoryMap[email];
+      return regList.some(
+        (u) =>
+          u.full_name?.toLowerCase().includes(query) ||
+          u.phone_number?.includes(query) ||
+          (u.bib_number && String(u.bib_number).includes(query))
+      );
+    });
+  }, [emailDirectoryMap, search]);
+
+  // ====================================
   // SEARCH & CATEGORY FILTER WITH BIB SORT
   // ====================================
 
@@ -423,10 +521,18 @@ export default function AdminPage({
             📊 Export Multi-Sheet Excel (.xls)
           </button>
 
+          {/* EXPORT EMAIL DIRECTORY CSV */}
+          <button
+            onClick={exportEmailCSV}
+            className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg"
+          >
+            📧 Export Email Directory CSV (.csv)
+          </button>
+
           {/* EXPORT CSV */}
           <button
             onClick={exportCSV}
-            className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg"
+            className="bg-zinc-800 hover:bg-zinc-700 text-gray-200 px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg border border-white/10"
           >
             📄 Export Current View CSV
           </button>
@@ -804,23 +910,112 @@ transition            border
         >
           🏃‍♀️ 3K Category ({count3k})
         </button>
+        <button
+          type="button"
+          onClick={() => setStatusFilter('emails')}
+          className={`px-5 py-2.5 rounded-xl font-bold text-sm transition ${statusFilter === 'emails' ? 'bg-amber-400 text-black shadow-lg' : 'bg-white/5 border border-amber-400/40 text-amber-300 hover:bg-white/10'}`}
+        >
+          📧 Registered Email IDs ({uniqueEmailCount})
+        </button>
       </div>
 
-      {/* TABLE */}
+      {/* CONDITIONAL TABLE VIEW */}
+      {statusFilter === 'emails' ? (
+        <div className="overflow-x-auto bg-white/5 border border-white/20 rounded-3xl backdrop-blur-xl p-6 mb-10">
+          <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-yellow-300">Registered Email IDs Directory</h2>
+              <p className="text-gray-400 text-sm mt-1">
+                Real-time auto-updating list of all unique registered email addresses and their participants.
+              </p>
+            </div>
+            <button
+              onClick={exportEmailCSV}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg"
+            >
+              📥 Download Email Directory CSV (.csv)
+            </button>
+          </div>
 
-      <div
-        className="
-          overflow-x-auto
-          bg-white/5
-border-white/10
-backdrop-blur-xl
-hover:scale-105
-transition          border
-          border-white/20
-          rounded-3xl
-          backdrop-blur-xl
-        "
-      >
+          <table className="w-full min-w-[900px] text-left">
+            <thead>
+              <tr className="bg-yellow-400 text-black">
+                <th className="p-4">Email Address</th>
+                <th className="p-4 text-center">Total Registered</th>
+                <th className="p-4">Registered Participants & Pass Details</th>
+                <th className="p-4">Phone Numbers</th>
+                <th className="p-4 text-center">Status Summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredEmailKeys.map((email) => {
+                const regList = emailDirectoryMap[email];
+                const approved = regList.filter((u) => u.payment_status === 'approved').length;
+                const pending = regList.filter((u) => u.payment_status === 'pending').length;
+                const draft = regList.filter((u) => u.payment_status === 'draft').length;
+
+                return (
+                  <tr key={email} className="border-t border-white/10 hover:bg-white/5 transition">
+                    <td className="p-4 font-bold text-yellow-200">{email}</td>
+                    <td className="p-4 text-center font-black text-xl text-cyan-300">{regList.length}</td>
+                    <td className="p-4 space-y-2">
+                      {regList.map((u) => (
+                        <div key={u.registration_id} className="flex flex-wrap items-center gap-2 text-sm">
+                          <span className="font-semibold text-white">{u.full_name}</span>
+                          <span className="bg-yellow-400/10 text-yellow-300 px-2 py-0.5 rounded font-medium text-xs">
+                            {u.ticket_type}
+                          </span>
+                          {u.bib_number && (
+                            <span className="bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded font-bold text-xs">
+                              #{u.bib_number}
+                            </span>
+                          )}
+                          <span
+                            className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${
+                              u.payment_status === 'approved'
+                                ? 'bg-green-500/20 text-green-300'
+                                : u.payment_status === 'pending'
+                                ? 'bg-amber-500/20 text-amber-300'
+                                : 'bg-red-500/20 text-red-300'
+                            }`}
+                          >
+                            {u.payment_status}
+                          </span>
+                        </div>
+                      ))}
+                    </td>
+                    <td className="p-4 text-gray-300 text-sm">
+                      {Array.from(new Set(regList.map((u) => u.phone_number).filter(Boolean))).join(', ')}
+                    </td>
+                    <td className="p-4 text-center">
+                      <div className="flex justify-center gap-2 text-xs font-bold">
+                        {approved > 0 && <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded">✓ {approved} Approved</span>}
+                        {pending > 0 && <span className="bg-amber-500/20 text-amber-300 px-2 py-1 rounded">⏳ {pending} Pending</span>}
+                        {draft > 0 && <span className="bg-orange-500/20 text-orange-300 px-2 py-1 rounded">⚠️ {draft} Draft</span>}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        /* TABLE */
+        <div
+          className="
+            overflow-x-auto
+            bg-white/5
+            border-white/10
+            backdrop-blur-xl
+            hover:scale-105
+            transition
+            border
+            border-white/20
+            rounded-3xl
+            backdrop-blur-xl
+          "
+        >
         <table
           className="
             w-full
@@ -1039,6 +1234,7 @@ transition          border
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 }
