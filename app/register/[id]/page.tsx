@@ -52,9 +52,8 @@ export default function RegisterPage({
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const hasToken = Boolean(localStorage.getItem('admin_token'));
       const hasAdminQuery = window.location.search.includes('admin=true');
-      if (hasToken || hasAdminQuery) {
+      if (hasAdminQuery) {
         setIsAdminMode(true);
       }
     }
