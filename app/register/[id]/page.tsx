@@ -48,6 +48,17 @@ export default function RegisterPage({
   const [activeSlabKey, setActiveSlabKey] = useState<string>('slab1');
   const [activeSlabName, setActiveSlabName] = useState<string>('Early Bird Offer');
   const [isClosed, setIsClosed] = useState<boolean>(false);
+  const [isAdminMode, setIsAdminMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hasToken = Boolean(localStorage.getItem('admin_token'));
+      const hasAdminQuery = window.location.search.includes('admin=true');
+      if (hasToken || hasAdminQuery) {
+        setIsAdminMode(true);
+      }
+    }
+  }, []);
 
   // COUPON CODE STATES
   const [couponInput, setCouponInput] = useState('');
@@ -370,6 +381,7 @@ export default function RegisterPage({
       draftData.append('total_amount', totalAmount.toString());
       draftData.append('allowed_entries', allowedEntries.toString());
       draftData.append('event_id', id);
+      draftData.append('is_admin_mode', isAdminMode ? 'true' : 'false');
 
       if (paymentProof) {
         draftData.append('payment_proof', paymentProof);
@@ -576,7 +588,7 @@ export default function RegisterPage({
     );
   }
 
-  if (isClosed) {
+  if (isClosed && !isAdminMode) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center text-white text-center p-6">
         <div className="bg-white/5 border border-white/10 backdrop-blur-2xl rounded-[40px] p-8 md:p-14 max-w-xl shadow-2xl relative overflow-hidden">
@@ -602,7 +614,19 @@ export default function RegisterPage({
   }
 
   return (
-    <main className="min-h-screen bg-black text-white flex items-center justify-center p-10">
+    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 md:p-10">
+      {isAdminMode && (
+        <div className="w-full max-w-3xl bg-amber-500/20 border border-amber-500/40 rounded-2xl p-4 mb-6 text-amber-200 flex items-center justify-between shadow-lg">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">👑</span>
+            <div>
+              <p className="font-bold text-amber-300">Admin Registration Mode Active</p>
+              <p className="text-xs text-amber-200/80">Registration override enabled. You can register participants even when online registrations are closed for public users.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {event?.category?.toLowerCase()?.trim() === 'marathon' && step === 1 ? (
         <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 w-full max-w-3xl shadow-2xl">
           <h1 className="text-4xl md:text-5xl font-black mb-3 text-cyan-300">Select Your Distance</h1>

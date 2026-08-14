@@ -571,6 +571,14 @@ export default function AdminPage({
 </h1>
 
         <div className="flex flex-wrap gap-4">
+          {/* REGISTER NEW PARTICIPANT (ADMIN MODE) */}
+          <button
+            onClick={() => window.open(`/register/${id}?admin=true`, '_blank')}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg"
+          >
+            ➕ Add New Registration (Admin Mode)
+          </button>
+
           {/* EXPORT MULTI-SHEET EXCEL */}
           <button
             onClick={exportExcel}
