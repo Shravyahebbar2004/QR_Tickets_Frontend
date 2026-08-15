@@ -234,7 +234,9 @@ export default function AdminPage({
     const emailKeys = Object.keys(emailDirectoryMap).sort();
 
     const rows = emailKeys.map((emailKey) => {
-      const regList = emailDirectoryMap[emailKey];
+      const regList = [...emailDirectoryMap[emailKey]].sort(
+        (a, b) => Number(a.registration_id) - Number(b.registration_id)
+      );
       const total = regList.length;
       const approved = regList.filter((u) => u.payment_status === 'approved').length;
       const pending = regList.filter((u) => u.payment_status === 'pending').length;
@@ -297,7 +299,11 @@ export default function AdminPage({
       'Blood Group'
     ];
 
-    const sortedUsers = [...users].sort((a, b) => (a.email || '').localeCompare(b.email || ''));
+    const sortedUsers = [...users].sort((a, b) => {
+      const emailCompare = (a.email || '').toLowerCase().localeCompare((b.email || '').toLowerCase());
+      if (emailCompare !== 0) return emailCompare;
+      return Number(a.registration_id) - Number(b.registration_id);
+    });
 
     const rows = sortedUsers.map((u) => [
       u.email || 'N/A',
@@ -356,7 +362,12 @@ export default function AdminPage({
         `${process.env.NEXT_PUBLIC_API_URL}/api/admin/${id}`,
       );
 
-      setUsers(response.data.registrations || []);
+      const rawRegistrations: User[] = response.data.registrations || [];
+      const sortedRegistrations = [...rawRegistrations].sort(
+        (a, b) => Number(a.registration_id) - Number(b.registration_id)
+      );
+
+      setUsers(sortedRegistrations);
     } catch (error) {
       console.log(error);
     }
@@ -458,7 +469,10 @@ export default function AdminPage({
 
   const emailDirectoryMap = useMemo(() => {
     const map: { [email: string]: User[] } = {};
-    users.forEach((user) => {
+    const sortedAllUsers = [...users].sort(
+      (a, b) => Number(a.registration_id) - Number(b.registration_id)
+    );
+    sortedAllUsers.forEach((user) => {
       const emailKey = (user.email || 'N/A').toLowerCase().trim();
       if (!map[emailKey]) {
         map[emailKey] = [];
